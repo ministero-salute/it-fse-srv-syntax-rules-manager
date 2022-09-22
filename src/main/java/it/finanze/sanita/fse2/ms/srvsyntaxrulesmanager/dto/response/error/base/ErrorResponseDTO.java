@@ -16,14 +16,6 @@ import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utils.UtilsOA.OA_I
 @Data
 public class ErrorResponseDTO implements AbstractDTO {
 
-    public static final String GENERIC_ERROR = "/msg/generic-error";
-    public static final String CONSTRAINT_ERROR = "/msg/constraint-error";
-    public static final String NOT_FOUND_ERROR = "/msg/not-found";
-    public static final String OPERATION_ERROR = "/msg/operation-error";
-    public static final String CONFLICT_ERROR = "/msg/conflict-error";
-    public static final String DATA_PROCESSING_ERROR = "/msg/process-error";
-    public static final String DATA_INTEGRITY_ERROR = "/msg/data-integrity-error";
-
     /**
      * Trace id log.
      */

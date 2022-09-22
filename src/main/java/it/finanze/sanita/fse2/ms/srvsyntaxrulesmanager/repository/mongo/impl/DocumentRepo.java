@@ -2,42 +2,37 @@ package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.impl;
 
 import com.mongodb.MongoException;
 import com.mongodb.bulk.BulkWriteResult;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.UpdateOneModel;
-import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.DataIntegrityException;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.CollectionNaming;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IDocumentRepo;
-import lombok.extern.slf4j.Slf4j;
-import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY.*;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IChangeSetRepo.FIELD_DELETED;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IChangeSetRepo.FIELD_LAST_UPDATE;
+import static org.springframework.data.mongodb.core.BulkOperations.BulkMode.UNORDERED;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Repository
-@Slf4j
 public class DocumentRepo implements IDocumentRepo {
 
     @Autowired
     private MongoTemplate mongo;
-
-    @Autowired
-    private CollectionNaming naming;
 
     /**
      * Retrieves the documents entities by their extension identifier
@@ -146,47 +141,41 @@ public class DocumentRepo implements IDocumentRepo {
 
     /**
      * Update all the given entities inside the schema
-     * @param entities The new entities to replace with the old ones
+     * @param entities Map containing keys as the old document and values as the new ones
      * @return The {@link BulkWriteResult} object
      * @throws OperationException If a data-layer error occurs
      */
     @Override
-    public List<SchemaETY> updateDocsByExtensionId(List<SchemaETY> entities)
+    public List<SchemaETY> updateDocsByExtensionId(Map<SchemaETY, SchemaETY> entities)
         throws OperationException, DataIntegrityException {
         // List to hold queries
-        List<UpdateOneModel<Document>> queries = new ArrayList<>();
+        BulkOperations ops = mongo.bulkOps(UNORDERED, SchemaETY.class);
         BulkWriteResult result;
         // Create queries
         // They will be sent as a single call to the database
-        for (SchemaETY e : entities) {
-            // Verify not null
-            Objects.requireNonNull(e.getId(), "The document id cannot be null");
-            // Create query
+        entities.forEach((current, newest) -> {
+            // Create query to match the required file
             Query query = new Query();
             query.addCriteria(
-                where(FIELD_ID).is(new ObjectId(e.getId()))
+                where(FIELD_ID).is(new ObjectId(current.getId()))
             );
             query.addCriteria(
                 where(FIELD_DELETED).is(false)
             );
-            // Creating query
-            queries.add(new UpdateOneModel<>(
-                    // Retrieve by id
-                    query.getQueryObject(),
-                    // Update operator
-                    Updates.combine(
-                        Updates.set(FIELD_LAST_UPDATE, e.getLastUpdateDate()),
-                        Updates.set(FIELD_CONTENT, e.getContentSchema())
-                    )
-                )
-            );
-        }
+            // Set fields to modify
+            Update update = new Update();
+            update.set(FIELD_LAST_UPDATE, new Date());
+            update.set(FIELD_DELETED, true);
+            // Creating query to mark as deleted the old file
+            ops.updateOne(query, update);
+            // Creating query to insert the new ones
+            ops.insert(newest);
+        });
+
         // Now, we reach the database instance with the queries
         try {
-            // Retrieve schema document
-            MongoCollection<Document> collection = mongo.getCollection(naming.getSchemaCollection());
             // Execute
-            result = collection.bulkWrite(queries);
+            result = ops.execute();
         }catch (MongoException e) {
             // Catch data-layer runtime exceptions and turn into a checked exception
             throw new OperationException("Unable to update documents for the given extension" , e);
@@ -194,13 +183,13 @@ public class DocumentRepo implements IDocumentRepo {
         // Assert we modified the expected data size
         if(entities.size() != result.getMatchedCount() || entities.size() != result.getModifiedCount()) {
             throw new DataIntegrityException(
-                String.format("Expected document count doesn't match modified document count on %s\nExpected: %d/Matched: %d/Modified: %d",
-                    entities.get(0).getTypeIdExtension(), entities.size(), result.getMatchedCount(), result.getModifiedCount()
+                String.format("Expected document count doesn't match modified document count\nExpected: %d/Matched: %d/Modified: %d",
+                    entities.size(), result.getMatchedCount(), result.getModifiedCount()
                 )
             );
         }
         // Bye bye
-        return entities;
+        return new ArrayList<>(entities.values());
     }
 
     /**

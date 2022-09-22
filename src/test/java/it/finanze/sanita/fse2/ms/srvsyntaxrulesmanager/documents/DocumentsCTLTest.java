@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.base.MockRequests.*;
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.ErrorBuilderDTO.*;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.ErrorType.*;
 import static org.apache.http.HttpStatus.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -52,17 +52,13 @@ class DocumentsCTLTest extends AbstractEntityHandler{
 
     @Test
     void getDocumentByIdWithInvalidId() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.findDocById(anyString())
-        ).thenThrow(new ObjectIdNotValidException("Unknown id"));
         // Execute request
         mvc.perform(
             getDocByIdReq(FAKE_INVALID_DTO_ID)
         ).andExpectAll(
             status().is(SC_BAD_REQUEST),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(VALIDATION_TITLE)
+            jsonPath("$.title").value(VALIDATION.getTitle())
         );
     }
 
@@ -78,7 +74,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_NOT_FOUND),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(DOCUMENT_NOT_FOUND_TITLE)
+            jsonPath("$.title").value(RESOURCE.getTitle())
         );
     }
 
@@ -94,7 +90,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_INTERNAL_SERVER_ERROR),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(OPERATION_TITLE)
+            jsonPath("$.title").value(SERVER.getTitle())
         );
     }
 
@@ -127,7 +123,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_NOT_FOUND),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(EXTENSION_NOT_FOUND_TITLE)
+            jsonPath("$.title").value(RESOURCE.getTitle())
         );
     }
 
@@ -145,7 +141,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_INTERNAL_SERVER_ERROR),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(OPERATION_TITLE)
+            jsonPath("$.title").value(SERVER.getTitle())
         );
     }
 
@@ -161,7 +157,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_INTERNAL_SERVER_ERROR),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(GENERIC_TITLE)
+            jsonPath("$.title").value(SERVER.getTitle())
         );
     }
 
@@ -206,7 +202,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_INTERNAL_SERVER_ERROR),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(OPERATION_TITLE)
+            jsonPath("$.title").value(SERVER.getTitle())
         );
     }
 
@@ -230,7 +226,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_NOT_FOUND),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(EXTENSION_NOT_FOUND_TITLE)
+            jsonPath("$.title").value(RESOURCE.getTitle())
         );
     }
 
@@ -254,7 +250,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_NOT_FOUND),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(DOCUMENT_NOT_FOUND_TITLE)
+            jsonPath("$.title").value(RESOURCE.getTitle())
         );
     }
 
@@ -281,7 +277,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_UNPROCESSABLE_ENTITY),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(DATA_PROCESSING_TITLE)
+            jsonPath("$.title").value(IO.getTitle())
         );
     }
 
@@ -296,7 +292,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_BAD_REQUEST),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(VALIDATION_TITLE)
+            jsonPath("$.title").value(VALIDATION.getTitle())
         );
     }
 
@@ -314,7 +310,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_BAD_REQUEST),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(VALIDATION_TITLE)
+            jsonPath("$.title").value(VALIDATION.getTitle())
         );
     }
 
@@ -384,7 +380,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_UNPROCESSABLE_ENTITY),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(DATA_PROCESSING_TITLE)
+            jsonPath("$.title").value(IO.getTitle())
         );
     }
 
@@ -409,7 +405,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_CONFLICT),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(EXTENSION_CONFLICT_TITLE)
+            jsonPath("$.title").value(RESOURCE.getTitle())
         );
     }
 
@@ -434,7 +430,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_UNPROCESSABLE_ENTITY),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(DATA_PROCESSING_TITLE)
+            jsonPath("$.title").value(IO.getTitle())
         );
     }
 
@@ -453,7 +449,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_BAD_REQUEST),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(VALIDATION_TITLE)
+            jsonPath("$.title").value(VALIDATION.getTitle())
         );
     }
 
@@ -472,7 +468,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_BAD_REQUEST),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(VALIDATION_TITLE)
+            jsonPath("$.title").value(VALIDATION.getTitle())
         );
     }
 
@@ -491,7 +487,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_BAD_REQUEST),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(VALIDATION_TITLE)
+            jsonPath("$.title").value(VALIDATION.getTitle())
         );
     }
 
@@ -507,7 +503,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_BAD_REQUEST),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(VALIDATION_TITLE)
+            jsonPath("$.title").value(VALIDATION.getTitle())
         );
     }
 
@@ -540,7 +536,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_NOT_FOUND),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(EXTENSION_NOT_FOUND_TITLE)
+            jsonPath("$.title").value(RESOURCE.getTitle())
         );
     }
 
@@ -558,7 +554,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_INTERNAL_SERVER_ERROR),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(OPERATION_TITLE)
+            jsonPath("$.title").value(SERVER.getTitle())
         );
     }
 
@@ -574,7 +570,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         ).andExpectAll(
             status().is(SC_INTERNAL_SERVER_ERROR),
             content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(GENERIC_TITLE)
+            jsonPath("$.title").value(SERVER.getTitle())
         );
     }
 }

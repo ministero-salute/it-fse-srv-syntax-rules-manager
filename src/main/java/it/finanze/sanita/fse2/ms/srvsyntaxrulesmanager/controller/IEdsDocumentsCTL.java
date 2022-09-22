@@ -12,6 +12,7 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.operation.docu
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.UniqueMultipart;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.ValidObjectId;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -50,8 +51,9 @@ public interface IEdsDocumentsCTL {
             max = OA_ANY_STRING_MAX,
             message = "Document id does not match the expected size"
         )
+        @ValidObjectId(message = "Document id not valid")
         String id
-    ) throws DocumentNotFoundException, OperationException, ObjectIdNotValidException;
+    ) throws DocumentNotFoundException, OperationException;
 
     @GetMapping(API_GET_BY_EXTS)
     @GetDocumentsByExt

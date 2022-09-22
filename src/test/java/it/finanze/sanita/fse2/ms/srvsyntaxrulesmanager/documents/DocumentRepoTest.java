@@ -11,19 +11,19 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
+import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.ComponentScan.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.data.mongodb.core.BulkOperations.BulkMode.UNORDERED;
 
 @DataMongoTest
 @ComponentScans( value = {
@@ -237,43 +238,38 @@ class DocumentRepoTest extends AbstractDatabaseHandler {
 
     @Test
     void updateDocsByExtensionId() throws OperationException, DataIntegrityException {
+        // Working vars
+        Map<String, SchemaETY> newest = getEntitiesToUseAsReplacement();
+        Map<SchemaETY, SchemaETY> entities = new HashMap<>();
         // Documents to modify
         List<String> filenames = new ArrayList<>(getEntitiesToUseAsReplacement().keySet());
-        // Retrieve old documents
-        Map<String, SchemaETY> oldFiles = repository.isDocumentInserted(
+        Map<String, SchemaETY> current = repository.isDocumentInserted(
             SCHEMA_TEST_EXTS_B,
             filenames
         );
         // Modify data
-        oldFiles.forEach((name, entity) -> {
-            // Assign their ids to the new ones
-            getEntitiesToUseAsReplacement().get(name).setId(entity.getId());
-            // Create new timestamp
-            getEntitiesToUseAsReplacement().get(name).setLastUpdateDate(
-                Date.from(Instant.now().plus(5, ChronoUnit.MINUTES))
-            );
+        current.forEach((name, entity) -> {
+            entities.put(entity, newest.get(name));
         });
         // Replace test entities content
-        repository.updateDocsByExtensionId(
-            new ArrayList<>(getEntitiesToUseAsReplacement().values())
-        );
+        repository.updateDocsByExtensionId(entities);
         // Retrieve new documents
         Map<String, SchemaETY> newFiles = repository.isDocumentInserted(
             SCHEMA_TEST_EXTS_B,
             filenames
         );
         // Assert size
-        assertEquals(newFiles.size(), oldFiles.size());
+        assertEquals(newFiles.size(), current.size());
         // Assertions
         for (String filename : filenames) {
             // Get documents instance (before and after)
             SchemaETY newFile = newFiles.get(filename);
-            SchemaETY oldFile = oldFiles.get(filename);
+            SchemaETY oldFile = current.get(filename);
             // Verify file exists
             assertNotNull(newFile);
             assertNotNull(oldFile);
             // Verify they are not equals
-            assertNotSame(oldFiles.get(filename), newFiles.get(filename));
+            assertNotSame(current.get(filename), newFiles.get(filename));
             // Verify content is not the same
             assertNotEquals(oldFile.getContentSchema(), newFile.getContentSchema());
             // Verify timestamp is not the same
@@ -283,27 +279,27 @@ class DocumentRepoTest extends AbstractDatabaseHandler {
 
     @Test
     void updateDocsByExtensionIdExceptions() throws OperationException {
+        // Working vars
+        Map<String, SchemaETY> newest = getEntitiesToUseAsReplacement();
+        Map<SchemaETY, SchemaETY> entities = new HashMap<>();
+        BulkOperations ops = Mockito.spy(BulkOperations.class);
         // Documents to modify
         List<String> filenames = new ArrayList<>(getEntitiesToUseAsReplacement().keySet());
         // Retrieve old documents
-        Map<String, SchemaETY> oldFiles = repository.isDocumentInserted(
+        Map<String, SchemaETY> current = repository.isDocumentInserted(
             SCHEMA_TEST_EXTS_B,
             filenames
         );
         // Modify data
-        oldFiles.forEach((name, entity) -> {
-            // Assign their ids to the new ones
-            getEntitiesToUseAsReplacement().get(name).setId(entity.getId());
-            // Create new timestamp
-            getEntitiesToUseAsReplacement().get(name).setLastUpdateDate(
-                Date.from(Instant.now().plus(5, ChronoUnit.MINUTES))
-            );
+        current.forEach((name, entity) -> {
+            entities.put(entity, newest.get(name));
         });
         // Provide knowledge
-        doThrow(new MongoException("Test")).when(mongo).getCollection(anyString());
+        doReturn(ops).when(mongo).bulkOps(UNORDERED, SchemaETY.class);
+        doThrow(new MongoException("test")).when(ops).execute();
         // Verify exception
         assertThrows(OperationException.class, () -> repository.updateDocsByExtensionId(
-            new ArrayList<>(getEntitiesToUseAsReplacement().values())
+            entities
         ));
     }
 

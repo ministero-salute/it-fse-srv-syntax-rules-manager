@@ -48,11 +48,11 @@ public interface IDocumentRepo {
 
     /**
      * Update all the given entities inside the schema
-     * @param entities The new entities to replace with the old ones
+     * @param entities Map containing keys as the old document and values as the new ones
      * @return The {@link BulkWriteResult} object
      * @throws OperationException If a data-layer error occurs
      */
-    List<SchemaETY> updateDocsByExtensionId(List<SchemaETY> entities) throws OperationException, DataIntegrityException;
+    List<SchemaETY> updateDocsByExtensionId(Map<SchemaETY, SchemaETY> entities) throws OperationException, DataIntegrityException;
 
     /**
      * Deletes all the documents entities matching the given extensions

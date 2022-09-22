@@ -25,6 +25,8 @@ public class RootNotValidException extends Exception {
      */
     private final List<String> values;
 
+    private final String field;
+
     /**
      * Message constructor.
      *
@@ -32,9 +34,10 @@ public class RootNotValidException extends Exception {
      * @param value  Provided value
      * @param values Expected values
      */
-    public RootNotValidException(final String msg, String value, List<String> values) {
+    public RootNotValidException(final String msg, String field, String value, List<String> values) {
         super(msg);
         this.value = value;
         this.values = values;
+        this.field = field;
     }
 }

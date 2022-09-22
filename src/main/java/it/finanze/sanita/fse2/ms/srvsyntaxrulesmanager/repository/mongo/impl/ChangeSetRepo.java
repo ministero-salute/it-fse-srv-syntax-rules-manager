@@ -4,7 +4,6 @@ import com.mongodb.MongoException;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IChangeSetRepo;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
@@ -17,7 +16,6 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Repository
-@Slf4j
 public class ChangeSetRepo implements IChangeSetRepo<SchemaETY> {
     @Autowired
     private MongoTemplate mongo;
@@ -43,33 +41,6 @@ public class ChangeSetRepo implements IChangeSetRepo<SchemaETY> {
         } catch (MongoException e) {
             // Catch data-layer runtime exceptions and turn into a checked exception
             throw new OperationException("Unable to retrieve change-set insertions", e);
-        }
-        return objects;
-    }
-
-    /**
-     * Retrieves the latest modifications according to the given timeframe
-     *
-     * @param lastUpdate The timeframe to consider while calculating
-     * @return The missing modifications
-     * @throws OperationException If a data-layer error occurs
-     */
-    @Override
-    public List<SchemaETY> getModifications(Date lastUpdate) throws OperationException {
-        // Working var
-        List<SchemaETY> objects;
-        // Create criteria
-        Query q = query(
-            where(FIELD_LAST_UPDATE).gt(lastUpdate)
-                .and(FIELD_INSERTION_DATE).lt(lastUpdate)
-                .and(FIELD_DELETED).ne(true)
-        );
-        try {
-            // Execute
-            objects = mongo.find(q, SchemaETY.class);
-        } catch (MongoException e) {
-            // Catch data-layer runtime exceptions and turn into a checked exception
-            throw new OperationException("Unable to retrieve change-set modifications", e);
         }
         return objects;
     }

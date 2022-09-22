@@ -24,10 +24,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.ComponentScan.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,14 +57,6 @@ class ChangeSetRepoTest extends AbstractDatabaseHandler {
     }
 
     @Test
-    void getInsertions() throws OperationException {
-        // Retrieve documents with the current timestamp
-        List<SchemaETY> insertions = repository.getInsertions(new Date());
-        // Expect nothing
-        assertTrue(insertions.isEmpty());
-    }
-
-    @Test
     void getInsertionsWithTimestamp() throws OperationException {
         // Retrieve documents with yesterday date
         List<SchemaETY> insertions = repository.getInsertions(UtilsMisc.getYesterday());
@@ -84,47 +73,36 @@ class ChangeSetRepoTest extends AbstractDatabaseHandler {
     }
 
     @Test
-    void getModifications() throws OperationException {
-        // Retrieve documents with the current timestamp
-        List<SchemaETY> modifications = repository.getModifications(new Date());
-        // Expect nothing
-        assertTrue(modifications.isEmpty());
-    }
-
-    @Test
     void getModificationsWithTimestamp() throws OperationException, DataIntegrityException {
+        // Working vars
+        Map<String, SchemaETY> newest = getEntitiesToUseAsReplacement();
+        Map<SchemaETY, SchemaETY> entities = new HashMap<>();
         // Documents to modify
         List<String> filenames = new ArrayList<>(getEntitiesToUseAsReplacement().keySet());
         // Retrieve old documents
-        Map<String, SchemaETY> oldFiles = documents.isDocumentInserted(
+        Map<String, SchemaETY> current = documents.isDocumentInserted(
             SCHEMA_TEST_EXTS_B,
             filenames
         );
         // Modify data
-        oldFiles.forEach((name, entity) -> {
-            // Assign their ids to the new ones
-            getEntitiesToUseAsReplacement().get(name).setId(entity.getId());
+        current.forEach((name, entity) -> {
+            // Create new date
+            Date date = Date.from(Instant.now().plus(5, ChronoUnit.MINUTES));
             // Create new timestamp
-            getEntitiesToUseAsReplacement().get(name).setLastUpdateDate(
-                Date.from(Instant.now().plus(5, ChronoUnit.MINUTES))
-            );
+            // (we need it because the updated files and the newest one already match)
+            newest.get(name).setInsertionDate(date);
+            newest.get(name).setLastUpdateDate(date);
+            // Add it
+            entities.put(entity, newest.get(name));
         });
         // Replace test entities content
-        documents.updateDocsByExtensionId(
-            new ArrayList<>(getEntitiesToUseAsReplacement().values())
-        );
+        documents.updateDocsByExtensionId(entities);
         // Retrieve documents with last update
-        List<SchemaETY> modifications = repository.getModifications(lastUpdate);
+        List<SchemaETY> insertions = repository.getInsertions(lastUpdate);
+        List<SchemaETY> deletions = repository.getDeletions(lastUpdate);
         // Expect size match
-        assertEquals(getEntitiesToUseAsReplacement().values().size(), modifications.size());
-    }
-
-    @Test
-    void getModificationsExceptions() {
-        // Provide knowledge
-        doThrow(new MongoException("Test")).when(mongo).find(any(), eq(SchemaETY.class));
-        // Expect error
-        assertThrows(OperationException.class, () -> repository.getModifications(new Date()));
+        assertEquals(getEntitiesToUseAsReplacement().values().size(), insertions.size());
+        assertEquals(getEntitiesToUseAsReplacement().values().size(), deletions.size());
     }
 
     @Test
@@ -142,7 +120,8 @@ class ChangeSetRepoTest extends AbstractDatabaseHandler {
         // Retrieve documents with lastUpdate
         List<SchemaETY> deletions = repository.getDeletions(lastUpdate);
         // Expect full match
-        assertEquals(SCHEMA_TEST_SIZE, deletions.size());
+        // We need to sum up the files we modified during this test run
+        assertEquals(SCHEMA_TEST_SIZE + getEntitiesToUseAsReplacement().size(), deletions.size());
     }
 
     @Test

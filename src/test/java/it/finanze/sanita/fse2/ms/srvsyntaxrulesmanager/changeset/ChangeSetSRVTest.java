@@ -54,22 +54,6 @@ class ChangeSetSRVTest extends AbstractEntityHandler {
     }
 
     @Test
-    void getModifications() throws OperationException {
-        // Providing mock knowledge
-        when(repository.getModifications(any(Date.class))).thenReturn(getEntitiesToUpload());
-        // Assertions
-        assertDoesNotThrow(() -> {
-            assertEquals(getEntitiesToUpload().size(), service.getModifications(new Date()).size());
-        });
-        // Providing mock knowledge
-        when(repository.getModifications(any())).thenReturn(getEntitiesToUpload());
-        // Assertions
-        assertDoesNotThrow(() -> {
-            assertTrue(service.getModifications(null).isEmpty());
-        });
-    }
-
-    @Test
     void getDeletions() throws OperationException {
         // Providing mock knowledge
         when(repository.getDeletions(any(Date.class))).thenReturn(getEntitiesToUpload());

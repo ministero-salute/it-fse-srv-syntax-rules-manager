@@ -21,15 +21,6 @@ public interface IChangeSetRepo<T> {
     List<T> getInsertions(Date lastUpdate) throws OperationException;
 
     /**
-     * Retrieves the latest modifications according to the given timeframe
-     *
-     * @param lastUpdate The timeframe to consider while calculating
-     * @return The missing modifications
-     * @throws OperationException If a data-layer error occurs
-     */
-    List<T> getModifications(Date lastUpdate) throws OperationException;
-
-    /**
      * Retrieves the latest deletions according to the given timeframe
      *
      * @param lastUpdate The timeframe to consider while calculating

@@ -6,7 +6,6 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaE
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IChangeSetRepo;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.service.IChangeSetSRV;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utils.UtilsMisc;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +14,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 public class ChangeSetSRV implements IChangeSetSRV {
 
@@ -41,27 +39,6 @@ public class ChangeSetSRV implements IChangeSetSRV {
         }
         // Iterate and populate
         return insertions.stream().map(UtilsMisc::toChangeset).collect(Collectors.toList());
-    }
-
-    /**
-     * Retrieves the latest modifications according to the given timeframe
-     *
-     * @param lastUpdate The timeframe to consider while calculating
-     * @return The missing modifications
-     * @throws OperationException If a data-layer error occurs
-     */
-    @Override
-    public List<ChangeSetDTO> getModifications(Date lastUpdate) throws OperationException {
-        // Create empty container
-        List<ChangeSetDTO> changes = new ArrayList<>();
-        // Verify no null value has been provided
-        if(lastUpdate != null) {
-            // Retrieve modifications
-            List<SchemaETY> modifications = repository.getModifications(lastUpdate);
-            // Iterate and populate
-            changes = modifications.stream().map(UtilsMisc::toChangeset).collect(Collectors.toList());
-        }
-        return changes;
     }
 
     /**

@@ -15,13 +15,6 @@ public interface IChangeSetSRV {
      * @throws OperationException If a data-layer error occurs
      */
     List<ChangeSetDTO> getInsertions(@Nullable Date lastUpdate) throws OperationException;
-    /**
-     * Retrieves the latest modifications according to the given timeframe
-     * @param lastUpdate The timeframe to consider while calculating
-     * @return The missing modifications
-     * @throws OperationException If a data-layer error occurs
-     */
-    List<ChangeSetDTO> getModifications(@Nullable Date lastUpdate) throws OperationException;
 
     /**
      * Retrieves the latest deletions according to the given timeframe

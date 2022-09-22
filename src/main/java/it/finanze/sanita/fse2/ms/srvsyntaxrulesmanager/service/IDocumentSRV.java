@@ -14,9 +14,8 @@ public interface IDocumentSRV {
      * @return The document matching the extension identifier
      * @throws OperationException If a data-layer error occurs
      * @throws DocumentNotFoundException If no document matching the identifier is found
-     * @throws ObjectIdNotValidException If the document identifier is not valid
      */
-    SchemaDocumentDTO findDocById(String id) throws OperationException, DocumentNotFoundException, ObjectIdNotValidException;
+    SchemaDocumentDTO findDocById(String id) throws OperationException, DocumentNotFoundException;
 
     /**
      * Retrieves the documents by their extension identifier

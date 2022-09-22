@@ -1,17 +1,17 @@
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators;
 
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.impl.UniqueMultipartValidator;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.impl.NoFutureDateValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = UniqueMultipartValidator.class)
+@Constraint(validatedBy = NoFutureDateValidator.class)
 @Target({ ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface UniqueMultipart {
-    String message() default "One or more files duplicated";
+public @interface NoFutureDate {
+    String message() default "The date is set in the future";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

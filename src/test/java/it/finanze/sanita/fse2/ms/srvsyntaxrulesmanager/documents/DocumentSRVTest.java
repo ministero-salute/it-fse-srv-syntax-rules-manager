@@ -54,14 +54,6 @@ class DocumentSRVTest extends AbstractEntityHandler {
     }
 
     @Test
-    void findDocWithInvalidId() {
-        // Verify exception is thrown
-        assertThrows(ObjectIdNotValidException.class, () -> {
-            service.findDocById(FAKE_INVALID_DTO_ID);
-        });
-    }
-
-    @Test
     void findDocWithNotFoundDocument() throws OperationException {
         // Providing mock knowledge
         when(repository.findDocById(anyString())).thenReturn(null);
@@ -197,7 +189,7 @@ class DocumentSRVTest extends AbstractEntityHandler {
         // Providing mock knowledge
         when(repository.isExtensionInserted(SCHEMA_TEST_EXTS_B)).thenReturn(true);
         when(repository.isDocumentInserted(anyString(), any())).thenReturn(getEntitiesToUseAsReplacement());
-        when(repository.updateDocsByExtensionId(anyList())).thenReturn(any());
+        when(repository.updateDocsByExtensionId(anyMap())).thenReturn(any());
         // Verify exception is thrown
         assertDoesNotThrow(() -> {
             service.updateDocsByExtensionId(

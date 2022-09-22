@@ -1,20 +1,29 @@
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.impl;
 
 
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.AbstractCTL;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.IEdsDocumentsCTL;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDocumentDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.*;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.service.IDocumentSRV;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.AbstractCTL;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.IEdsDocumentsCTL;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDocumentDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.DeleteDocumentsResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentsResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.UpdateDocumentsResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.UploadDocumentsResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.DataIntegrityException;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.DataProcessingException;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.DocumentNotFoundException;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.ExtensionAlreadyExistsException;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.ExtensionNotFoundException;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.RootNotValidException;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.service.IDocumentSRV;
 
-@Slf4j
 @RestController
 public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
 
@@ -30,10 +39,9 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
      * @return The document matching the identifier
      * @throws OperationException If a data-layer error occurs
      * @throws DocumentNotFoundException If no document matching the id is found
-     * @throws ObjectIdNotValidException If the document identifier is not valid
      */
     @Override
-    public GetDocumentResDTO getDocumentById(String id) throws OperationException, DocumentNotFoundException, ObjectIdNotValidException {
+    public GetDocumentResDTO getDocumentById(String id) throws OperationException, DocumentNotFoundException {
         // Retrieve document by id
         SchemaDocumentDTO out = service.findDocById(id);
         // Return response

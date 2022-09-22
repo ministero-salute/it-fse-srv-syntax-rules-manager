@@ -34,7 +34,6 @@ class ChangeSetCTLTest {
     void getStatus() throws Exception {
         // Providing mock knowledge
         when(service.getInsertions(any(Date.class))).thenReturn(new ArrayList<>());
-        when(service.getModifications(any(Date.class))).thenReturn(new ArrayList<>());
         when(service.getDeletions(any(Date.class))).thenReturn(new ArrayList<>());
         // Execute request
         mvc.perform(
@@ -50,7 +49,6 @@ class ChangeSetCTLTest {
     void getStatusAsNull() throws Exception {
         // Providing mock knowledge
         when(service.getInsertions(any())).thenReturn(new ArrayList<>());
-        when(service.getModifications(any())).thenReturn(new ArrayList<>());
         when(service.getDeletions(any())).thenReturn(new ArrayList<>());
         // Execute request
         mvc.perform(

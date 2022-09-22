@@ -1,12 +1,11 @@
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.service.impl;
 
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDocumentDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.ErrorInstance.Fields;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IDocumentRepo;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.service.IDocumentSRV;
-import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +14,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Slf4j
 @Service
 public class DocumentSRV implements IDocumentSRV {
 
@@ -29,14 +27,9 @@ public class DocumentSRV implements IDocumentSRV {
      * @return The document matching the extension identifier
      * @throws OperationException        If a data-layer error occurs
      * @throws DocumentNotFoundException If no document matching the identifier is found
-     * @throws ObjectIdNotValidException If the document identifier is not valid
      */
     @Override
-    public SchemaDocumentDTO findDocById(String id) throws OperationException, DocumentNotFoundException, ObjectIdNotValidException {
-        // Verify object id is fine
-        if(!ObjectId.isValid(id)) {
-            throw new ObjectIdNotValidException("The following string is not a valid object id: " + id);
-        }
+    public SchemaDocumentDTO findDocById(String id) throws OperationException, DocumentNotFoundException {
         // Get document
         SchemaETY doc = repository.findDocById(id);
         // Verify data
@@ -93,6 +86,7 @@ public class DocumentSRV implements IDocumentSRV {
         if(!rootName.isPresent()) {
             throw new RootNotValidException(
                 "Root filename doesn't match any of the possible values",
+                Fields.ROOT,
                 root,
                 filenames
             );
@@ -147,14 +141,19 @@ public class DocumentSRV implements IDocumentSRV {
             if (!inserted.containsKey(filename)) {
                 throw new DocumentNotFoundException(filename + " does not exists on the schema instance");
             }
-            // Now update the entity content and last update
-            // No need to fear NullPointerException, we already checked the object existence
-            inserted.get(filename).setContentSchema(f);
-            inserted.get(filename).setLastUpdateDate(new Date());
         }
-        // No document is missing
+        // Create mapping OLD->NEW files
+        Map<SchemaETY, SchemaETY> entities = new HashMap<>();
+        // Start conversion
+        for (MultipartFile f : files) {
+            // The associated entity
+            SchemaETY current = inserted.get(f.getOriginalFilename());
+            SchemaETY newest = SchemaETY.fromMultipart(f, extension, current.getRootSchema());
+            // Convert to entities
+            entities.put(current, newest);
+        }
         // Invoke update on db
-        repository.updateDocsByExtensionId(new ArrayList<>(inserted.values()));
+        repository.updateDocsByExtensionId(entities);
         // Return
         return new ArrayList<>(inserted.keySet());
     }

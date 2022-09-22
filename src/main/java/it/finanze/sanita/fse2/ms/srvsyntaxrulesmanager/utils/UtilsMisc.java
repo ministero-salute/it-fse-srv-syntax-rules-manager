@@ -3,6 +3,7 @@ package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utils;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.changes.ChangeSetDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
 
+import javax.validation.Path;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -26,6 +27,12 @@ public final class UtilsMisc {
 
     public static ChangeSetDTO toChangeset(SchemaETY entity) {
         return new ChangeSetDTO(entity.getId(), new ChangeSetDTO.Payload(entity.getTypeIdExtension(), entity.getNameSchema()));
+    }
+
+    public static String extractKeyFromPath(Path path) {
+        String field = "";
+        for(Path.Node node: path) field = node.getName();
+        return field;
     }
 
     /**
