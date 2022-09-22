@@ -34,6 +34,12 @@ public class MongoDatabaseCFG {
     public MongoDatabaseFactory createFactory(MongoPropertiesCFG props) {
         return new SimpleMongoClientDatabaseFactory(props.getUri());
     }
+
+    /**
+     * Create a new transaction manager according to the specs
+     * @param factory The factory interface instance
+     * @return The transaction manager
+     */
     @Bean
     public MongoTransactionManager createTransactions(MongoDatabaseFactory factory) {
         return new MongoTransactionManager(

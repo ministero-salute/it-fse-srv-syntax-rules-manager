@@ -55,6 +55,10 @@ public class OpenApiCFG {
         }
     }
 
+    /**
+     * Disable additional properties on every request object
+     * @return The {@link OpenApiCustomiser} instance
+     */
     @Bean
     public OpenApiCustomiser disableAdditionalRequestProperties() {
         return openApi -> openApi
@@ -77,6 +81,10 @@ public class OpenApiCFG {
         );
     }
 
+    /**
+     * Disable additional properties on every response object
+     * @return The {@link OpenApiCustomiser} instance
+     */
     @Bean
     public OpenApiCustomiser disableAdditionalResponseProperties() {
         return openApi -> openApi.getComponents().

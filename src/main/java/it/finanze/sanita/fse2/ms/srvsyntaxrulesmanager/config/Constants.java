@@ -54,8 +54,15 @@ public final class Constants {
 
     }
 
+    /**
+     * Available profiles on the microservice
+     */
     public static final class Profile {
 
+        /**
+         * Runner profile name.
+         * Used to load test files on the database at start-up.
+         */
         public static final String RUNNER = "runner";
 
         /**
@@ -63,13 +70,14 @@ public final class Constants {
          */
         public static final String TEST = "test";
 
+        /**
+         * Test profile name underscored
+         */
         public static final String TEST_PREFIX = "test_";
 
         /**
          * Private constructor to disallow to access from other classes
          */
-        private Profile() {
-            //This method is intentionally left blank.
-        }
+        private Profile() {}
     }
 }
