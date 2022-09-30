@@ -42,6 +42,6 @@ public class UploadDocumentsResDTO extends ResponseDTO<UploadPayloadDTO> {
      * @param data      The data object
      */
     public UploadDocumentsResDTO(LogTraceInfoDTO traceInfo, UploadPayloadDTO data) {
-        super(traceInfo, data);
+        super(traceInfo, null);
     }
 }
