@@ -332,7 +332,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
                 }
             )
         ).andExpectAll(
-            status().is(SC_OK),
+            status().is(201),
             content().contentType(APPLICATION_JSON)
         );
     }

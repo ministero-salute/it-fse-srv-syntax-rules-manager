@@ -23,7 +23,7 @@ import static java.lang.annotation.ElementType.METHOD;
 @ApiResponses(
     value = {
         @ApiResponse(
-            responseCode = "200",
+            responseCode = "201",
             description = "Documents uploaded",
             content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE,

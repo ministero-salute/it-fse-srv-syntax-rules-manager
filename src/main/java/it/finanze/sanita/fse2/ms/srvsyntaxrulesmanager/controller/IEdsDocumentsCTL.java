@@ -13,6 +13,8 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.UniqueMultipart;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.ValidObjectId;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -80,7 +82,9 @@ public interface IEdsDocumentsCTL {
         consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
     @UploadDocumentsByExt
+    @ResponseStatus(HttpStatus.CREATED)
     UploadDocumentsResDTO uploadDocuments(
+
         @RequestPart
         @Parameter(
             description = "Root filename (eg. Test.xsd)",
@@ -131,13 +135,17 @@ public interface IEdsDocumentsCTL {
         )
         @UniqueMultipart
         MultipartFile[] files
-    ) throws OperationException, ExtensionAlreadyExistsException, DataProcessingException, RootNotValidException;
+
+    ) 
+    
+    throws OperationException, ExtensionAlreadyExistsException, DataProcessingException, RootNotValidException;
 
     @PutMapping(
         value = API_PUT_BY_EXTS,
         produces = {MediaType.APPLICATION_JSON_VALUE},
         consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
+
     @UpdateDocumentsByExt
     UpdateDocumentsResDTO updateDocuments(
         @PathVariable(name = API_PATH_EXTS_VAR)
