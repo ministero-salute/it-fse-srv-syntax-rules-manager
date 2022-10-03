@@ -39,7 +39,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
     servers = {
         @Server(
             description = "EDS Syntax Service Development URL",
-            url = "http://localhost:9100",
+            url = "http://localhost:${server.port}",
             extensions = {
                 @Extension(properties = {
                     @ExtensionProperty(name = "x-sandbox", parseValue = true, value = "true")
