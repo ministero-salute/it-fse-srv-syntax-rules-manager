@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.log.LogTraceInfoDTO;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.UploadDocumentsResDTO.UploadPayloadDTO;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utils.UtilsOA.*;
 
+@Data
 public class UploadDocumentsResDTO extends ResponseDTO<UploadPayloadDTO> {
 
     @Getter
@@ -34,6 +36,7 @@ public class UploadDocumentsResDTO extends ResponseDTO<UploadPayloadDTO> {
         private ArrayList<String> uploaded;
     }
 
+    private int insertedSchema;
 
     /**
      * Instantiates a new response DTO.
@@ -41,7 +44,8 @@ public class UploadDocumentsResDTO extends ResponseDTO<UploadPayloadDTO> {
      * @param traceInfo The {@link LogTraceInfoDTO} instance
      * @param data      The data object
      */
-    public UploadDocumentsResDTO(LogTraceInfoDTO traceInfo, UploadPayloadDTO data) {
+    public UploadDocumentsResDTO(LogTraceInfoDTO traceInfo, UploadPayloadDTO data, int inInsertedSchema) {
         super(traceInfo, null);
+        this.insertedSchema = inInsertedSchema;
     }
 }

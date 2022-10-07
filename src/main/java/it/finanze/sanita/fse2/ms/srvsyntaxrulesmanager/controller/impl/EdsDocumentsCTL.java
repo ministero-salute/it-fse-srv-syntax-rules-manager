@@ -82,7 +82,7 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
         // Insert documents according to given identifier
         ArrayList<String> inserted = new ArrayList<>(service.insertDocsByExtensionId(root, extension, files));
         // Return response
-        return new UploadDocumentsResDTO(getLogTraceInfo(), new UploadDocumentsResDTO.UploadPayloadDTO(extension, inserted));
+        return new UploadDocumentsResDTO(getLogTraceInfo(), new UploadDocumentsResDTO.UploadPayloadDTO(extension, inserted),inserted.size());
     }
 
     /**
