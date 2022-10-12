@@ -14,6 +14,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Logs.*;
+
 @Service
 public class DocumentSRV implements IDocumentSRV {
 
@@ -34,7 +36,7 @@ public class DocumentSRV implements IDocumentSRV {
         SchemaETY doc = repository.findDocById(id);
         // Verify data
         if (doc == null) {
-            throw new DocumentNotFoundException("The requested document does not exists");
+            throw new DocumentNotFoundException(ERR_SRV_DOC_NOT_FOUND);
         }
         // Bye bye
         return SchemaDocumentDTO.fromEntity(doc);
@@ -56,7 +58,7 @@ public class DocumentSRV implements IDocumentSRV {
         List<SchemaETY> docs = repository.findDocsByExtensionId(extension);
         // Verify data
         if (docs == null || docs.isEmpty()) {
-            throw new ExtensionNotFoundException("The requested extension does not exists");
+            throw new ExtensionNotFoundException(ERR_SRV_EXT_NOT_FOUND);
         }
         // Convert entity to dto representation
         out = docs.stream().map(SchemaDocumentDTO::fromEntity).collect(Collectors.toList());
@@ -84,17 +86,12 @@ public class DocumentSRV implements IDocumentSRV {
         Optional<String> rootName = filenames.stream().filter(root::equals).findFirst();
         // Verify existence
         if(!rootName.isPresent()) {
-            throw new RootNotValidException(
-                "Root filename doesn't match any of the possible values",
-                Fields.ROOT,
-                root,
-                filenames
-            );
+            throw new RootNotValidException(String.format(ERR_SRV_ROOT_NOT_FOUND, root, filenames), Fields.ROOT);
         }
         // Check if given extension already exists
         if(repository.isExtensionInserted(extension)) {
             // Let the caller know about it
-            throw new ExtensionAlreadyExistsException("Cannot insert the given extension, it already exists");
+            throw new ExtensionAlreadyExistsException(ERR_SRV_EXT_ALREADY_ESISTS);
         }
         // Create list for RAW->ETY model conversion
         List<SchemaETY> entities = new ArrayList<>();
@@ -127,7 +124,7 @@ public class DocumentSRV implements IDocumentSRV {
         // Check if given extension already exists
         if(!repository.isExtensionInserted(extension)) {
             // Let the caller know about it
-            throw new ExtensionNotFoundException("Unable to update the given extension, it does not exists");
+            throw new ExtensionNotFoundException(ERR_SRV_EXT_NOT_FOUND);
         }
         // Verify if files we want to update exists inside the schema
         List<String> filenames = Arrays.stream(files).map(MultipartFile::getOriginalFilename).collect(Collectors.toList());
@@ -139,7 +136,7 @@ public class DocumentSRV implements IDocumentSRV {
             String filename = f.getOriginalFilename();
             // The file must already exist on the database in order to be modified
             if (!inserted.containsKey(filename)) {
-                throw new DocumentNotFoundException(filename + " does not exists on the schema instance");
+                throw new DocumentNotFoundException(String.format(ERR_SRV_EXT_DOC_NOT_FOUND, filename));
             }
         }
         // Create mapping OLD->NEW files
@@ -175,7 +172,7 @@ public class DocumentSRV implements IDocumentSRV {
             removed = repository.deleteDocsByExtensionId(extension);
         }else{
             // Let the caller know about it
-            throw new ExtensionNotFoundException("No document with the given extension exists");
+            throw new ExtensionNotFoundException(ERR_SRV_EXT_NOT_FOUND);
         }
         // Return filenames of the removed elements
         return removed.stream().map(SchemaETY::getNameSchema).collect(Collectors.toList());

@@ -2,8 +2,6 @@ package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions;
 
 import lombok.Getter;
 
-import java.util.List;
-
 /**
  * If the given root filename doesn't match one of the provided schema files
  */
@@ -15,29 +13,16 @@ public class RootNotValidException extends Exception {
      */
     private static final long serialVersionUID = -5864543132277838362L;
 
-    /**
-     * Provided value
-     */
-    private final String value;
-
-    /**
-     * Expected values
-     */
-    private final List<String> values;
-
     private final String field;
 
     /**
      * Message constructor.
      *
      * @param msg    Message to be shown.
-     * @param value  Provided value
-     * @param values Expected values
+     * @param field  Field name
      */
-    public RootNotValidException(final String msg, String field, String value, List<String> values) {
+    public RootNotValidException(final String msg, final String field) {
         super(msg);
-        this.value = value;
-        this.values = values;
         this.field = field;
     }
 }

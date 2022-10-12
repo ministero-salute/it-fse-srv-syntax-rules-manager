@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
 
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Logs.ERR_VAL_FUTURE_DATE;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utils.UtilsRoutes.*;
 
 /**
@@ -28,7 +29,7 @@ public interface IChangeSetCTL {
     ChangeSetResDTO changeSet(
         @RequestParam(value=API_QP_LAST_UPDATE, required = false)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-        @NoFutureDate(message = "The last update date cannot be in the future")
+        @NoFutureDate(message = ERR_VAL_FUTURE_DATE)
         Date lastUpdate
     ) throws OperationException;
 }

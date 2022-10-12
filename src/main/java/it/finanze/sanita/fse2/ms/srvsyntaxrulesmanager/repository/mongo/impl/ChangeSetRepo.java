@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Date;
 import java.util.List;
 
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Logs.*;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
@@ -40,7 +41,7 @@ public class ChangeSetRepo implements IChangeSetRepo<SchemaETY> {
             objects = mongo.find(q, SchemaETY.class);
         } catch (MongoException e) {
             // Catch data-layer runtime exceptions and turn into a checked exception
-            throw new OperationException("Unable to retrieve change-set insertions", e);
+            throw new OperationException(ERR_REP_CHANGESET_INSERT, e);
         }
         return objects;
     }
@@ -71,7 +72,7 @@ public class ChangeSetRepo implements IChangeSetRepo<SchemaETY> {
             objects = mongo.find(q, SchemaETY.class);
         } catch (MongoException e) {
             // Catch data-layer runtime exceptions and turn into a checked exception
-            throw new OperationException("Unable to retrieve change-set deletions", e);
+            throw new OperationException(ERR_REP_CHANGESET_DELETE, e);
         }
         return objects;
     }
@@ -93,7 +94,7 @@ public class ChangeSetRepo implements IChangeSetRepo<SchemaETY> {
             objects = mongo.find(q, SchemaETY.class);
         } catch (MongoException e) {
             // Catch data-layer runtime exceptions and turn into a checked exception
-            throw new OperationException("Unable to retrieve every available extension with their documents", e);
+            throw new OperationException(ERR_REP_EVERY_ACTIVE_DOC, e);
         }
         return objects;
     }

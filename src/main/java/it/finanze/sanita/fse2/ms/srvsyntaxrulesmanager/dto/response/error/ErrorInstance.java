@@ -30,9 +30,7 @@ public final class ErrorInstance {
 
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static final class Fields {
-                public static final String ID = "id";
                 public static final String ROOT = "root";
-                public static final String LAST_UPDATE = "lastUpdate";
         }
 
 }

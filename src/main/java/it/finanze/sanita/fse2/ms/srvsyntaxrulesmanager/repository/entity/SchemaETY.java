@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Logs.ERR_ETY_BINARY_CONVERSION;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IChangeSetRepo.*;
 
 /**
@@ -51,7 +52,7 @@ public class SchemaETY {
         try {
             this.contentSchema = new Binary(file.getBytes());
         } catch (IOException e) {
-            throw new DataProcessingException("Unable to encode multipart raw bytes into entity data", e);
+            throw new DataProcessingException(ERR_ETY_BINARY_CONVERSION, e);
         }
     }
 
@@ -59,7 +60,7 @@ public class SchemaETY {
         try {
             this.contentSchema = new Binary(Files.readAllBytes(path));
         } catch (IOException e) {
-            throw new DataProcessingException("Unable to encode file raw bytes into entity data", e);
+            throw new DataProcessingException(ERR_ETY_BINARY_CONVERSION, e);
         }
     }
 

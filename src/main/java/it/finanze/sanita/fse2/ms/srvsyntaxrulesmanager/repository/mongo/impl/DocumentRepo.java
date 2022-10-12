@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Logs.*;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY.*;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IChangeSetRepo.FIELD_DELETED;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IChangeSetRepo.FIELD_LAST_UPDATE;
@@ -54,7 +55,7 @@ public class DocumentRepo implements IDocumentRepo {
             out = mongo.find(query, SchemaETY.class);
         } catch (MongoException e) {
             // Catch data-layer runtime exceptions and turn into a checked exception
-            throw new OperationException("Unable to retrieve documents by extension identifier", e);
+            throw new OperationException(ERR_REP_DOCS_NOT_FOUND, e);
         }
         // Return data
         return out;
@@ -80,7 +81,7 @@ public class DocumentRepo implements IDocumentRepo {
             res = mongo.exists(query, SchemaETY.class);
         } catch(MongoException e) {
             // Catch data-layer runtime exceptions and turn into a checked exception
-            throw new OperationException("Unable to verify if given extension is inserted" , e);
+            throw new OperationException(ERR_REP_IS_EXT_INSERTED , e);
         }
         // Return data
         return res;
@@ -112,7 +113,7 @@ public class DocumentRepo implements IDocumentRepo {
             );
         }catch (MongoException e) {
             // Catch data-layer runtime exceptions and turn into a checked exception
-            throw new OperationException("Unable to match documents with filenames for the given extension" , e);
+            throw new OperationException(ERR_REP_IS_DOCS_INSERTED , e);
         }
         // Bye bye
         return out;
@@ -133,7 +134,7 @@ public class DocumentRepo implements IDocumentRepo {
             inserted = new ArrayList<>(mongo.insertAll(entities));
         } catch(MongoException e) {
             // Catch data-layer runtime exceptions and turn into a checked exception
-            throw new OperationException("Unable to insert documents for the given extension" , e);
+            throw new OperationException(ERR_REP_INS_DOCS_BY_EXT , e);
         }
         // Return processed data
         return inserted;
@@ -178,14 +179,12 @@ public class DocumentRepo implements IDocumentRepo {
             result = ops.execute();
         }catch (MongoException e) {
             // Catch data-layer runtime exceptions and turn into a checked exception
-            throw new OperationException("Unable to update documents for the given extension" , e);
+            throw new OperationException(ERR_REP_UPD_DOCS_BY_EXT , e);
         }
         // Assert we modified the expected data size
         if(entities.size() != result.getMatchedCount() || entities.size() != result.getModifiedCount()) {
             throw new DataIntegrityException(
-                String.format("Expected document count doesn't match modified document count\nExpected: %d/Matched: %d/Modified: %d",
-                    entities.size(), result.getMatchedCount(), result.getModifiedCount()
-                )
+                String.format(ERR_REP_UPD_MISMATCH, result.getModifiedCount(), entities.size())
             );
         }
         // Bye bye
@@ -218,13 +217,11 @@ public class DocumentRepo implements IDocumentRepo {
             result = mongo.updateMulti(query, update, SchemaETY.class);
         } catch(MongoException e) {
             // Catch data-layer runtime exceptions and turn into a checked exception
-            throw new OperationException("Unable to delete documents by extension" , e);
+            throw new OperationException(ERR_REP_DEL_DOCS_BY_EXT , e);
         }
         // Assert we modified the expected data size
         if(entities.size() != result.getMatchedCount() || entities.size() != result.getModifiedCount()) {
-            throw new DataIntegrityException(
-                "Expected document count doesn't match deleted document count on " + entities.get(0).getTypeIdExtension()
-            );
+            throw new DataIntegrityException(String.format(ERR_REP_DEL_MISMATCH, result.getModifiedCount(), entities.size()));
         }
         // Return modified entities
         return entities;
@@ -248,7 +245,7 @@ public class DocumentRepo implements IDocumentRepo {
             object = mongo.findOne(q, SchemaETY.class);
         } catch (MongoException e) {
             // Catch data-layer runtime exceptions and turn into a checked exception
-            throw new OperationException("Unable to retrieve the requested active document", e);
+            throw new OperationException(ERR_REP_GET_BY_ID, e);
         }
         return object;
     }

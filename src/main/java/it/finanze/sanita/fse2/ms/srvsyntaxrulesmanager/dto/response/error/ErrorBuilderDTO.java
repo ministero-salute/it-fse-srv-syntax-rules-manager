@@ -10,8 +10,8 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.Arrays;
 
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Logs.*;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.ErrorInstance.*;
 import static org.apache.http.HttpStatus.*;
 
@@ -62,11 +62,7 @@ public final class ErrorBuilderDTO {
             trace,
             ErrorType.VALIDATION.getType(),
             ErrorType.VALIDATION.getTitle(),
-            String.format(
-                "Root filename %s doesn't match any of the possible values: %s",
-                ex.getValue(),
-                Arrays.toString(ex.getValues().toArray())
-            ),
+            ex.getMessage(),
             SC_BAD_REQUEST,
             ErrorType.VALIDATION.toInstance(Validation.CONSTRAINT_FIELD, ex.getField())
         );
@@ -77,7 +73,7 @@ public final class ErrorBuilderDTO {
             trace,
             ErrorType.VALIDATION.getType(),
             ErrorType.VALIDATION.getTitle(),
-            ex.getMessage(),
+            String.format(ERR_VAL_MISSING_PART, ex.getRequestPartName()),
             SC_BAD_REQUEST,
             ErrorType.VALIDATION.toInstance(Validation.CONSTRAINT_FIELD, ex.getRequestPartName())
         );
@@ -88,7 +84,7 @@ public final class ErrorBuilderDTO {
             trace,
             ErrorType.VALIDATION.getType(),
             ErrorType.VALIDATION.getTitle(),
-            ex.getMessage(),
+            String.format(ERR_VAL_MISSING_PARAMETER, ex.getParameterName()),
             SC_BAD_REQUEST,
             ErrorType.VALIDATION.toInstance(Validation.CONSTRAINT_FIELD, ex.getParameterName())
         );
