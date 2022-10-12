@@ -23,7 +23,7 @@ import static java.lang.annotation.ElementType.METHOD;
     value = {
         @ApiResponse(
             responseCode = "200",
-            description = "Documents updated",
+            description = "Schema aggiornato",
             content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE,
                 schema = @Schema(implementation = UpdateDocumentsResDTO.class)
@@ -31,7 +31,7 @@ import static java.lang.annotation.ElementType.METHOD;
         ),
         @ApiResponse(
             responseCode = "400",
-            description = "Invalid parameters",
+            description = "I parametri forniti non sono validi",
             content = @Content(
                 mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
                 schema = @Schema(implementation = ErrorResponseDTO.class)
@@ -39,15 +39,15 @@ import static java.lang.annotation.ElementType.METHOD;
         ),
         @ApiResponse(
             responseCode = "404",
-            description = "The requested extension was not found",
+            description = "Schema non trovato sul database",
             content = @Content(
                 mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
                 schema = @Schema(implementation = ErrorResponseDTO.class)
             )
         ),
         @ApiResponse(
-            responseCode = "404",
-            description = "One of the documents to be replaced was not found",
+            responseCode = "409",
+            description = "Conflitto con la risorsa in input",
             content = @Content(
                 mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
                 schema = @Schema(implementation = ErrorResponseDTO.class)
@@ -55,7 +55,7 @@ import static java.lang.annotation.ElementType.METHOD;
         ),
         @ApiResponse(
             responseCode = "500",
-            description = "Unable to execute the request due to an internal error",
+            description = "Internal Server Error",
             content = @Content(
                 mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
                 schema = @Schema(implementation = ErrorResponseDTO.class)

@@ -20,6 +20,7 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.DataProcessing
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.ExtensionAlreadyExistsException;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.ExtensionNotFoundException;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.InvalidContentException;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.RootNotValidException;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.service.IDocumentSRV;
@@ -45,7 +46,7 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
         // Retrieve document by id
         SchemaDocumentDTO out = service.findDocById(id);
         // Return response
-        return new GetDocumentResDTO(getLogTraceInfo(), new GetDocumentResDTO.GetOneDocPayloadDTO(out));
+        return new GetDocumentResDTO(getLogTraceInfo(), out);
     }
 
     /**
@@ -62,7 +63,7 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
         // Retrieve documents by extension
         ArrayList<SchemaDocumentDTO> out = new ArrayList<>(service.findDocsByExtensionId(extension));
         // Return response
-        return new GetDocumentsResDTO(getLogTraceInfo(), new GetDocumentsResDTO.GetMultipleDocsPayloadDTO(out));
+        return new GetDocumentsResDTO(getLogTraceInfo(), out);
     }
 
     /**
@@ -75,14 +76,18 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
      * @throws ExtensionAlreadyExistsException If the given extension is already inserted into the schema
      * @throws DataProcessingException If an error occurs while converting raw data to entity type
      * @throws RootNotValidException If the given root filename is not present in the files array
+     * @throws InvalidContentException If at least one files has an invalid content that means is empty or not a proper schema file
      */
     @Override
     public UploadDocumentsResDTO uploadDocuments(String root, String extension, MultipartFile[] files)
-        throws OperationException, ExtensionAlreadyExistsException, DataProcessingException, RootNotValidException {
-        // Insert documents according to given identifier
-        ArrayList<String> inserted = new ArrayList<>(service.insertDocsByExtensionId(root, extension, files));
-        // Return response
-        return new UploadDocumentsResDTO(getLogTraceInfo(), new UploadDocumentsResDTO.UploadPayloadDTO(extension, inserted),inserted.size());
+        throws OperationException, ExtensionAlreadyExistsException, DataProcessingException, RootNotValidException, InvalidContentException {
+        
+        if (validateFiles(files)) {
+            int insertedSchema = service.insertDocsByExtensionId(root, extension, files);
+            return new UploadDocumentsResDTO(getLogTraceInfo(), insertedSchema);
+        } else {
+            throw new InvalidContentException(String.format("One or more than one file appears not to be a valid schema for the extension: %s", extension));
+        }
     }
 
     /**
@@ -94,13 +99,17 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
      * @throws ExtensionNotFoundException If no documents matching the extension are found
      * @throws DocumentNotFoundException If at least one document to be replaced is not found inside the collection
      * @throws DataProcessingException If unable to convert the input raw data into a binary representation
+     * @throws InvalidContentException If at least one files has an invalid content that means is empty or not a proper schema file
      */
     @Override
-    public UpdateDocumentsResDTO updateDocuments(String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException {
-        // Update documents according to given identifier
-        ArrayList<String> updated = new ArrayList<>(service.updateDocsByExtensionId(extension, files));
-        // Return response
-        return new UpdateDocumentsResDTO(getLogTraceInfo(), new UpdateDocumentsResDTO.UpdatePayloadDTO(extension, updated));
+    public UpdateDocumentsResDTO updateDocuments(String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, InvalidContentException {
+        
+        if (validateFiles(files)) {
+            int updatedSchema = service.updateDocsByExtensionId(extension, files);
+            return new UpdateDocumentsResDTO(getLogTraceInfo(), updatedSchema);
+        } else {
+            throw new InvalidContentException(String.format("One or more than one file appears not to be a valid schema for the extension: %s", extension));
+        }
     }
 
     /**
@@ -112,10 +121,9 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
      */
     @Override
     public DeleteDocumentsResDTO deleteDocuments(String extension) throws OperationException, ExtensionNotFoundException, DataIntegrityException {
-        // Delete documents according to given identifier
-        ArrayList<String> removed = new ArrayList<>(service.deleteDocsByExtensionId(extension));
+        int deletedSchema = service.deleteDocsByExtensionId(extension);
         // Return response
-        return new DeleteDocumentsResDTO(getLogTraceInfo(), new DeleteDocumentsResDTO.DeletePayloadDTO(extension, removed));
+        return new DeleteDocumentsResDTO(getLogTraceInfo(), deletedSchema);
     }
 
 }

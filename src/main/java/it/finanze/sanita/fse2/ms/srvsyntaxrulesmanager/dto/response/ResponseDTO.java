@@ -12,7 +12,7 @@ import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utils.UtilsOA.OA_I
  * @author G. Baittiner
  */
 @Getter
-public abstract class ResponseDTO<T> implements AbstractDTO {
+public abstract class ResponseDTO implements AbstractDTO {
 
     /**
      * Trace id log.
@@ -27,19 +27,13 @@ public abstract class ResponseDTO<T> implements AbstractDTO {
     private final String spanID;
 
     /**
-     * Data object
-     */
-    private final T data;
-
-    /**
      * Instantiates a new response DTO.
      *
      * @param traceInfo The {@link LogTraceInfoDTO} instance
      * @param data The data object
      */
-    protected ResponseDTO(final LogTraceInfoDTO traceInfo, T data) {
+    protected ResponseDTO(final LogTraceInfoDTO traceInfo) {
         this.traceID = traceInfo.getTraceID();
         this.spanID = traceInfo.getSpanID();
-        this.data = data;
     }
 }

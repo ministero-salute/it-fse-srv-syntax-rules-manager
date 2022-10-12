@@ -11,6 +11,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
@@ -43,22 +44,13 @@ public class DocumentRepo implements IDocumentRepo {
      */
     @Override
     public List<SchemaETY> findDocsByExtensionId(String extension) throws OperationException {
-        // Init empty collection
-        List<SchemaETY> out;
-        // Create query
-        Query query = new Query();
-        query.addCriteria(
-            where(FIELD_TYPE_ID_EXT).is(extension).and(FIELD_DELETED).is(false)
-        );
+        Query query = Query.query(Criteria.where(FIELD_TYPE_ID_EXT).is(extension).and(FIELD_DELETED).is(false));
+        
         try {
-            // Execute
-            out = mongo.find(query, SchemaETY.class);
+           return mongo.find(query, SchemaETY.class);
         } catch (MongoException e) {
-            // Catch data-layer runtime exceptions and turn into a checked exception
             throw new OperationException(ERR_REP_DOCS_NOT_FOUND, e);
         }
-        // Return data
-        return out;
     }
 
     /**
@@ -69,22 +61,12 @@ public class DocumentRepo implements IDocumentRepo {
      */
     @Override
     public boolean isExtensionInserted(String extension) throws OperationException {
-        // Init result variable
-        boolean res;
-        // Create query
-        Query query = new Query();
-        query.addCriteria(
-            where(FIELD_TYPE_ID_EXT).is(extension).and(FIELD_DELETED).is(false)
-        );
+        Query query = Query.query(Criteria.where(FIELD_TYPE_ID_EXT).is(extension).and(FIELD_DELETED).is(false));
         try {
-            // Execute
-            res = mongo.exists(query, SchemaETY.class);
+            return mongo.exists(query, SchemaETY.class);
         } catch(MongoException e) {
-            // Catch data-layer runtime exceptions and turn into a checked exception
             throw new OperationException(ERR_REP_IS_EXT_INSERTED , e);
         }
-        // Return data
-        return res;
     }
 
     /**
@@ -97,26 +79,13 @@ public class DocumentRepo implements IDocumentRepo {
      */
     @Override
     public Map<String, SchemaETY> isDocumentInserted(String extension, List<String> filenames) throws OperationException {
-        // Init empty collection
-        Map<String, SchemaETY> out;
-        // Create query
-        Query query = new Query();
-        query.addCriteria(where(FIELD_TYPE_ID_EXT).is(extension));
-        query.addCriteria(where(FIELD_FILENAME).in(filenames));
-        query.addCriteria(where(FIELD_DELETED).is(false));
+        Query query = Query.query(Criteria.where(FIELD_TYPE_ID_EXT).is(extension).and(FIELD_FILENAME).in(filenames).and(FIELD_DELETED).is(false));
         try {
-            // Execute
             List<SchemaETY> entities = mongo.find(query, SchemaETY.class);
-            // Convert to map
-            out = entities.stream().collect(
-                Collectors.toMap(SchemaETY::getNameSchema, entity -> entity)
-            );
-        }catch (MongoException e) {
-            // Catch data-layer runtime exceptions and turn into a checked exception
+            return entities.stream().collect(Collectors.toMap(SchemaETY::getNameSchema, entity -> entity));
+        } catch (MongoException e) {
             throw new OperationException(ERR_REP_IS_DOCS_INSERTED , e);
         }
-        // Bye bye
-        return out;
     }
 
     /**
@@ -127,17 +96,11 @@ public class DocumentRepo implements IDocumentRepo {
      */
     @Override
     public List<SchemaETY> insertDocsByExtensionId(List<SchemaETY> entities) throws OperationException {
-        // Init inserted docs list
-        List<SchemaETY> inserted;
         try {
-            // Execute
-            inserted = new ArrayList<>(mongo.insertAll(entities));
+            return new ArrayList<>(mongo.insertAll(entities));
         } catch(MongoException e) {
-            // Catch data-layer runtime exceptions and turn into a checked exception
             throw new OperationException(ERR_REP_INS_DOCS_BY_EXT , e);
         }
-        // Return processed data
-        return inserted;
     }
 
     /**
@@ -236,17 +199,14 @@ public class DocumentRepo implements IDocumentRepo {
      */
     @Override
     public SchemaETY findDocById(String id) throws OperationException {
-        // Working var
-        SchemaETY object;
         // Create query
-        Query q = query(where(FIELD_ID).is(new ObjectId(id)));
+        Query query = query(where(FIELD_ID).is(new ObjectId(id)));
         try {
             // Execute
-            object = mongo.findOne(q, SchemaETY.class);
+            return mongo.findOne(query, SchemaETY.class);
         } catch (MongoException e) {
             // Catch data-layer runtime exceptions and turn into a checked exception
             throw new OperationException(ERR_REP_GET_BY_ID, e);
         }
-        return object;
     }
 }

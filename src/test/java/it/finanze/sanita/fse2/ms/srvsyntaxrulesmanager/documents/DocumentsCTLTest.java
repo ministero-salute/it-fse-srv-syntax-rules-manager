@@ -166,7 +166,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         // Providing mock knowledge
         when(
             service.updateDocsByExtensionId(anyString(), any())
-        ).thenReturn(new ArrayList<>());
+        ).thenReturn(0);
         // Execute request
         mvc.perform(
             putDocsByExtensionIdReq(
@@ -320,7 +320,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         // Providing mock knowledge
         when(
             service.insertDocsByExtensionId(anyString(),anyString(), any())
-        ).thenReturn(new ArrayList<>());
+        ).thenReturn(0);
         // Execute request
         mvc.perform(
             postDocsByExtensionIdReq(
@@ -512,7 +512,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         // Providing mock knowledge
         when(
             service.deleteDocsByExtensionId(anyString())
-        ).thenReturn(new ArrayList<>());
+        ).thenReturn(0);
         // Execute request
         mvc.perform(
             deleteDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A)

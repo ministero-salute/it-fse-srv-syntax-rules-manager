@@ -101,6 +101,18 @@ public final class ErrorBuilderDTO {
         );
     }
 
+    public static ErrorResponseDTO createInvalidContentError(LogTraceInfoDTO trace, InvalidContentException ex) {
+        return new ErrorResponseDTO(
+            trace,
+            ErrorType.VALIDATION.getType(),
+            ErrorType.VALIDATION.getTitle(),
+            ex.getMessage(),
+            SC_BAD_REQUEST,
+            ErrorType.VALIDATION.toInstance(Validation.CONSTRAINT_FIELD, "file")
+        );
+
+    }
+
     public static ErrorResponseDTO createOperationError(LogTraceInfoDTO trace, OperationException ex) {
         return new ErrorResponseDTO(
             trace,

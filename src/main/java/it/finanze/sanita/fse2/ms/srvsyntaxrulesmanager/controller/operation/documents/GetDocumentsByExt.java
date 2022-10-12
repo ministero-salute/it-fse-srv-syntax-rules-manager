@@ -24,28 +24,28 @@ import static java.lang.annotation.ElementType.METHOD;
     value = {
         @ApiResponse(
             responseCode = "200",
-            description = "Documents retrieved",
+            description = "Documenti trovati sul database",
             content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE,
                 schema = @Schema(implementation = GetDocumentsResDTO.class))
         ),
         @ApiResponse(
             responseCode = "400",
-            description = "Invalid parameters",
+            description = "I parametri forniti non sono validi",
             content = @Content(
                 mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
                 schema = @Schema(implementation = ErrorResponseDTO.class))
         ),
         @ApiResponse(
             responseCode = "404",
-            description = "The requested extension was not found",
+            description = "Schema non trovato sul database",
             content = @Content(
                 mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
                 schema = @Schema(implementation = ErrorResponseDTO.class))
         ),
         @ApiResponse(
             responseCode = "500",
-            description = "Unable to execute the request due to an internal error",
+            description = "Internal Server Error",
             content = @Content(
                 mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
                 schema = @Schema(implementation = ErrorResponseDTO.class))

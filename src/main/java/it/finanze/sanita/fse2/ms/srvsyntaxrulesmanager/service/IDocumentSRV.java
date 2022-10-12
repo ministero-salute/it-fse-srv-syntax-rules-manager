@@ -37,19 +37,19 @@ public interface IDocumentSRV {
      * @throws DataProcessingException If an error occurs while converting raw data to entity type
      * @throws RootNotValidException If the given root filename is not present in the files array
      */
-    List<String> insertDocsByExtensionId(String root, String extension, MultipartFile[] files) throws OperationException, ExtensionAlreadyExistsException, DataProcessingException, RootNotValidException;
+    int insertDocsByExtensionId(String root, String extension, MultipartFile[] files) throws OperationException, ExtensionAlreadyExistsException, DataProcessingException, RootNotValidException;
 
     /**
      * Update the documents content with the provided ones according to the extension
      * @param extension The extension id
      * @param files   The documents to use as replacement of the old ones
-     * @return List with filenames of elements updated into the schema
+     * @return The number of inserted schema.
      * @throws OperationException        If a data-layer error occurs
      * @throws ExtensionNotFoundException  If no documents matching the extension are found
      * @throws DocumentNotFoundException If at least one document to be replaced is not found inside the collection
      * @throws DataProcessingException If unable to convert the input raw data into a binary representation
      */
-    List<String> updateDocsByExtensionId(String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException;
+    int updateDocsByExtensionId(String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException;
 
     /**
      * Deletes all the documents entities matching the given extensions
@@ -58,5 +58,5 @@ public interface IDocumentSRV {
      * @throws OperationException If a data-layer error occurs
      * @throws ExtensionNotFoundException If there is no document matching the given extension
      */
-    List<String> deleteDocsByExtensionId(String extension) throws OperationException, ExtensionNotFoundException, DataIntegrityException;
+    int deleteDocsByExtensionId(String extension) throws OperationException, ExtensionNotFoundException, DataIntegrityException;
 }

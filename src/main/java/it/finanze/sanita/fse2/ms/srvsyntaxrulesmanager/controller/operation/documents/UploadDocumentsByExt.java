@@ -24,7 +24,7 @@ import static java.lang.annotation.ElementType.METHOD;
     value = {
         @ApiResponse(
             responseCode = "201",
-            description = "Documents uploaded",
+            description = "Documenti inseriti",
             content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE,
                 schema = @Schema(implementation = UploadDocumentsResDTO.class)
@@ -32,7 +32,7 @@ import static java.lang.annotation.ElementType.METHOD;
         ),
         @ApiResponse(
             responseCode = "400",
-            description = "Invalid parameters",
+            description = "I parametri forniti non sono validi",
             content = @Content(
                 mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
                 schema = @Schema(implementation = ErrorResponseDTO.class)
@@ -40,7 +40,7 @@ import static java.lang.annotation.ElementType.METHOD;
         ),
         @ApiResponse(
             responseCode = "409",
-            description = "Duplicated extension identifier",
+            description = "Conflitto sulla risorsa in input",
             content = @Content(
                 mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
                 schema = @Schema(implementation = ErrorResponseDTO.class)
@@ -48,7 +48,7 @@ import static java.lang.annotation.ElementType.METHOD;
         ),
         @ApiResponse(
             responseCode = "422",
-            description = "Unprocessable entity",
+            description = "Documento non processabile",
             content = @Content(
                 mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
                 schema = @Schema(implementation = ErrorResponseDTO.class)

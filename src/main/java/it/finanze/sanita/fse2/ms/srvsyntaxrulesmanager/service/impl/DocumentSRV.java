@@ -32,13 +32,10 @@ public class DocumentSRV implements IDocumentSRV {
      */
     @Override
     public SchemaDocumentDTO findDocById(String id) throws OperationException, DocumentNotFoundException {
-        // Get document
         SchemaETY doc = repository.findDocById(id);
-        // Verify data
         if (doc == null) {
             throw new DocumentNotFoundException(ERR_SRV_DOC_NOT_FOUND);
         }
-        // Bye bye
         return SchemaDocumentDTO.fromEntity(doc);
     }
 
@@ -50,19 +47,12 @@ public class DocumentSRV implements IDocumentSRV {
      * @throws ExtensionNotFoundException If no documents matching the extension are found
      */
     @Override
-    public List<SchemaDocumentDTO> findDocsByExtensionId(String extension)
-        throws OperationException, ExtensionNotFoundException {
-        // List containing the mapping ETY -> DTO
-        List<SchemaDocumentDTO> out;
-        // Execute query from repository and get entity list
+    public List<SchemaDocumentDTO> findDocsByExtensionId(String extension) throws OperationException, ExtensionNotFoundException {
         List<SchemaETY> docs = repository.findDocsByExtensionId(extension);
-        // Verify data
         if (docs == null || docs.isEmpty()) {
             throw new ExtensionNotFoundException(ERR_SRV_EXT_NOT_FOUND);
         }
-        // Convert entity to dto representation
-        out = docs.stream().map(SchemaDocumentDTO::fromEntity).collect(Collectors.toList());
-        // Bye bye
+        List<SchemaDocumentDTO> out = docs.stream().map(SchemaDocumentDTO::fromEntity).collect(Collectors.toList());
         return out;
     }
 
@@ -78,34 +68,28 @@ public class DocumentSRV implements IDocumentSRV {
      * @throws RootNotValidException If the given root filename is not present in the files array
      */
     @Override
-    public List<String> insertDocsByExtensionId(String root, String extension, MultipartFile[] files)
+    public int insertDocsByExtensionId(String root, String extension, MultipartFile[] files)
         throws OperationException, ExtensionAlreadyExistsException, DataProcessingException, RootNotValidException {
-        // Generate multipart filename list
+
         List<String> filenames = Stream.of(files).map(MultipartFile::getOriginalFilename).collect(Collectors.toList());
-        // Check if given root file matches any file provided
         Optional<String> rootName = filenames.stream().filter(root::equals).findFirst();
-        // Verify existence
+
         if(!rootName.isPresent()) {
             throw new RootNotValidException(String.format(ERR_SRV_ROOT_NOT_FOUND, root, filenames), Fields.ROOT);
         }
-        // Check if given extension already exists
+
         if(repository.isExtensionInserted(extension)) {
-            // Let the caller know about it
             throw new ExtensionAlreadyExistsException(ERR_SRV_EXT_ALREADY_ESISTS);
         }
-        // Create list for RAW->ETY model conversion
+
         List<SchemaETY> entities = new ArrayList<>();
-        // Start conversion
         for (MultipartFile f : files) {
-            // Verify if root file
             boolean isRoot = root.equals(f.getOriginalFilename());
-            // Convert to entities
             entities.add(SchemaETY.fromMultipart(f, extension, isRoot));
         }
-        // Insert documents
+
         List<SchemaETY> inserted = repository.insertDocsByExtensionId(entities);
-        // Return filenames of the inserted elements
-        return inserted.stream().map(SchemaETY::getNameSchema).collect(Collectors.toList());
+        return inserted != null ? inserted.size() : 0;
     }
 
     /**
@@ -113,46 +97,35 @@ public class DocumentSRV implements IDocumentSRV {
      *
      * @param extension The extension id
      * @param files   The documents to use as replacement of the old ones
-     * @return List with filenames of elements updated into the schema
+     * @return Number of schema updated.
      * @throws OperationException        If a data-layer error occurs
      * @throws ExtensionNotFoundException  If no documents matching the extension are found
      * @throws DocumentNotFoundException If at least one document to be replaced is not found inside the collection
      * @throws DataProcessingException If unable to convert the input raw data into a binary representation
      */
     @Override
-    public List<String> updateDocsByExtensionId(String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException {
-        // Check if given extension already exists
-        if(!repository.isExtensionInserted(extension)) {
-            // Let the caller know about it
+    public int updateDocsByExtensionId(String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException {
+        if (!repository.isExtensionInserted(extension)) {
             throw new ExtensionNotFoundException(ERR_SRV_EXT_NOT_FOUND);
         }
-        // Verify if files we want to update exists inside the schema
         List<String> filenames = Arrays.stream(files).map(MultipartFile::getOriginalFilename).collect(Collectors.toList());
-        // Let's query the database and see which files can be replaced
         Map<String, SchemaETY> inserted = repository.isDocumentInserted(extension, filenames);
-        // Iterate on array files and verify if any document is missing
+        
         for (MultipartFile f : files) {
-            // The file we are looking for
             String filename = f.getOriginalFilename();
-            // The file must already exist on the database in order to be modified
             if (!inserted.containsKey(filename)) {
                 throw new DocumentNotFoundException(String.format(ERR_SRV_EXT_DOC_NOT_FOUND, filename));
             }
         }
-        // Create mapping OLD->NEW files
+
         Map<SchemaETY, SchemaETY> entities = new HashMap<>();
-        // Start conversion
         for (MultipartFile f : files) {
-            // The associated entity
             SchemaETY current = inserted.get(f.getOriginalFilename());
             SchemaETY newest = SchemaETY.fromMultipart(f, extension, current.getRootSchema());
-            // Convert to entities
             entities.put(current, newest);
         }
-        // Invoke update on db
-        repository.updateDocsByExtensionId(entities);
-        // Return
-        return new ArrayList<>(inserted.keySet());
+        List<SchemaETY> updatedSchema = repository.updateDocsByExtensionId(entities);
+        return updatedSchema != null ? updatedSchema.size() : 0;
     }
 
     /**
@@ -163,18 +136,15 @@ public class DocumentSRV implements IDocumentSRV {
      * @throws ExtensionNotFoundException If there is no document matching the given extension
      */
     @Override
-    public List<String> deleteDocsByExtensionId(String extension) throws OperationException, ExtensionNotFoundException, DataIntegrityException {
-        // Removed documents list
-        List<SchemaETY> removed;
+    public int deleteDocsByExtensionId(String extension) throws OperationException, ExtensionNotFoundException, DataIntegrityException {
         // Verify we are trying to delete something that exists
         if(repository.isExtensionInserted(extension)) {
             // Let's remove all the documents matching the version
-            removed = repository.deleteDocsByExtensionId(extension);
-        }else{
+            List<SchemaETY> removed = repository.deleteDocsByExtensionId(extension);
+            return removed != null ? removed.size() : 0;
+        } else{
             // Let the caller know about it
             throw new ExtensionNotFoundException(ERR_SRV_EXT_NOT_FOUND);
         }
-        // Return filenames of the removed elements
-        return removed.stream().map(SchemaETY::getNameSchema).collect(Collectors.toList());
     }
 }
