@@ -129,5 +129,7 @@ public final class Constants {
         // Schema
         public static final String ERR_ETY_BINARY_CONVERSION = "Impossibile convertire i dati binari nel formato richiesto (UTF-8)";
         public static final String ERR_INVALID_CONTENT = "One or more than one file appears not to be a valid schema for the extension: %s";
+        public static final String ERR_FIND_ACTIVE_DOCS = "Impossibile trovare documenti attivi";
+
     }
 }

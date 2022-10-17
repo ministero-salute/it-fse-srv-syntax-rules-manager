@@ -5,11 +5,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.operation.document.GetDocumentById;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.operation.documents.DeleteDocumentsByExt;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.operation.documents.GetDocumentsByExt;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.operation.documents.PatchDocumentsByExt;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.operation.documents.UpdateDocumentsByExt;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.operation.documents.UploadDocumentsByExt;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.operation.documents.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.UniqueMultipart;
@@ -82,4 +78,8 @@ public interface IEdsDocumentsCTL {
     DeleteDocumentsResDTO deleteDocuments(
             @PathVariable(name = API_PATH_EXTS_VAR) @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = ERR_VAL_EXT_BLANK) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size") String extension)
             throws OperationException, ExtensionNotFoundException, DataIntegrityException;
+
+    @GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
+    @GetAllDocuments
+    GetDocumentsResDTO getAllDocuments() throws DocumentNotFoundException, OperationException;
 }

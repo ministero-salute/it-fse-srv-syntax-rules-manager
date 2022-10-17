@@ -121,4 +121,8 @@ public final class MockRequests {
         );
     }
 
+    public static MockHttpServletRequestBuilder findActiveDocsReq() {
+        return get(API_DOCUMENT_MAPPER)
+                .contentType(MediaType.APPLICATION_JSON_VALUE);
+    }
 }

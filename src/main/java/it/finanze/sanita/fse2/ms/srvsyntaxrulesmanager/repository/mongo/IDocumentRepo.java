@@ -89,4 +89,11 @@ public interface IDocumentRepo {
      * @return
      */
     List<SchemaETY> deleteDocsByExtensionIdAndFilenames(String extension, List<String> filenames) throws OperationException, DataIntegrityException;
+
+    /**
+     * Retrieves all active documents on DB
+     * @return All active documents
+     * @throws OperationException If a data-layer error occurs
+     */
+    List<SchemaETY> findAllActive() throws OperationException;
 }

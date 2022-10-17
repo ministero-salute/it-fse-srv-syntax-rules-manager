@@ -151,4 +151,18 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
         }
     }
 
+    /**
+     * Retrieves all the active documents
+     *
+     * @return The documents found on DB
+     * @throws OperationException        If a data-layer error occurs
+     * @throws ExtensionNotFoundException If no documents matching the extension are found
+     */
+    @Override
+    public GetDocumentsResDTO getAllDocuments() throws OperationException {
+        // Retrieve documents by extension
+        ArrayList<SchemaDocumentDTO> out = new ArrayList<>(service.findAllActiveDocuments());
+        // Return response
+        return new GetDocumentsResDTO(getLogTraceInfo(), out);
+    }
 }

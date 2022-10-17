@@ -187,4 +187,24 @@ public class DocumentSRV implements IDocumentSRV {
         List<SchemaETY> replacedSchema = repository.insertDocsByExtensionId(new ArrayList<>(toReplaceFromDB.values()));
         return replacedSchema != null ? replacedSchema.size() : 0;
     }
+
+    @Override
+    public List<SchemaDocumentDTO> findAllActiveDocuments() throws OperationException {
+        List<SchemaETY> etyList = repository.findAllActive();
+        if (etyList == null || etyList.isEmpty()) {
+            log.warn("No active schema documents found");
+            return new ArrayList<>();
+        }
+        return buildDtoFromEty(etyList);
+    }
+
+    private List<SchemaDocumentDTO> buildDtoFromEty(List<SchemaETY> etyList) {
+        List<SchemaDocumentDTO> schemaDocumentDTOList = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(etyList)) {
+            for (SchemaETY ety : etyList) {
+                schemaDocumentDTOList.add(SchemaDocumentDTO.fromEntity(ety));
+            }
+        }
+        return schemaDocumentDTOList;
+    }
 }

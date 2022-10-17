@@ -5,9 +5,9 @@ import com.mongodb.MongoException;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.base.AbstractEntityHandler;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.DataIntegrityException;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.DataProcessingException;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IDocumentRepo;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -24,6 +24,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -551,5 +553,30 @@ class DocumentsCTLTest extends AbstractEntityHandler {
                 status().is(SC_INTERNAL_SERVER_ERROR),
                 content().contentType(APPLICATION_PROBLEM_JSON)
         );
+    }
+
+    @Test
+    void getActiveDocumentsTest() throws Exception {
+        this.uploadDocumentsWithValidData();
+        ResultActions resultActions = mvc.perform(findActiveDocsReq()).andExpectAll(
+                status().is(SC_OK),
+                content().contentType(APPLICATION_JSON_VALUE)
+        );
+        MvcResult result = resultActions.andReturn();
+        String response = result.getResponse().getContentAsString();
+        Assertions.assertNotNull(response);
+        Assertions.assertNotEquals("{\"documents\":[]}", response);
+    }
+
+    @Test
+    void getActiveDocumentsNotFoundTest() throws Exception {
+        ResultActions resultActions = mvc.perform(findActiveDocsReq()).andExpectAll(
+                status().is(SC_OK),
+                content().contentType(APPLICATION_JSON_VALUE)
+        );
+        MvcResult result = resultActions.andReturn();
+        String response = result.getResponse().getContentAsString();
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals("{\"documents\":[]}", response);
     }
 }

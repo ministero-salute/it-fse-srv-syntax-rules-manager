@@ -22,9 +22,10 @@
 		<container.output>target/container</container.output>
 		<container.output.runtime>${container.output}/runtime</container.output.runtime>
 		<!-- SonarQube -->
-		<sonar.coverage.exclusions>
-			src/main/java/it/finanze/sanita/fse2/ms/srvsyntaxrulesmanager/config/*
-		</sonar.coverage.exclusions>
+		<sonar.exclusions>
+			src/main/java/it/finanze/sanita/fse2/ms/srvsyntaxrulesmanager/config/OpenApiCFG.java,
+			src/main/java/it/finanze/sanita/fse2/ms/srvsyntaxrulesmanager/runner/**/*.*
+		</sonar.exclusions>
 	</properties>
 	<dependencies>
 		<!-- CORE -->

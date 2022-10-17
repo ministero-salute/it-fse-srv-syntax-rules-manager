@@ -254,4 +254,14 @@ public class DocumentRepo implements IDocumentRepo {
         }
         return entities;
     }
+
+    @Override
+    public List<SchemaETY> findAllActive() throws OperationException {
+        try {
+            Query query = Query.query(Criteria.where(FIELD_DELETED).ne(true));
+            return mongo.find(query, SchemaETY.class);
+        } catch (MongoException e) {
+            throw new OperationException(ERR_FIND_ACTIVE_DOCS , e);
+        }
+    }
 }

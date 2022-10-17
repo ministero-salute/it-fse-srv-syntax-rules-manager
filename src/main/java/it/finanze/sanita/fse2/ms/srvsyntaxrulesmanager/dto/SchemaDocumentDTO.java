@@ -5,6 +5,7 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaE
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityMisc;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -13,6 +14,7 @@ import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class SchemaDocumentDTO implements Serializable {
     @Schema(maxLength = OA_ANY_STRING_MAX)
     private String id;
