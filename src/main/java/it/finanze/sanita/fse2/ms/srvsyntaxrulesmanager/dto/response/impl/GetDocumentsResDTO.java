@@ -1,26 +1,33 @@
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl;
 
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.log.LogTraceInfoDTO;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.*;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class GetDocumentsResDTO extends ResponseDTO {
+public class GetDocumentsResDTO extends ResponseDTO<GetDocumentsResDTO.GetMultipleDocsPayloadDTO> {
 
-    @ArraySchema(minItems = 0, maxItems = 10000, uniqueItems = true, schema = @Schema(implementation = SchemaDocumentDTO.class))
-    private ArrayList<SchemaDocumentDTO> documents;
+    @Getter
+    @AllArgsConstructor
+    public static class GetMultipleDocsPayloadDTO implements Serializable {
+        /**
+         * Documents retrieved
+         */
+        @ArraySchema(
+                minItems = OA_ARRAY_FILES_MIN,
+                maxItems = OA_ARRAY_FILES_MAX,
+                schema = @Schema(maxLength = OA_ANY_STRING_MAX)
+        )
+        private ArrayList<SchemaDocumentDTO> documents;
+    }
 
     /**
      * Instantiates a new response DTO.
@@ -28,8 +35,7 @@ public class GetDocumentsResDTO extends ResponseDTO {
      * @param traceInfo The {@link LogTraceInfoDTO} instance
      * @param data      The data object
      */
-    public GetDocumentsResDTO(LogTraceInfoDTO traceInfo, ArrayList<SchemaDocumentDTO> data) {
-        super(traceInfo);
-        this.documents = data;
+    public GetDocumentsResDTO(LogTraceInfoDTO traceInfo, GetMultipleDocsPayloadDTO data) {
+        super(traceInfo, data);
     }
 }

@@ -565,7 +565,7 @@ class DocumentsCTLTest extends AbstractEntityHandler {
         MvcResult result = resultActions.andReturn();
         String response = result.getResponse().getContentAsString();
         Assertions.assertNotNull(response);
-        Assertions.assertNotEquals("{\"documents\":[]}", response);
+        Assertions.assertNotEquals("{\"data\":{\"documents\":[]}}", response);
     }
 
     @Test
@@ -577,6 +577,6 @@ class DocumentsCTLTest extends AbstractEntityHandler {
         MvcResult result = resultActions.andReturn();
         String response = result.getResponse().getContentAsString();
         Assertions.assertNotNull(response);
-        Assertions.assertEquals("{\"documents\":[]}", response);
+        Assertions.assertEquals("{\"data\":{\"documents\":[]}}", response);
     }
 }

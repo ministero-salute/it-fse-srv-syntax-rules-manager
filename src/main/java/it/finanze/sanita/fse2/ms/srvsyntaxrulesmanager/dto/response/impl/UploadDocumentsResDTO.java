@@ -1,31 +1,46 @@
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl;
 
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.log.LogTraceInfoDTO;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import java.io.Serializable;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class UploadDocumentsResDTO extends ResponseDTO {
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.UploadDocumentsResDTO.UploadPayloadDTO;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.*;
 
-	@Schema(description = "Numero di schema inseriti")
-    @Min(1)
-    @Max(1000)
-    private int insertedSchema;
+public class UploadDocumentsResDTO extends ResponseDTO<UploadPayloadDTO> {
+
+    @Getter
+    @AllArgsConstructor
+    public static class UploadPayloadDTO implements Serializable {
+        /**
+         * Extension identifier
+         */
+        @Schema(maxLength = OA_EXTS_STRING_MAX)
+        private String extension;
+        /**
+         * Elements uploaded
+         */
+        @ArraySchema(
+                minItems = OA_ARRAY_FILES_MIN,
+                maxItems = OA_ARRAY_FILES_MAX,
+                schema = @Schema(maxLength = OA_ANY_STRING_MAX)
+        )
+        private int insertedSchema;
+    }
+
 
     /**
      * Instantiates a new response DTO.
      *
      * @param traceInfo The {@link LogTraceInfoDTO} instance
+     * @param data      The data object
      */
-    public UploadDocumentsResDTO(LogTraceInfoDTO traceInfo, int inInsertedSchema) {
-        super(traceInfo);
-        this.insertedSchema = inInsertedSchema;
+    public UploadDocumentsResDTO(LogTraceInfoDTO traceInfo, UploadPayloadDTO data) {
+        super(traceInfo, data);
     }
 }

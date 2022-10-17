@@ -201,15 +201,14 @@ public class DocumentRepo implements IDocumentRepo {
      */
     @Override
     public SchemaETY findDocById(String id) throws OperationException {
-        // Create query
-        Query query = query(where(FIELD_ID).is(new ObjectId(id)).and(FIELD_DELETED).ne(true));
+        SchemaETY object;
+        Query q = query(where(FIELD_ID).is(new ObjectId(id)));
         try {
-            // Execute
-            return mongo.findOne(query, SchemaETY.class);
+            object = mongo.findOne(q, SchemaETY.class);
         } catch (MongoException e) {
-            // Catch data-layer runtime exceptions and turn into a checked exception
-            throw new OperationException(ERR_REP_GET_BY_ID, e);
+            throw new OperationException("Unable to retrieve the requested active document", e);
         }
+        return object;
     }
 
     /**

@@ -1,37 +1,44 @@
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl;
 
-import javax.validation.constraints.Min;
-
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-import javax.validation.constraints.Max;
-
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.log.LogTraceInfoDTO;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class DeleteDocumentsResDTO extends ResponseDTO {
-    
-    @Schema(description = "Numero di schema eliminati")
-    @Min(1)
-    @Max(1000)
-    private int deletedSchema;
+import java.io.Serializable;
+
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.DeleteDocumentsResDTO.DeletePayloadDTO;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.*;
+
+public class DeleteDocumentsResDTO extends ResponseDTO<DeletePayloadDTO> {
+    @Getter
+    @AllArgsConstructor
+    public static class DeletePayloadDTO implements Serializable {
+        /**
+         * Extension identifier
+         */
+        @Schema(maxLength = OA_EXTS_STRING_MAX)
+        private String extension;
+        /**
+         * Elements uploaded
+         */
+        @ArraySchema(
+                minItems = OA_ARRAY_FILES_MIN,
+                maxItems = OA_ARRAY_FILES_MAX,
+                schema = @Schema(maxLength = OA_ANY_STRING_MAX)
+        )
+        private int deletedSchema;
+    }
 
     /**
      * Instantiates a new response DTO.
      *
      * @param traceInfo The {@link LogTraceInfoDTO} instance
-     * @param deletedSchema     
+     * @param data      The data object
      */
-    public DeleteDocumentsResDTO(LogTraceInfoDTO traceInfo, int deletedSchema) {
-        super(traceInfo);
-        this.deletedSchema = deletedSchema;
+    public DeleteDocumentsResDTO(LogTraceInfoDTO traceInfo, DeletePayloadDTO data) {
+        super(traceInfo, data);
     }
 }
