@@ -1,21 +1,24 @@
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller;
 
 import brave.Tracer;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.ErrorInstance;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.log.LogTraceInfoDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.RootNotValidException;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.MimeTypeUtils;
-import org.springframework.web.multipart.MultipartFile;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Logs.ERR_SRV_INVALID_ROOT_EXT;
 
 /**
  * Abstract base controller
  * @author G. Baittiner
  */
+@Slf4j
 public abstract class AbstractCTL {
 
     /**
@@ -41,6 +44,16 @@ public abstract class AbstractCTL {
         return out;
     }
 
+	protected String checkRootExtension(String root) throws RootNotValidException {
+		if (FilenameUtils.getExtension(root).equals("")) {
+			log.warn("Root is missing extension name, 'xsd' will be added as default");
+			root += ".xsd";
+		} else if (!FilenameUtils.isExtension(root, "xsd")) {
+			throw new RootNotValidException(String.format(ERR_SRV_INVALID_ROOT_EXT, root), ErrorInstance.Fields.ROOT);
+		}
+		return root;
+	}
+
     protected boolean validateFiles(MultipartFile[] files) {
 		boolean isValid = true;
 		if (files != null && files.length > 0) {
@@ -58,21 +71,17 @@ public abstract class AbstractCTL {
 	}
 
     private boolean isValidSchema(MultipartFile file) {
-
-		boolean isValid = false;
 		if (file != null && !file.isEmpty()) {
 			try {
-				final Path path = Paths.get(file.getOriginalFilename());
-				final String mimeType = Files.probeContentType(path);
 				final String content = new String(file.getBytes(), StandardCharsets.UTF_8);
-
-				isValid = MimeTypeUtils.TEXT_XML_VALUE.equals(mimeType) && content.startsWith("<?xml") && content.contains("xs:schema");
+				final String extension = Optional.ofNullable(FilenameUtils.getExtension(file.getOriginalFilename())).orElse("");
+				final boolean isXsd = extension.equals("xsd");
+				return isXsd && content.startsWith("<?xml") && content.contains("xs:schema");
 			} catch (Exception e) {
-				isValid = false;
+				return false;
 			}
+		} else {
+			return false;
 		}
-
-		return isValid;
 	}
-
 }

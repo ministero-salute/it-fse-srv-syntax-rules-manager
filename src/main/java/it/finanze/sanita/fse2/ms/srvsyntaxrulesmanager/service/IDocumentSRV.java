@@ -20,11 +20,12 @@ public interface IDocumentSRV {
     /**
      * Retrieves the documents by their extension identifier
      * @param extension The extension id
+     * @param includeDeleted
      * @return The documents matching the extension identifier
      * @throws OperationException If a data-layer error occurs
      * @throws ExtensionNotFoundException If no documents matching the extension are found
      */
-    List<SchemaDocumentDTO> findDocsByExtensionId(String extension) throws OperationException, ExtensionNotFoundException;
+    List<SchemaDocumentDTO> findDocsByExtensionId(String extension, boolean includeDeleted) throws OperationException, ExtensionNotFoundException;
 
     /**
      * Insert the given data inside the schema
@@ -40,7 +41,8 @@ public interface IDocumentSRV {
     int insertDocsByExtensionId(String root, String extension, MultipartFile[] files) throws OperationException, ExtensionAlreadyExistsException, DataProcessingException, RootNotValidException;
 
     /**
-     * Update the documents content with the provided ones according to the extension
+     * Update the documents content with the provided ones according to the extension, deleting the old ones
+     * @param root The root identifier of the schemas
      * @param extension The extension id
      * @param files   The documents to use as replacement of the old ones
      * @return The number of inserted schema.
@@ -49,7 +51,7 @@ public interface IDocumentSRV {
      * @throws DocumentNotFoundException If at least one document to be replaced is not found inside the collection
      * @throws DataProcessingException If unable to convert the input raw data into a binary representation
      */
-    int updateDocsByExtensionId(String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException;
+    int updateDocsByExtensionId(String root, String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, RootNotValidException;
 
     /**
      * Deletes all the documents entities matching the given extensions
@@ -59,4 +61,12 @@ public interface IDocumentSRV {
      * @throws ExtensionNotFoundException If there is no document matching the given extension
      */
     int deleteDocsByExtensionId(String extension) throws OperationException, ExtensionNotFoundException, DataIntegrityException;
+
+    /**
+     * Patch the documents content with the provided ones according to the extension, adding the new ones
+     * @param extension
+     * @param files
+     * @return
+     */
+    int patchDocsByExtensionId(String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException;
 }

@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utils.UtilsProfile;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityProfile;
 
 @Configuration
 public class CollectionNaming {
     @Autowired
-    private UtilsProfile profiles;
+    private UtilityProfile profiles;
 
     @Bean("schemaBean")
     public String getSchemaCollection() {

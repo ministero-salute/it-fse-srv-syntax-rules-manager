@@ -45,7 +45,6 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DocumentNotFoundException.class)
     protected ResponseEntity<ErrorResponseDTO> handleDocumentNotFoundException(DocumentNotFoundException ex) {
         // Log me
-        log.warn("HANDLER handleDocumentNotFoundException()");
         log.error("HANDLER handleDocumentNotFoundException()", ex);
         // Create error DTO
         ErrorResponseDTO out = createDocumentNotFoundError(getLogTraceInfo(), ex);
@@ -64,7 +63,6 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
     @ExceptionHandler(RootNotValidException.class)
     protected ResponseEntity<ErrorResponseDTO> handleRootNotValidException(RootNotValidException ex) {
         // Log me
-        log.warn("HANDLER handleRootNotValidException()");
         log.error("HANDLER handleRootNotValidException()", ex);
         // Create error DTO
         ErrorResponseDTO out = createRootNotValidError(getLogTraceInfo(), ex);
@@ -85,7 +83,6 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DataIntegrityException.class)
     protected ResponseEntity<ErrorResponseDTO> handleDataIntegrityException(DataIntegrityException ex) {
         // Log me
-        log.warn("HANDLER DataIntegrityException()");
         log.error("HANDLER DataIntegrityException()", ex);
         // Create error DTO
         ErrorResponseDTO out = createDataIntegrityError(getLogTraceInfo(), ex);
@@ -104,7 +101,6 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
     @ExceptionHandler(OperationException.class)
     protected ResponseEntity<ErrorResponseDTO> handleOperationException(OperationException ex) {
         // Log me
-        log.warn("HANDLER handleOperationException()");
         log.error("HANDLER handleOperationException()", ex);
         // Create error DTO
         ErrorResponseDTO out = createOperationError(getLogTraceInfo(), ex);
@@ -124,7 +120,6 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DataProcessingException.class)
     protected ResponseEntity<ErrorResponseDTO> handleDataProcessingException(DataProcessingException ex) {
         // Log me
-        log.warn("HANDLER handleDataProcessingException()");
         log.error("HANDLER handleDataProcessingException()", ex);
         // Create error DTO
         ErrorResponseDTO out = createDataProcessingError(getLogTraceInfo(), ex);
@@ -143,7 +138,6 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ExtensionAlreadyExistsException.class)
     protected ResponseEntity<ErrorResponseDTO> handleResourceAlreadyExistsException(ExtensionAlreadyExistsException ex) {
         // Log me
-        log.warn("HANDLER handleResourceAlreadyExistsException()");
         log.error("HANDLER handleResourceAlreadyExistsException()", ex);
         // Create error DTO
         ErrorResponseDTO out = createExtensionExistsError(getLogTraceInfo(), ex);
@@ -162,7 +156,6 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ExtensionNotFoundException.class)
     protected ResponseEntity<ErrorResponseDTO> handleResourceNotFoundException(ExtensionNotFoundException ex) {
         // Log me
-        log.warn("HANDLER handleResourceNotFoundException()");
         log.error("HANDLER handleResourceNotFoundException()", ex);
         // Create error DTO
         ErrorResponseDTO out = createExtensionNotFoundError(getLogTraceInfo(), ex);
@@ -181,7 +174,6 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestPart(MissingServletRequestPartException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         // Log me
-        log.warn("HANDLER handleMissingServletRequestPart()");
         log.error("HANDLER handleMissingServletRequestPart()", ex);
         // Create error DTO
         ErrorResponseDTO out = createMissingPartError(getLogTraceInfo(), ex);
@@ -199,7 +191,6 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         // Log me
-        log.warn("HANDLER handleMissingServletRequestParameter()");
         log.error("HANDLER handleMissingServletRequestParameter()", ex);
         // Create error DTO
         ErrorResponseDTO out = createMissingParameterError(getLogTraceInfo(), ex);
@@ -217,7 +208,6 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     protected ResponseEntity<ErrorResponseDTO> handleConstraintViolationException(ConstraintViolationException ex) {
         // Log me
-        log.warn("HANDLER handleConstraintViolationException()");
         log.error("HANDLER handleConstraintViolationException()", ex);
         // Create error DTO
         ErrorResponseDTO out = createConstraintError(getLogTraceInfo(), ex);
@@ -237,7 +227,6 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     protected ResponseEntity<ErrorResponseDTO> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         // Log me
-        log.warn("HANDLER MethodArgumentTypeMismatchException()");
         log.error("HANDLER MethodArgumentTypeMismatchException()", ex);
         // Create error DTO
         ErrorResponseDTO out = createArgumentMismatchError(getLogTraceInfo(), ex);
@@ -257,7 +246,6 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {Exception.class})
     protected ResponseEntity<ErrorResponseDTO> handleGenericException(Exception ex) {
         // Log me
-        log.warn("HANDLER handleGenericException()");
         log.error("HANDLER handleGenericException()", ex);
         // Create error DTO
         ErrorResponseDTO out = createGenericError(getLogTraceInfo(), ex);

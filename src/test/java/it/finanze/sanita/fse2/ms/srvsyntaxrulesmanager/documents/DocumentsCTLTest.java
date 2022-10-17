@@ -3,48 +3,69 @@ package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.documents;
 import brave.Tracer;
 import com.mongodb.MongoException;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.base.AbstractEntityHandler;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.IEdsDocumentsCTL;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.service.IDocumentSRV;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.DataIntegrityException;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.DataProcessingException;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IDocumentRepo;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.base.MockRequests.*;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.ErrorType.*;
 import static org.apache.http.HttpStatus.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(IEdsDocumentsCTL.class)
-class DocumentsCTLTest extends AbstractEntityHandler{
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ComponentScan
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ActiveProfiles(Constants.Profile.TEST)
+@AutoConfigureMockMvc
+class DocumentsCTLTest extends AbstractEntityHandler {
 
     @Autowired
     private MockMvc mvc;
+
     @MockBean
     private Tracer tracer;
-    @MockBean
-    private IDocumentSRV service;
+
+    @SpyBean
+    private MongoTemplate mongoTemplate;
+
+    @SpyBean
+    private IDocumentRepo documentRepo;
+
+    @BeforeEach
+    void setup() {
+        mongoTemplate.dropCollection(SchemaETY.class);
+    }
 
     @Test
     void getDocumentById() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.findDocById(anyString())
-        ).thenReturn(FAKE_DTO);
-        // Execute request
-        mvc.perform(
-            getDocByIdReq(FAKE_VALID_DTO_ID)
-        ).andExpectAll(
+        SchemaETY schemaETY = SchemaETY.fromMultipart(createFakeMultipart("test1.xsd", true), SCHEMA_TEST_EXTS_A, true);
+        schemaETY.setId(FAKE_VALID_DTO_ID);
+        mongoTemplate.insert(schemaETY);
+        mvc.perform(getDocByIdReq(FAKE_VALID_DTO_ID)).andExpectAll(
             status().is2xxSuccessful(),
             content().contentType(APPLICATION_JSON_VALUE)
         );
@@ -52,7 +73,6 @@ class DocumentsCTLTest extends AbstractEntityHandler{
 
     @Test
     void getDocumentByIdWithInvalidId() throws Exception {
-        // Execute request
         mvc.perform(
             getDocByIdReq(FAKE_INVALID_DTO_ID)
         ).andExpectAll(
@@ -64,11 +84,6 @@ class DocumentsCTLTest extends AbstractEntityHandler{
 
     @Test
     void getDocumentByIdWithNotFound() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.findDocById(anyString())
-        ).thenThrow(new DocumentNotFoundException("ID is valid but no file exists"));
-        // Execute request
         mvc.perform(
             getDocByIdReq(FAKE_VALID_DTO_ID)
         ).andExpectAll(
@@ -80,11 +95,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
 
     @Test
     void getDocumentByIdInvalidOperation() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.findDocById(anyString())
-        ).thenThrow(new OperationException("An error occurred", new MongoException("")));
-        // Execute request
+        Mockito.doThrow(new MongoException("Invalid exception")).when(mongoTemplate).findOne(any(), eq(SchemaETY.class));
         mvc.perform(
             getDocByIdReq(FAKE_VALID_DTO_ID)
         ).andExpectAll(
@@ -96,11 +107,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
 
     @Test
     void getDocumentsByValidExtension() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.findDocsByExtensionId(anyString())
-        ).thenReturn(new ArrayList<>());
-        // Execute request
+        this.uploadDocumentsWithValidData();
         mvc.perform(
             findDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A)
         ).andExpectAll(
@@ -111,13 +118,6 @@ class DocumentsCTLTest extends AbstractEntityHandler{
 
     @Test
     void getDocumentsByInvalidExtension() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.findDocsByExtensionId(anyString())
-        ).thenThrow(
-            new ExtensionNotFoundException("Extension does not exists")
-        );
-        // Execute request
         mvc.perform(
             findDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A)
         ).andExpectAll(
@@ -129,13 +129,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
 
     @Test
     void getDocumentsByInvalidOperation() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.findDocsByExtensionId(anyString())
-        ).thenThrow(
-            new OperationException("I/O Error", new MongoException("Everything blew up"))
-        );
-        // Execute request
+        Mockito.doThrow(new MongoException("Invalid exception")).when(mongoTemplate).find(any(), eq(SchemaETY.class));
         mvc.perform(
             findDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A)
         ).andExpectAll(
@@ -147,11 +141,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
 
     @Test
     void getDocumentsByUnknownError() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.findDocsByExtensionId(anyString())
-        ).thenThrow(new RuntimeException());
-        // Execute request
+        Mockito.doThrow(new MongoException("Invalid exception")).when(mongoTemplate).find(any(), eq(SchemaETY.class));
         mvc.perform(
             findDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A)
         ).andExpectAll(
@@ -161,19 +151,16 @@ class DocumentsCTLTest extends AbstractEntityHandler{
         );
     }
 
- @Test
+    @Test
     void updateDocumentsWithValidData() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.updateDocsByExtensionId(anyString(), any())
-        ).thenReturn(0);
-        // Execute request
+        this.uploadDocumentsWithValidData();
         mvc.perform(
             putDocsByExtensionIdReq(
-                SCHEMA_TEST_EXTS_A,
+                SCHEMA_TEST_ROOT,
+                    SCHEMA_TEST_EXTS_A,
                 new MockMultipartFile[]{
-                    createFakeMultipart("test0.xsd"),
-                    createFakeMultipart("test1.xsd")
+                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
+                    createFakeMultipart("test1.xsd", true)
                 }
             )
         ).andExpectAll(
@@ -183,44 +170,51 @@ class DocumentsCTLTest extends AbstractEntityHandler{
     }
 
     @Test
-    void updateDocumentsWithInvalidOperation() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.updateDocsByExtensionId(anyString(), any())
-        ).thenThrow(
-            new OperationException("I/O Error", new MongoException("Everything blew up"))
+    void updateDocumentsWithInvalidRoot() throws Exception {
+        this.uploadDocumentsWithValidData();
+        mvc.perform(
+                putDocsByExtensionIdReq(
+                        SCHEMA_TEST_ROOT,
+                        SCHEMA_TEST_EXTS_A,
+                        new MockMultipartFile[]{
+                                createFakeMultipart("test0.xsd", true),
+                                createFakeMultipart("test1.xsd", true)
+                        }
+                )
+        ).andExpectAll(
+                status().is(SC_BAD_REQUEST),
+                content().contentType(APPLICATION_PROBLEM_JSON)
         );
-        // Execute request
+    }
+
+    @Test
+    void updateDocumentsWithInvalidOperation() throws Exception {
+        this.uploadDocumentsWithValidData();
+        Mockito.doThrow(new MongoException("Invalid exception")).when(mongoTemplate).insertAll(any());
         mvc.perform(
             putDocsByExtensionIdReq(
-                SCHEMA_TEST_EXTS_A,
+                SCHEMA_TEST_ROOT,
+                    SCHEMA_TEST_EXTS_A,
                 new MockMultipartFile[]{
-                    createFakeMultipart("test0.xsd"),
-                    createFakeMultipart("test1.xsd")
+                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
+                    createFakeMultipart("test1.xsd", true)
                 }
             )
         ).andExpectAll(
             status().is(SC_INTERNAL_SERVER_ERROR),
-            content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(SERVER.getTitle())
+            content().contentType(APPLICATION_PROBLEM_JSON)
         );
     }
 
     @Test
     void updateDocumentsWithInvalidExtension() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.updateDocsByExtensionId(anyString(), any())
-        ).thenThrow(
-            new ExtensionNotFoundException("Extension does not exists")
-        );
-        // Execute request
         mvc.perform(
             putDocsByExtensionIdReq(
-                SCHEMA_TEST_EXTS_A,
+                SCHEMA_TEST_ROOT,
+                    SCHEMA_TEST_EXTS_A,
                 new MockMultipartFile[]{
-                    createFakeMultipart("test0.xsd"),
-                    createFakeMultipart("test1.xsd")
+                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
+                    createFakeMultipart("test1.xsd", true)
                 }
             )
         ).andExpectAll(
@@ -231,62 +225,28 @@ class DocumentsCTLTest extends AbstractEntityHandler{
     }
 
     @Test
-    void updateDocumentsWithOneOrMoreInvalidFiles() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.updateDocsByExtensionId(anyString(), any())
-        ).thenThrow(
-            new DocumentNotFoundException("test0.xsd does not exists")
-        );
-        // Execute request
+    void updateDocumentsWithOneOrMoreEmptyFiles() throws Exception {
         mvc.perform(
-            putDocsByExtensionIdReq(
-                SCHEMA_TEST_EXTS_A,
-                new MockMultipartFile[]{
-                    createFakeMultipart("test0.xsd"),
-                    createFakeMultipart("test1.xsd")
-                }
-            )
+                putDocsByExtensionIdReq(
+                        SCHEMA_TEST_ROOT,
+                        SCHEMA_TEST_EXTS_A,
+                        new MockMultipartFile[]{
+                                createFakeMultipart("test0.xsd", false),
+                                createFakeMultipart("test1.xsd", true)
+                        }
+                )
         ).andExpectAll(
-            status().is(SC_NOT_FOUND),
-            content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(RESOURCE.getTitle())
-        );
-    }
-
-    @Test
-    void updateDocumentsWithMalformedData() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.updateDocsByExtensionId(anyString(), any())
-        ).thenThrow(
-            new DataProcessingException(
-                "Puff preety",
-                new IOException("Puff puff preety")
-            )
-        );
-        // Execute request
-        mvc.perform(
-            putDocsByExtensionIdReq(
-                SCHEMA_TEST_EXTS_A,
-                new MockMultipartFile[]{
-                    createFakeMultipart("test0.xsd"),
-                    createFakeMultipart("test1.xsd")
-                }
-            )
-        ).andExpectAll(
-            status().is(SC_UNPROCESSABLE_ENTITY),
-            content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(IO.getTitle())
+                status().is(SC_BAD_REQUEST),
+                content().contentType(APPLICATION_PROBLEM_JSON)
         );
     }
 
     @Test
     void updateDocumentsWithMissingFiles() throws Exception {
-        // Execute request
         mvc.perform(
             putDocsByExtensionIdReq(
-                SCHEMA_TEST_EXTS_A,
+                SCHEMA_TEST_ROOT,
+                    SCHEMA_TEST_EXTS_A,
                 new MockMultipartFile[]{}
             )
         ).andExpectAll(
@@ -298,13 +258,13 @@ class DocumentsCTLTest extends AbstractEntityHandler{
 
     @Test
     void updateDocumentsWithMissingExtension() throws Exception {
-        // Execute request
         mvc.perform(
             putDocsByExtensionIdReq(
                 createBlankString(),
+                createBlankString(),
                 new MockMultipartFile[]{
-                    createFakeMultipart("test0.xsd"),
-                    createFakeMultipart("test1.xsd")
+                    createFakeMultipart("test0.xsd", true),
+                    createFakeMultipart("test1.xsd", true)
                 }
             )
         ).andExpectAll(
@@ -317,18 +277,12 @@ class DocumentsCTLTest extends AbstractEntityHandler{
 
     @Test
     void uploadDocumentsWithValidData() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.insertDocsByExtensionId(anyString(),anyString(), any())
-        ).thenReturn(0);
-        // Execute request
         mvc.perform(
             postDocsByExtensionIdReq(
                 SCHEMA_TEST_ROOT,
                 SCHEMA_TEST_EXTS_A,
                 new MockMultipartFile[]{
-                    createFakeMultipart(SCHEMA_TEST_ROOT),
-                    createFakeMultipart("test1.xsd")
+                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
                 }
             )
         ).andExpectAll(
@@ -339,15 +293,14 @@ class DocumentsCTLTest extends AbstractEntityHandler{
 
     @Test
     void uploadDocumentsWithDuplicatedFiles() throws Exception {
-        // Execute request
         mvc.perform(
             postDocsByExtensionIdReq(
                 SCHEMA_TEST_ROOT,
                 SCHEMA_TEST_EXTS_A,
                 new MockMultipartFile[]{
-                    createFakeMultipart(SCHEMA_TEST_ROOT),
-                    createFakeMultipart(SCHEMA_TEST_ROOT),
-                    createFakeMultipart("test1.xsd")
+                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
+                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
+                    createFakeMultipart("test1.xsd", true)
                 }
             )
         ).andExpectAll(
@@ -358,48 +311,32 @@ class DocumentsCTLTest extends AbstractEntityHandler{
 
     @Test
     void uploadDocumentsWithOperationError() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.insertDocsByExtensionId(anyString(),anyString(),any())
-        ).thenThrow(
-            new DataProcessingException(
-                "Puff preety",
-                new IOException("Puff puff preety")
-            )
-        );
-        // Execute request
+        Mockito.doThrow(new MongoException("Invalid exception")).when(mongoTemplate).insertAll(any());
         mvc.perform(
             postDocsByExtensionIdReq(
                 SCHEMA_TEST_ROOT,
                 SCHEMA_TEST_EXTS_A,
                 new MockMultipartFile[]{
-                    createFakeMultipart(SCHEMA_TEST_ROOT),
-                    createFakeMultipart("test1.xsd")
+                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
+                    createFakeMultipart("test1.xsd", true)
                 }
             )
         ).andExpectAll(
-            status().is(SC_UNPROCESSABLE_ENTITY),
-            content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(IO.getTitle())
+            status().is(SC_INTERNAL_SERVER_ERROR),
+            content().contentType(APPLICATION_PROBLEM_JSON)
         );
     }
 
     @Test
     void uploadDocumentsWithConflictExtension() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.insertDocsByExtensionId(anyString(),anyString(), any())
-        ).thenThrow(
-            new ExtensionAlreadyExistsException("Extension exists")
-        );
-        // Execute request
+        this.uploadDocumentsWithValidData();
         mvc.perform(
             postDocsByExtensionIdReq(
                 SCHEMA_TEST_ROOT,
                 SCHEMA_TEST_EXTS_A,
                 new MockMultipartFile[]{
-                    createFakeMultipart(SCHEMA_TEST_ROOT),
-                    createFakeMultipart("test1.xsd")
+                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
+                    createFakeMultipart("test1.xsd", true)
                 }
             )
         ).andExpectAll(
@@ -410,40 +347,14 @@ class DocumentsCTLTest extends AbstractEntityHandler{
     }
 
     @Test
-    void uploadDocumentsWithProcessingError() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.insertDocsByExtensionId(anyString(),anyString(), any())
-        ).thenThrow(
-            new DataProcessingException("KO", new IOException())
-        );
-        // Execute request
-        mvc.perform(
-            postDocsByExtensionIdReq(
-                SCHEMA_TEST_ROOT,
-                SCHEMA_TEST_EXTS_A,
-                new MockMultipartFile[]{
-                    createFakeMultipart(SCHEMA_TEST_ROOT),
-                    createFakeMultipart("test1.xsd")
-                }
-            )
-        ).andExpectAll(
-            status().is(SC_UNPROCESSABLE_ENTITY),
-            content().contentType(APPLICATION_PROBLEM_JSON),
-            jsonPath("$.title").value(IO.getTitle())
-        );
-    }
-
-    @Test
     void uploadDocumentsWithMissingRoot() throws Exception {
-        // Execute request
         mvc.perform(
             postDocsByExtensionIdReq(
                 createBlankString(),
                 SCHEMA_TEST_EXTS_A,
                 new MockMultipartFile[]{
-                    createFakeMultipart(SCHEMA_TEST_ROOT),
-                    createFakeMultipart("test1.xsd")
+                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
+                    createFakeMultipart("test1.xsd", true)
                 }
             )
         ).andExpectAll(
@@ -455,14 +366,13 @@ class DocumentsCTLTest extends AbstractEntityHandler{
 
     @Test
     void uploadDocumentsWithMissingExtension() throws Exception {
-        // Execute request
         mvc.perform(
             postDocsByExtensionIdReq(
                 SCHEMA_TEST_ROOT,
                 createBlankString(),
                 new MockMultipartFile[]{
-                    createFakeMultipart(SCHEMA_TEST_ROOT),
-                    createFakeMultipart("test1.xsd")
+                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
+                    createFakeMultipart("test1.xsd", true)
                 }
             )
         ).andExpectAll(
@@ -474,14 +384,13 @@ class DocumentsCTLTest extends AbstractEntityHandler{
 
     @Test
     void uploadDocumentsWithMissingType() throws Exception {
-        // Execute request
         mvc.perform(
             postDocsByExtensionIdReq(
                 SCHEMA_TEST_ROOT,
                 createBlankString(),
                 new MockMultipartFile[]{
-                    createFakeMultipart(SCHEMA_TEST_ROOT),
-                    createFakeMultipart("test1.xsd")
+                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
+                    createFakeMultipart("test1.xsd", true)
                 }
             )
         ).andExpectAll(
@@ -493,7 +402,6 @@ class DocumentsCTLTest extends AbstractEntityHandler{
 
     @Test
     void uploadDocumentsWithMissingFiles() throws Exception {
-        // Execute request
         mvc.perform(
             postDocsByExtensionIdReq(
                 SCHEMA_TEST_ROOT,
@@ -509,11 +417,7 @@ class DocumentsCTLTest extends AbstractEntityHandler{
 
     @Test
     void deleteDocumentsByValidExtension() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.deleteDocsByExtensionId(anyString())
-        ).thenReturn(0);
-        // Execute request
+        this.uploadDocumentsWithValidData();
         mvc.perform(
             deleteDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A)
         ).andExpectAll(
@@ -524,13 +428,6 @@ class DocumentsCTLTest extends AbstractEntityHandler{
 
     @Test
     void deleteDocumentsByInvalidExtension() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.deleteDocsByExtensionId(anyString())
-        ).thenThrow(
-            new ExtensionNotFoundException("Extension does not exists")
-        );
-        // Execute request
         mvc.perform(
             deleteDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A)
         ).andExpectAll(
@@ -542,13 +439,8 @@ class DocumentsCTLTest extends AbstractEntityHandler{
 
     @Test
     void deleteDocumentsByInvalidOperation() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.deleteDocsByExtensionId(anyString())
-        ).thenThrow(
-            new OperationException("I/O Error", new MongoException("Everything blew up"))
-        );
-        // Execute request
+        this.uploadDocumentsWithValidData();
+        Mockito.doThrow(new MongoException("Invalid exception")).when(mongoTemplate).updateMulti(any(), any(), eq(SchemaETY.class));
         mvc.perform(
             deleteDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A)
         ).andExpectAll(
@@ -560,17 +452,104 @@ class DocumentsCTLTest extends AbstractEntityHandler{
 
     @Test
     void deleteDocumentsByUnknownError() throws Exception {
-        // Providing mock knowledge
-        when(
-            service.deleteDocsByExtensionId(anyString())
-        ).thenThrow(new RuntimeException());
-        // Execute request
+        this.uploadDocumentsWithValidData();
+        Mockito.doThrow(new MongoException("Invalid exception")).when(mongoTemplate).updateMulti(any(), any(), eq(SchemaETY.class));
         mvc.perform(
             deleteDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A)
         ).andExpectAll(
             status().is(SC_INTERNAL_SERVER_ERROR),
             content().contentType(APPLICATION_PROBLEM_JSON),
             jsonPath("$.title").value(SERVER.getTitle())
+        );
+    }
+
+    @Test
+    void patchDocumentsTest() throws Exception {
+        this.uploadDocumentsWithValidData();
+        List<MockMultipartFile> files = new ArrayList<>();
+        files.add(createFakeMultipart("CDA.xsd", true));
+        files.add(createFakeMultipart("test1.xsd", true));
+
+        mvc.perform(patchDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A, files)).andExpectAll(
+                status().is(SC_OK),
+                content().contentType(APPLICATION_JSON_VALUE)
+        );
+
+        List<SchemaETY> onDB = mongoTemplate.find(Query.query(Criteria.where("type_id_extension").is(SCHEMA_TEST_EXTS_A)), SchemaETY.class);
+        // old CDA.xsd deleted, new CDA.xsd patched, new test1.xsd appended
+        assertEquals(3, onDB.size());
+    }
+
+    @Test
+    void patchDocumentsTestWithInvalidData() throws Exception {
+        this.uploadDocumentsWithValidData();
+        List<MockMultipartFile> files = new ArrayList<>();
+        files.add(createFakeMultipart("CDA.xsd", true));
+        files.add(createFakeMultipart("test1.xsd", false));
+
+        mvc.perform(patchDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A, files)).andExpectAll(
+                status().is(SC_BAD_REQUEST),
+                content().contentType(APPLICATION_PROBLEM_JSON)
+        );
+
+        List<SchemaETY> onDB = mongoTemplate.find(Query.query(Criteria.where("type_id_extension").is(SCHEMA_TEST_EXTS_A)), SchemaETY.class);
+        assertEquals(1, onDB.size());
+    }
+
+    @Test
+    void patchDocumentsTestWithNullFiles() throws Exception {
+        this.uploadDocumentsWithValidData();
+
+        mvc.perform(patchDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A, null)).andExpectAll(
+                status().is(SC_BAD_REQUEST),
+                content().contentType(APPLICATION_PROBLEM_JSON)
+        );
+
+        List<SchemaETY> onDB = mongoTemplate.find(Query.query(Criteria.where("type_id_extension").is(SCHEMA_TEST_EXTS_A)), SchemaETY.class);
+        assertEquals(1, onDB.size());
+    }
+
+    @Test
+    void patchDocumentsTestWithExtensionNotFound() throws Exception {
+        List<MockMultipartFile> files = new ArrayList<>();
+        files.add(createFakeMultipart("CDA.xsd", true));
+        files.add(createFakeMultipart("test1.xsd", true));
+        mvc.perform(patchDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A, files)).andExpectAll(
+                status().is(SC_NOT_FOUND),
+                content().contentType(APPLICATION_PROBLEM_JSON)
+        );
+
+        List<SchemaETY> onDB = mongoTemplate.find(Query.query(Criteria.where("type_id_extension").is(SCHEMA_TEST_EXTS_A)), SchemaETY.class);
+        assertEquals(0, onDB.size());
+    }
+
+    @Test
+    void patchDocumentsTestWithMongoFailure() throws Exception {
+        this.uploadDocumentsWithValidData();
+
+        Mockito.doThrow(new MongoException("Mongo failure")).when(mongoTemplate).insertAll(any());
+
+        List<MockMultipartFile> files = new ArrayList<>();
+        files.add(createFakeMultipart("CDA.xsd", true));
+        files.add(createFakeMultipart("test1.xsd", true));
+        mvc.perform(patchDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A, files)).andExpectAll(
+                status().is(SC_INTERNAL_SERVER_ERROR),
+                content().contentType(APPLICATION_PROBLEM_JSON)
+        );
+    }
+
+    @Test
+    void patchDocumentsTestWithDataIntegrityException() throws Exception {
+        this.uploadDocumentsWithValidData();
+
+        Mockito.doThrow(new DataIntegrityException("Integrity failed")).when(documentRepo).deleteDocsByExtensionIdAndFilenames(anyString(), any());
+
+        List<MockMultipartFile> files = new ArrayList<>();
+        files.add(createFakeMultipart("CDA.xsd", true));
+        files.add(createFakeMultipart("test1.xsd", true));
+        mvc.perform(patchDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A, files)).andExpectAll(
+                status().is(SC_INTERNAL_SERVER_ERROR),
+                content().contentType(APPLICATION_PROBLEM_JSON)
         );
     }
 }

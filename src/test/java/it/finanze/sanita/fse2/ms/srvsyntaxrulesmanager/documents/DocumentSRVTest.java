@@ -11,6 +11,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.mockito.ArgumentMatchers;
 import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -19,11 +20,12 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @WebMvcTest(IDocumentSRV.class)
@@ -66,22 +68,21 @@ class DocumentSRVTest extends AbstractEntityHandler {
     @Test
     void findDocsWithInvalidExtension() throws OperationException {
         // Providing mock knowledge
-        when(repository.findDocsByExtensionId(anyString()))
-            .thenReturn(new ArrayList<>());
+        when(repository.findDocsByExtensionId(anyString(), ArgumentMatchers.eq(false))).thenReturn(new ArrayList<>());
         // Verify exception is thrown
         assertThrows(ExtensionNotFoundException.class, () -> {
-            service.findDocsByExtensionId(SCHEMA_TEST_FAKE_EXTS);
+            service.findDocsByExtensionId(SCHEMA_TEST_FAKE_EXTS, false);
         });
     }
 
     @Test
     void findDocsWithValidExtension() throws OperationException {
         // Providing mock knowledge
-        when(repository.findDocsByExtensionId(SCHEMA_TEST_EXTS_A))
+        when(repository.findDocsByExtensionId(SCHEMA_TEST_EXTS_A, false))
             .thenReturn(new ArrayList<>(getReadOnlyEntities().values()));
         // Verify exception is not thrown
         assertDoesNotThrow(() -> {
-            service.findDocsByExtensionId(SCHEMA_TEST_EXTS_A);
+            service.findDocsByExtensionId(SCHEMA_TEST_EXTS_A, false);
         });
     }
 
@@ -100,7 +101,7 @@ class DocumentSRVTest extends AbstractEntityHandler {
                         SCHEMA_TEST_ROOT_B,
                         SCHEMA_TEST_ROOT_B,
                         "application/xsd",
-                        new byte[0]
+                        "<?xml schema".getBytes(StandardCharsets.UTF_8)
                     )
                 }
             );
@@ -118,7 +119,7 @@ class DocumentSRVTest extends AbstractEntityHandler {
                         "invalid_root.xsd",
                         "invalid_root.xsd",
                         "application/xsd",
-                        new byte[0]
+                        "<?xml schema".getBytes(StandardCharsets.UTF_8)
                     )
                 }
             );
@@ -145,7 +146,7 @@ class DocumentSRVTest extends AbstractEntityHandler {
                         SCHEMA_TEST_ROOT_B,
                         SCHEMA_TEST_ROOT_B,
                         "application/xsd",
-                        new byte[0]
+                        "<?xml schema".getBytes(StandardCharsets.UTF_8)
                     )
                 }
             );
@@ -176,7 +177,7 @@ class DocumentSRVTest extends AbstractEntityHandler {
                            SCHEMA_TEST_ROOT_B,
                            SCHEMA_TEST_ROOT_B,
                            "application/xsd",
-                           new byte[0]
+                           "<?xml schema".getBytes(StandardCharsets.UTF_8)
                        )
                    }
                );
@@ -188,24 +189,32 @@ class DocumentSRVTest extends AbstractEntityHandler {
     void updateWithValidExtension() throws OperationException, DataIntegrityException {
         // Providing mock knowledge
         when(repository.isExtensionInserted(SCHEMA_TEST_EXTS_B)).thenReturn(true);
-        when(repository.isDocumentInserted(anyString(), any())).thenReturn(getEntitiesToUseAsReplacement());
-        when(repository.updateDocsByExtensionId(anyMap())).thenReturn(any());
+        when(repository.getInsertedDocumentsByExtension(anyString())).thenReturn(getEntitiesToUseAsReplacementList());
+        when(repository.deleteDocsByExtensionId(anyString())).thenReturn(getEntitiesToUseAsReplacementList());
+        when(repository.insertDocsByExtensionId(anyList())).thenReturn(getEntitiesToUseAsReplacementList());
         // Verify exception is thrown
         assertDoesNotThrow(() -> {
             service.updateDocsByExtensionId(
+                SCHEMA_TEST_ROOT,
                 SCHEMA_TEST_EXTS_B,
                 new MockMultipartFile[]{
+                    new MockMultipartFile(
+                            "CDA.xsd",
+                            "CDA.xsd",
+                            MediaType.APPLICATION_XML.toString(),
+                            "<?xml schema".getBytes(StandardCharsets.UTF_8)
+                    ),
                     new MockMultipartFile(
                         "datatypes.xsd",
                         "datatypes.xsd",
                         MediaType.APPLICATION_XML.toString(),
-                        new byte[0]
+                        "<?xml schema".getBytes(StandardCharsets.UTF_8)
                     ),
                     new MockMultipartFile(
                         "datatypes-base.xsd",
                         "datatypes-base.xsd",
                         MediaType.APPLICATION_XML.toString(),
-                        new byte[0]
+                        "<?xml schema".getBytes(StandardCharsets.UTF_8)
                     ),
                 }
             );
@@ -219,25 +228,10 @@ class DocumentSRVTest extends AbstractEntityHandler {
         // Verify exception is thrown
         assertThrows(ExtensionNotFoundException.class, () -> {
             service.updateDocsByExtensionId(
+                SCHEMA_TEST_ROOT,
                 SCHEMA_TEST_EXTS_C,
                 new MockMultipartFile[]{
-                    new MockMultipartFile(SCHEMA_TEST_ROOT_B, new byte[0])
-                }
-            );
-        });
-    }
-
-    @Test
-    void updateWithInvalidFile() throws OperationException {
-        // Providing mock knowledge
-        when(repository.isExtensionInserted(SCHEMA_TEST_EXTS_B)).thenReturn(true);
-        when(repository.isDocumentInserted(anyString(), any())).thenReturn(new HashMap<>());
-        // Verify exception is thrown
-        assertThrows(DocumentNotFoundException.class, () -> {
-            service.updateDocsByExtensionId(
-                SCHEMA_TEST_EXTS_B,
-                new MockMultipartFile[]{
-                    new MockMultipartFile(SCHEMA_TEST_ROOT_B, new byte[0])
+                    new MockMultipartFile(SCHEMA_TEST_ROOT, SCHEMA_TEST_ROOT, MediaType.APPLICATION_JSON_VALUE, "<?xml schema".getBytes(StandardCharsets.UTF_8))
                 }
             );
         });
@@ -247,7 +241,7 @@ class DocumentSRVTest extends AbstractEntityHandler {
     void updateWithInvalidDataFile() throws OperationException {
         // Providing mock knowledge
         when(repository.isExtensionInserted(SCHEMA_TEST_EXTS_B)).thenReturn(true);
-        when(repository.isDocumentInserted(anyString(), any())).thenReturn(new HashMap<>());
+        when(repository.getInsertedDocumentsByExtension(anyString())).thenReturn(new ArrayList<>());
         try(MockedStatic<SchemaETY> mock = mockStatic(SchemaETY.class)) {
             // Providing mock knowledge
             mock.when(() -> SchemaETY.fromMultipart(
@@ -258,11 +252,12 @@ class DocumentSRVTest extends AbstractEntityHandler {
                 new DataProcessingException("Unable to convert raw data", new IOException())
             );
             // Verify exception is thrown
-            assertThrows(DocumentNotFoundException.class, () -> {
+            assertThrows(DataProcessingException.class, () -> {
                 service.updateDocsByExtensionId(
+                    SCHEMA_TEST_ROOT_B,
                     SCHEMA_TEST_EXTS_B,
                     new MockMultipartFile[]{
-                        new MockMultipartFile(SCHEMA_TEST_ROOT_B, new byte[0])
+                        new MockMultipartFile(SCHEMA_TEST_ROOT, SCHEMA_TEST_ROOT_B, MediaType.APPLICATION_JSON_VALUE, "<?xml schema".getBytes(StandardCharsets.UTF_8))
                     }
                 );
             });

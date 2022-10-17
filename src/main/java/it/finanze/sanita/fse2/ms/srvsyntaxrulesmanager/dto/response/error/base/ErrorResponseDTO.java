@@ -6,8 +6,8 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.log.LogTrace
 import lombok.Data;
 import org.apache.http.HttpStatus;
 
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utils.UtilsOA.OA_ANY_STRING_MAX;
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utils.UtilsOA.OA_IDS_SIZE_MAX;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.OA_ANY_STRING_MAX;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.OA_IDS_SIZE_MAX;
 
 /**
  * Error response

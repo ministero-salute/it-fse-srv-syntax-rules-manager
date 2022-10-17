@@ -16,10 +16,11 @@ public interface IDocumentRepo {
     /**
      * Retrieves the documents entities by their extension identifier
      * @param extension The extension id
+     * @param allDocuments
      * @return The documents matching the extension identifier or an empty list if none match
      * @throws OperationException If a data-layer error occurs
      */
-    List<SchemaETY> findDocsByExtensionId(String extension) throws OperationException;
+    List<SchemaETY> findDocsByExtensionId(String extension, boolean allDocuments) throws OperationException;
 
     /**
      * Verify if exists at least one document with the given extension identifier
@@ -31,12 +32,12 @@ public interface IDocumentRepo {
 
     /**
      * Verify if given filename exists with the given extension identifier
+     *
      * @param extension The extension id
-     * @param filenames The filenames to verify
-     * @return Map containing all matching documents entities by filename
+     * @return List containing documents entities
      * @throws OperationException If a data-layer error occurs
      */
-    Map<String, SchemaETY> isDocumentInserted(String extension, List<String> filenames) throws OperationException;
+    List <SchemaETY> getInsertedDocumentsByExtension(String extension) throws OperationException;
 
     /**
      * Inserts all the given entities inside the schema
@@ -71,4 +72,21 @@ public interface IDocumentRepo {
      * @throws OperationException If a data-layer error occurs
      */
     SchemaETY findDocById(String id) throws OperationException;
+
+    /**
+     * Insert documents
+     * @param extension
+     * @param filenames
+     * @return
+     * @throws OperationException
+     */
+    List<SchemaETY> findExistingDocumentsByExtensionAndFilenames(String extension, List<String> filenames) throws OperationException;
+
+    /**
+     * Logically delete documents by filenames and extension
+     * @param extension
+     * @param filenames
+     * @return
+     */
+    List<SchemaETY> deleteDocsByExtensionIdAndFilenames(String extension, List<String> filenames) throws OperationException, DataIntegrityException;
 }

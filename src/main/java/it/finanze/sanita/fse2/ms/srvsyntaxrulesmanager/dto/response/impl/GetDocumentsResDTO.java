@@ -6,9 +6,20 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.log.LogTrace
 
 import java.util.ArrayList;
 
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class GetDocumentsResDTO extends ResponseDTO {
 
+    @ArraySchema(minItems = 0, maxItems = 10000, uniqueItems = true, schema = @Schema(implementation = SchemaDocumentDTO.class))
     private ArrayList<SchemaDocumentDTO> documents;
 
     /**

@@ -5,8 +5,9 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.OperationExcep
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IChangeSetRepo;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.service.IChangeSetSRV;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utils.UtilsMisc;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityMisc;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,17 +29,17 @@ public class ChangeSetSRV implements IChangeSetSRV {
      * @throws OperationException If a data-layer error occurs
      */
     @Override
-    public List<ChangeSetDTO> getInsertions(Date lastUpdate) throws OperationException {
+    public List<ChangeSetDTO> getInsertions(@Nullable Date lastUpdate) throws OperationException {
         // Retrieve insertions
         List<SchemaETY> insertions;
         // Verify no null value has been provided
         if(lastUpdate != null) {
             insertions = repository.getInsertions(lastUpdate);
-        }else{
+        } else {
             insertions = repository.getEveryActiveDocument();
         }
         // Iterate and populate
-        return insertions.stream().map(UtilsMisc::toChangeset).collect(Collectors.toList());
+        return insertions.stream().map(UtilityMisc::toChangeset).collect(Collectors.toList());
     }
 
     /**
@@ -49,7 +50,7 @@ public class ChangeSetSRV implements IChangeSetSRV {
      * @throws OperationException If a data-layer error occurs
      */
     @Override
-    public List<ChangeSetDTO> getDeletions(Date lastUpdate) throws OperationException {
+    public List<ChangeSetDTO> getDeletions(@Nullable Date lastUpdate) throws OperationException {
         // Create empty container
         List<ChangeSetDTO> changes = new ArrayList<>();
         // Verify no null value has been provided
@@ -57,7 +58,7 @@ public class ChangeSetSRV implements IChangeSetSRV {
             // Retrieve deletions
             List<SchemaETY> deletions = repository.getDeletions(lastUpdate);
             // Iterate and populate
-            changes = deletions.stream().map(UtilsMisc::toChangeset).collect(Collectors.toList());
+            changes = deletions.stream().map(UtilityMisc::toChangeset).collect(Collectors.toList());
         }
         return changes;
     }

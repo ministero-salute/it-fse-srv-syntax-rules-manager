@@ -85,7 +85,6 @@ public final class Constants {
      * Logs messages
      */
     public static final class Logs {
-
         /**
          * Private constructor to disallow to access from other classes
          */
@@ -105,6 +104,7 @@ public final class Constants {
         // Services
         // DocumentSRV
         public static final String ERR_SRV_ROOT_NOT_FOUND = "Il nome del 'root' file %s non corrisponde a nessuno dei valori possibili: %s";
+        public static final String ERR_SRV_INVALID_ROOT_EXT = "L'estensione del 'root' file %s non è consentita";
         public static final String ERR_SRV_DOC_NOT_FOUND = "Il documento richiesto non esiste";
         public static final String ERR_SRV_EXT_NOT_FOUND = "L'estensione richiesta non esiste";
         public static final String ERR_SRV_EXT_ALREADY_ESISTS = "L'estensione richiesta esiste già";
@@ -128,5 +128,6 @@ public final class Constants {
         // Entities
         // Schema
         public static final String ERR_ETY_BINARY_CONVERSION = "Impossibile convertire i dati binari nel formato richiesto (UTF-8)";
+        public static final String ERR_INVALID_CONTENT = "One or more than one file appears not to be a valid schema for the extension: %s";
     }
 }

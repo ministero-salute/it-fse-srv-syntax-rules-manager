@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.base.ErrorResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.UpdateDocumentsResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.PatchDocumentsResDTO;
 import org.springframework.http.MediaType;
 
 import java.lang.annotation.Retention;
@@ -16,8 +16,8 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.METHOD;
 
 @Operation(
-    summary = "Update documents by extension and root",
-    description = "Update all the provided documents matching the given extension"
+    summary = "Patch documents by extension",
+    description = "Patch all the provided documents matching the given extension"
 )
 @ApiResponses(
     value = {
@@ -26,7 +26,7 @@ import static java.lang.annotation.ElementType.METHOD;
             description = "Schema aggiornato",
             content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE,
-                schema = @Schema(implementation = UpdateDocumentsResDTO.class)
+                schema = @Schema(implementation = PatchDocumentsResDTO.class)
             )
         ),
         @ApiResponse(
@@ -65,5 +65,5 @@ import static java.lang.annotation.ElementType.METHOD;
 )
 @Target(METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface UpdateDocumentsByExt {
+public @interface PatchDocumentsByExt {
 }

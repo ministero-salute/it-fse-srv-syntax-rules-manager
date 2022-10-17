@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Date;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Logs.ERR_VAL_FUTURE_DATE;
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utils.UtilsRoutes.*;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityRoutes.*;
 
 /**
  * ChangeSet retriever controller

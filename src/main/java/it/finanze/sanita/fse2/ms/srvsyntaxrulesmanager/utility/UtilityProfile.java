@@ -1,4 +1,4 @@
-package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utils;
+package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility;
 
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,7 +6,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UtilsProfile {
+public class UtilityProfile {
     @Autowired
     private Environment environment;
 

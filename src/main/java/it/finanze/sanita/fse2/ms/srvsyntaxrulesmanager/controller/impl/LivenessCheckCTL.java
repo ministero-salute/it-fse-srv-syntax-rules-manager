@@ -29,8 +29,7 @@ public class LivenessCheckCTL implements HealthIndicator {
     @GetMapping("/status")
     @Operation(
         summary = "Health check status",
-        description = "Health check endpoint.",
-        tags = { "Actuator" }
+        description = "Health check endpoint."
     )
     @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE))
     @ApiResponses(value = {

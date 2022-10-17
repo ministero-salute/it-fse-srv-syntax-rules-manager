@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Logs.*;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY.*;
@@ -39,13 +38,18 @@ public class DocumentRepo implements IDocumentRepo {
     /**
      * Retrieves the documents entities by their extension identifier
      * @param extension The extension id
+     * @param includeDeleted
      * @return The documents matching the extension identifier or an empty list if none match
      * @throws OperationException If a data-layer error occurs
      */
     @Override
-    public List<SchemaETY> findDocsByExtensionId(String extension) throws OperationException {
-        Query query = Query.query(Criteria.where(FIELD_TYPE_ID_EXT).is(extension).and(FIELD_DELETED).is(false));
-        
+    public List<SchemaETY> findDocsByExtensionId(String extension, boolean includeDeleted) throws OperationException {
+        Query query = Query.query(Criteria.where(FIELD_TYPE_ID_EXT).is(extension));
+
+        if (!includeDeleted) {
+            query.addCriteria(Criteria.where(FIELD_DELETED).is(false));
+        }
+
         try {
            return mongo.find(query, SchemaETY.class);
         } catch (MongoException e) {
@@ -72,17 +76,15 @@ public class DocumentRepo implements IDocumentRepo {
     /**
      * Returns all documents matching extension and one of the given filenames
      *
-     * @param extension   The extension id
-     * @param filenames The filenames to verify
+     * @param extension The extension id
      * @return Map containing all matching documents entities by filename
      * @throws OperationException If a data-layer error occurs
      */
     @Override
-    public Map<String, SchemaETY> isDocumentInserted(String extension, List<String> filenames) throws OperationException {
-        Query query = Query.query(Criteria.where(FIELD_TYPE_ID_EXT).is(extension).and(FIELD_FILENAME).in(filenames).and(FIELD_DELETED).is(false));
+    public List<SchemaETY> getInsertedDocumentsByExtension(String extension) throws OperationException {
+        Query query = Query.query(Criteria.where(FIELD_TYPE_ID_EXT).is(extension).and(FIELD_DELETED).is(false));
         try {
-            List<SchemaETY> entities = mongo.find(query, SchemaETY.class);
-            return entities.stream().collect(Collectors.toMap(SchemaETY::getNameSchema, entity -> entity));
+            return mongo.find(query, SchemaETY.class);
         } catch (MongoException e) {
             throw new OperationException(ERR_REP_IS_DOCS_INSERTED , e);
         }
@@ -174,7 +176,7 @@ public class DocumentRepo implements IDocumentRepo {
         update.set(FIELD_LAST_UPDATE, new Date());
         update.set(FIELD_DELETED, true);
         // Get docs to remove
-        entities = findDocsByExtensionId(extension);
+        entities = findDocsByExtensionId(extension, false);
         try {
             // Execute
             result = mongo.updateMulti(query, update, SchemaETY.class);
@@ -200,7 +202,7 @@ public class DocumentRepo implements IDocumentRepo {
     @Override
     public SchemaETY findDocById(String id) throws OperationException {
         // Create query
-        Query query = query(where(FIELD_ID).is(new ObjectId(id)));
+        Query query = query(where(FIELD_ID).is(new ObjectId(id)).and(FIELD_DELETED).ne(true));
         try {
             // Execute
             return mongo.findOne(query, SchemaETY.class);
@@ -208,5 +210,48 @@ public class DocumentRepo implements IDocumentRepo {
             // Catch data-layer runtime exceptions and turn into a checked exception
             throw new OperationException(ERR_REP_GET_BY_ID, e);
         }
+    }
+
+    /**
+     * Returns all documents matching extension and one of the given filenames
+     *
+     * @param extension   The extension id
+     * @param filenames The filenames to verify
+     * @return Map containing all matching documents entities by filename
+     * @throws OperationException If a data-layer error occurs
+     */
+    @Override
+    public List<SchemaETY> findExistingDocumentsByExtensionAndFilenames(String extension, List<String> filenames) throws OperationException {
+        Query query = Query.query(Criteria.where(FIELD_TYPE_ID_EXT).is(extension).and(FIELD_DELETED).is(false).and(FIELD_FILENAME).in(filenames));
+        try {
+            return mongo.find(query, SchemaETY.class);
+        } catch (MongoException e) {
+            throw new OperationException("Unable to match documents with filenames for the given extension" , e);
+        }
+    }
+
+    /**
+     * Deletes all the documents entities matching the given extensions
+     * @param extension The extension id
+     * @param filenames files to be logically deleted
+     * @return The list containing all removed entities from the collection
+     * @throws OperationException If a data-layer error occurs
+     */
+    @Override
+    public List<SchemaETY> deleteDocsByExtensionIdAndFilenames(String extension, List<String> filenames) throws OperationException, DataIntegrityException {
+        Query query = Query.query(Criteria.where(FIELD_TYPE_ID_EXT).is(extension).and(FIELD_DELETED).is(false).and(FIELD_FILENAME).in(filenames));
+        Update update = new Update();
+        update.set(FIELD_LAST_UPDATE, new Date());
+        update.set(FIELD_DELETED, true);
+        List<SchemaETY> entities = findExistingDocumentsByExtensionAndFilenames(extension, filenames);
+        try {
+            UpdateResult result = mongo.updateMulti(query, update, SchemaETY.class);
+            if (entities.size() != result.getMatchedCount() || entities.size() != result.getModifiedCount()) {
+                throw new DataIntegrityException(String.format(ERR_REP_DEL_MISMATCH, result.getModifiedCount(), entities.size()));
+            }
+        } catch(MongoException e) {
+            throw new OperationException(ERR_REP_DEL_DOCS_BY_EXT , e);
+        }
+        return entities;
     }
 }

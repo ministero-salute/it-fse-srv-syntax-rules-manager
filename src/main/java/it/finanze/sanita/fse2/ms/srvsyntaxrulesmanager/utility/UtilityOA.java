@@ -1,11 +1,11 @@
-package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utils;
+package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility;
 
-public final class UtilsOA {
+public final class UtilityOA {
 
     /**
      * Private constructor to disallow to access from other classes
      */
-    private UtilsOA() {}
+    private UtilityOA() {}
 
     /**
      * Min size extension string

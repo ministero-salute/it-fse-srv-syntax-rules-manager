@@ -2,14 +2,14 @@ package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utils.UtilsMisc;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityMisc;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utils.UtilsOA.*;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.*;
 
 @Data
 @AllArgsConstructor
@@ -29,10 +29,10 @@ public class SchemaDocumentDTO implements Serializable {
         return new SchemaDocumentDTO(
             e.getId(),
             e.getNameSchema(),
-            UtilsMisc.encodeBase64(e.getContentSchema().getData()),
+            UtilityMisc.encodeBase64(e.getContentSchema().getData()),
             e.getTypeIdExtension(),
             e.getRootSchema(),
-            UtilsMisc.convertToOffsetDateTime(e.getLastUpdateDate())
+            UtilityMisc.convertToOffsetDateTime(e.getLastUpdateDate())
         );
     }
 

@@ -140,6 +140,10 @@ public abstract class AbstractEntityHandler {
         return new HashMap<>(replacement);
     }
 
+    protected List<SchemaETY> getEntitiesToUseAsReplacementList() {
+        return new ArrayList<>(getEntitiesToUseAsReplacement().values());
+    }
+
     private void setTestEntityToReplace() throws IOException {
         // List of all files inside the sample modified directory
         try (Stream<Path> files = Files.list(SCHEMA_MOD_SAMPLE_FILES)) {

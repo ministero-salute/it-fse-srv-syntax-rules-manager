@@ -1,4 +1,4 @@
-package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utils;
+package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility;
 
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.changes.ChangeSetDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
@@ -10,12 +10,12 @@ import java.time.ZoneOffset;
 import java.util.Base64;
 import java.util.Date;
 
-public final class UtilsMisc {
+public final class UtilityMisc {
 
     /**
      * Private constructor to disallow to access from other classes
      */
-    private UtilsMisc() {}
+    private UtilityMisc() {}
 
     public static OffsetDateTime convertToOffsetDateTime(Date dateToConvert) {
         return dateToConvert.toInstant().atOffset(ZoneOffset.UTC);
