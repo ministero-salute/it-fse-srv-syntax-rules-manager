@@ -1,44 +1,36 @@
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl;
 
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.log.LogTraceInfoDTO;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Value;
 
 import java.io.Serializable;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.DeleteDocumentsResDTO.DeletePayloadDTO;
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.*;
 
-public class DeleteDocumentsResDTO extends ResponseDTO<DeletePayloadDTO> {
+@Value
+@EqualsAndHashCode(callSuper = true)
+public class DeleteDocumentsResDTO extends ResponseDTO<DeletePayloadDTO> implements Serializable {
+    int deletedSchema;
+
     @Getter
     @AllArgsConstructor
     public static class DeletePayloadDTO implements Serializable {
-        /**
-         * Extension identifier
-         */
-        @Schema(maxLength = OA_EXTS_STRING_MAX)
         private String extension;
-        /**
-         * Elements uploaded
-         */
-        @ArraySchema(
-                minItems = OA_ARRAY_FILES_MIN,
-                maxItems = OA_ARRAY_FILES_MAX,
-                schema = @Schema(maxLength = OA_ANY_STRING_MAX)
-        )
-        private int deletedSchema;
     }
 
     /**
      * Instantiates a new response DTO.
      *
-     * @param traceInfo The {@link LogTraceInfoDTO} instance
-     * @param data      The data object
+     * @param traceInfo     The {@link LogTraceInfoDTO} instance
+     * @param data          The data object
+     * @param deletedSchema
      */
-    public DeleteDocumentsResDTO(LogTraceInfoDTO traceInfo, DeletePayloadDTO data) {
-        super(traceInfo, data);
+    public DeleteDocumentsResDTO(LogTraceInfoDTO traceInfo, DeletePayloadDTO data, int deletedSchema) {
+        super(traceInfo, null);
+        this.deletedSchema = deletedSchema;
     }
 }

@@ -86,7 +86,7 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
         String checkedRoot = checkRootExtension(root);
         if (validateFiles(files)) {
             int insertedSchema = service.insertDocsByExtensionId(checkedRoot, extension, files);
-            return new UploadDocumentsResDTO(getLogTraceInfo(), new UploadDocumentsResDTO.UploadPayloadDTO(extension, insertedSchema));
+            return new UploadDocumentsResDTO(getLogTraceInfo(), new UploadDocumentsResDTO.UploadPayloadDTO(extension), insertedSchema);
         } else {
             throw new InvalidContentException(String.format(Constants.Logs.ERR_INVALID_CONTENT, extension));
         }
@@ -109,7 +109,7 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
         String checkedRoot = checkRootExtension(root);
         if (validateFiles(files)) {
             int updatedSchema = service.updateDocsByExtensionId(checkedRoot, extension, files);
-            return new UpdateDocumentsResDTO(getLogTraceInfo(), new UpdateDocumentsResDTO.UpdatePayloadDTO(extension, updatedSchema));
+            return new UpdateDocumentsResDTO(getLogTraceInfo(), new UpdateDocumentsResDTO.UpdatePayloadDTO(extension), updatedSchema);
         } else {
             throw new InvalidContentException(String.format(Constants.Logs.ERR_INVALID_CONTENT, extension));
         }
@@ -125,7 +125,7 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
     @Override
     public DeleteDocumentsResDTO deleteDocuments(String extension) throws OperationException, ExtensionNotFoundException, DataIntegrityException {
         int deletedSchema = service.deleteDocsByExtensionId(extension);
-        return new DeleteDocumentsResDTO(getLogTraceInfo(), new DeleteDocumentsResDTO.DeletePayloadDTO(extension, deletedSchema));
+        return new DeleteDocumentsResDTO(getLogTraceInfo(), new DeleteDocumentsResDTO.DeletePayloadDTO(extension), deletedSchema);
     }
 
     /**
@@ -145,7 +145,7 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
         
         if (validateFiles(files)) {
             int patchedDocuments = service.patchDocsByExtensionId(extension, files);
-            return new UpdateDocumentsResDTO(getLogTraceInfo(), new UpdateDocumentsResDTO.UpdatePayloadDTO(extension, patchedDocuments));
+            return new UpdateDocumentsResDTO(getLogTraceInfo(), new UpdateDocumentsResDTO.UpdatePayloadDTO(extension), patchedDocuments);
         } else {
             throw new InvalidContentException(String.format(Constants.Logs.ERR_INVALID_CONTENT, extension));
         }
