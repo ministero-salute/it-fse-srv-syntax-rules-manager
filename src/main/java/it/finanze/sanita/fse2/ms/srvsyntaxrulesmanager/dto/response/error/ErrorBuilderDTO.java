@@ -48,7 +48,7 @@ public final class ErrorBuilderDTO {
             ErrorType.VALIDATION.getType(),
             ErrorType.VALIDATION.getTitle(),
             String.format(
-                "Failed to convert %s to %s",
+                ERR_VAL_UNABLE_CONVERT,
                 ex.getName(),
                 ex.getParameter().getParameter().getType().getSimpleName()
             ),
