@@ -31,6 +31,7 @@ public final class ErrorInstance {
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static final class Fields {
                 public static final String ROOT = "root";
+                public static final String FILES = "files";
         }
 
 }

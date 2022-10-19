@@ -13,6 +13,7 @@ import javax.validation.ConstraintViolationException;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Logs.*;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.ErrorInstance.*;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.ErrorInstance.Fields.FILES;
 import static org.apache.http.HttpStatus.*;
 
 /**
@@ -108,7 +109,7 @@ public final class ErrorBuilderDTO {
             ErrorType.VALIDATION.getTitle(),
             ex.getMessage(),
             SC_BAD_REQUEST,
-            ErrorType.VALIDATION.toInstance(Validation.CONSTRAINT_FIELD, "file")
+            ErrorType.VALIDATION.toInstance(Validation.CONSTRAINT_FIELD, FILES)
         );
 
     }
