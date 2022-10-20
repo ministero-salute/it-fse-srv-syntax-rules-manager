@@ -9,7 +9,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Logs.ERR_SRV_INVALID_ROOT_EXT;
@@ -58,7 +57,7 @@ public abstract class AbstractCTL {
 		boolean isValid = true;
 		if (files != null && files.length > 0) {
 			for (MultipartFile file : files) {
-				if (!isValidSchema(file)) {
+				if (!isValidFile(file)) {
 					isValid = false;
 					break;
 				}
@@ -70,13 +69,11 @@ public abstract class AbstractCTL {
 		return isValid;
 	}
 
-    private boolean isValidSchema(MultipartFile file) {
+    private boolean isValidFile(MultipartFile file) {
 		if (file != null && !file.isEmpty()) {
 			try {
-				final String content = new String(file.getBytes(), StandardCharsets.UTF_8);
 				final String extension = Optional.ofNullable(FilenameUtils.getExtension(file.getOriginalFilename())).orElse("");
-				final boolean isXsd = extension.equals("xsd");
-				return isXsd && content.startsWith("<?xml") && content.contains("xs:schema");
+				return extension.equals("xsd");
 			} catch (Exception e) {
 				return false;
 			}
