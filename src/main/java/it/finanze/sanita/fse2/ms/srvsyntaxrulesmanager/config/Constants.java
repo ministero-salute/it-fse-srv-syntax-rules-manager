@@ -102,6 +102,7 @@ public final class Constants {
         public static final String ERR_VAL_FUTURE_DATE = "La data del ultimo aggiornamento non può essere nel futuro";
         public static final String ERR_VAL_FILES_DUPLICATED = "Uno o più file duplicati";
         public static final String ERR_VAL_MISSING_PART = "Il campo richiesto '%s' non è presente";
+        public static final String ERR_VAL_UNABLE_CONVERT = "Impossibile convertire dal tipo %s al tipo %s il valore richiesto";
         public static final String ERR_VAL_MISSING_PARAMETER = "Il parametro richiesto '%s' non è presente";
 
         // Services
