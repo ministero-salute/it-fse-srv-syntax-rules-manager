@@ -7,6 +7,8 @@ package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.impl;
 import java.util.ArrayList;
 
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.schema.SchemaValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,14 +21,6 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocu
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentsResDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.UpdateDocumentsResDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.UploadDocumentsResDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.DataIntegrityException;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.DataProcessingException;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.ExtensionAlreadyExistsException;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.ExtensionNotFoundException;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.InvalidContentException;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.RootNotValidException;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.service.IDocumentSRV;
 
 @RestController
@@ -84,10 +78,11 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
      */
     @Override
     public UploadDocumentsResDTO uploadDocuments(String root, String extension, MultipartFile[] files)
-        throws OperationException, ExtensionAlreadyExistsException, DataProcessingException, RootNotValidException, InvalidContentException {
+        throws OperationException, ExtensionAlreadyExistsException, DataProcessingException, RootNotValidException, InvalidContentException, SchemaValidatorException {
 
         String checkedRoot = checkRootExtension(root);
         if (validateFiles(files)) {
+            new SchemaValidator(root).verify(files);
             int insertedSchema = service.insertDocsByExtensionId(checkedRoot, extension, files);
             return new UploadDocumentsResDTO(getLogTraceInfo(), new UploadDocumentsResDTO.UploadPayloadDTO(extension), insertedSchema);
         } else {
@@ -108,9 +103,10 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
      * @throws InvalidContentException If at least one files has an invalid content that means is empty or not a proper schema file
      */
     @Override
-    public UpdateDocumentsResDTO updateDocuments(String root, String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, InvalidContentException, RootNotValidException {
+    public UpdateDocumentsResDTO updateDocuments(String root, String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, InvalidContentException, RootNotValidException, SchemaValidatorException {
         String checkedRoot = checkRootExtension(root);
         if (validateFiles(files)) {
+            new SchemaValidator(root).verify(files);
             int updatedSchema = service.updateDocsByExtensionId(checkedRoot, extension, files);
             return new UpdateDocumentsResDTO(getLogTraceInfo(), new UpdateDocumentsResDTO.UpdatePayloadDTO(extension), updatedSchema);
         } else {

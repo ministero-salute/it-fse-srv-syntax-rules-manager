@@ -104,6 +104,8 @@ public final class Constants {
         public static final String ERR_VAL_MISSING_PART = "Il campo richiesto '%s' non è presente";
         public static final String ERR_VAL_UNABLE_CONVERT = "Impossibile convertire dal tipo %s al tipo %s il valore richiesto";
         public static final String ERR_VAL_MISSING_PARAMETER = "Il parametro richiesto '%s' non è presente";
+        public static final String ERR_VAL_INVALID_SCHEMA = "Lo schema fornito non risulta valido: %s";
+        public static final String ERR_VAL_INVALID_SCHEMA_IO = "Impossibile elaborare il contenuto dello schema";
 
         // Services
         // DocumentSRV
@@ -112,7 +114,7 @@ public final class Constants {
         public static final String ERR_SRV_DOC_NOT_FOUND = "Il documento richiesto non esiste";
         public static final String ERR_SRV_EXT_NOT_FOUND = "L'estensione richiesta non esiste";
         public static final String ERR_SRV_EXT_ALREADY_ESISTS = "L'estensione richiesta esiste già";
-        public static final String ERR_SRV_EXT_DOC_NOT_FOUND = "%s non esiste nell'istanza dello schema";
+        public static final String ERR_SRV_ROOT_DOC_NOT_FOUND = "Impossibile recuperare il documento root dello schema";
         // Repository
         // DocumentRepo
         public static final String ERR_REP_DOCS_NOT_FOUND = "Impossibile recuperare i documenti dell'estensione richiesta";

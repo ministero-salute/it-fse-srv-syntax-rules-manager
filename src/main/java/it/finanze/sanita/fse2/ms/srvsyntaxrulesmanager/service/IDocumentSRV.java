@@ -71,7 +71,7 @@ public interface IDocumentSRV {
      * @param files
      * @return
      */
-    int patchDocsByExtensionId(String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException;
+    int patchDocsByExtensionId(String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, SchemaValidatorException;
 
     /**
      * Find all active documents in DB

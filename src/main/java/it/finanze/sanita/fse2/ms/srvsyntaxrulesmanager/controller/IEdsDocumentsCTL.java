@@ -57,7 +57,7 @@ public interface IEdsDocumentsCTL {
             @RequestPart @Parameter(description = "Root filename (eg. Test.xsd)", schema = @Schema(minLength = OA_ANY_STRING_MIN, maxLength = OA_ANY_STRING_MAX)) @NotBlank(message = ERR_VAL_ROOT_BLANK) @Size(min = OA_ANY_STRING_MIN, max = OA_ANY_STRING_MAX, message = "Root filename does not match the expected size") String root,
             @RequestPart @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = ERR_VAL_EXT_BLANK) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size") String extension,
             @RequestPart @Parameter(description = "Files", array = @ArraySchema(minItems = OA_ARRAY_FILES_MIN, maxItems = OA_ARRAY_FILES_MAX, schema = @Schema(type = "string", format = "binary", maxLength = OA_FILE_CONTENT_MAX))) @Size(min = OA_ARRAY_FILES_MIN, max = OA_ARRAY_FILES_MAX, message = "File array does not match the expected size") @UniqueMultipart(message = ERR_VAL_FILES_DUPLICATED) MultipartFile[] files)
-            throws OperationException, ExtensionAlreadyExistsException, DataProcessingException, RootNotValidException, InvalidContentException;
+        throws OperationException, ExtensionAlreadyExistsException, DataProcessingException, RootNotValidException, InvalidContentException, SchemaValidatorException;
 
     @PutMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     @UpdateDocumentsByExt
@@ -65,8 +65,8 @@ public interface IEdsDocumentsCTL {
             @RequestPart @Parameter(description = "Root filename (eg. Test.xsd)", schema = @Schema(minLength = OA_ANY_STRING_MIN, maxLength = OA_ANY_STRING_MAX)) @NotBlank(message = ERR_VAL_ROOT_BLANK) @Size(min = OA_ANY_STRING_MIN, max = OA_ANY_STRING_MAX, message = "Root filename does not match the expected size") String root,
             @RequestPart @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = ERR_VAL_EXT_BLANK) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size") String extension,
             @RequestPart @Parameter(description = "Files", array = @ArraySchema(minItems = OA_ARRAY_FILES_MIN, maxItems = OA_ARRAY_FILES_MAX, schema = @Schema(type = "string", format = "binary", maxLength = OA_FILE_CONTENT_MAX))) @Size(min = OA_ARRAY_FILES_MIN, max = OA_ARRAY_FILES_MAX, message = "File array does not match the expected size") @UniqueMultipart(message = ERR_VAL_FILES_DUPLICATED) MultipartFile[] files)
-            throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException,
-            DataIntegrityException, InvalidContentException, RootNotValidException;
+        throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException,
+        DataIntegrityException, InvalidContentException, RootNotValidException, SchemaValidatorException;
 
     @PatchMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     @PatchDocumentsByExt

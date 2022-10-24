@@ -9,6 +9,7 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IDocumentRepo;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.service.IDocumentSRV;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.schema.SchemaValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -160,10 +161,19 @@ public class DocumentSRV implements IDocumentSRV {
     }
 
     @Override
-    public int patchDocsByExtensionId(String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException {
+    public int patchDocsByExtensionId(String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, SchemaValidatorException {
         if (!repository.isExtensionInserted(extension)) {
             throw new ExtensionNotFoundException(ERR_SRV_EXT_NOT_FOUND);
         }
+        // Get current docs
+        List<SchemaETY> docs = repository.getInsertedDocumentsByExtension(extension);
+        // Get root entity
+        Optional<String> root = docs.stream().filter(SchemaETY::getRootSchema).map(SchemaETY::getNameSchema).findFirst();
+        if(!root.isPresent()) throw new DocumentNotFoundException(ERR_SRV_ROOT_DOC_NOT_FOUND);
+        // Now convert to map <filename, byte-data>
+        Map<String, byte[]> map = docs.stream().collect(Collectors.toMap(SchemaETY::getNameSchema, entity -> entity.getContentSchema().getData()));
+        // Now verify
+        new SchemaValidator(root.get()).verify(map, files);
 
         List<String> filenames = Arrays.stream(files).map(MultipartFile::getOriginalFilename).collect(Collectors.toList());
         List<SchemaETY> deletedFromDB = repository.deleteDocsByExtensionIdAndFilenames(extension, filenames);

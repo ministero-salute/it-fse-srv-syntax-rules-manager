@@ -271,6 +271,18 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(out, headers, out.getStatus());
     }
 
+    @ExceptionHandler(SchemaValidatorException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleSchemaValidatorException(SchemaValidatorException ex) {
+        // Log me
+        log.error("HANDLER handleSchemaValidatorException()", ex);
+        // Create error DTO
+        ErrorResponseDTO out = createSchemaValidatorException(getLogTraceInfo(), ex);
+        // Set HTTP headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
+        return new ResponseEntity<>(out, headers, out.getStatus());
+    }
+
     /**
      * Generate a new {@link LogTraceInfoDTO} instance
      * @return The new instance

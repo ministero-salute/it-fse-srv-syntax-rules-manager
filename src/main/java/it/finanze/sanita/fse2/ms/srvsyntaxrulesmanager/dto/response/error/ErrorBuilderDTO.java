@@ -114,7 +114,17 @@ public final class ErrorBuilderDTO {
             SC_BAD_REQUEST,
             ErrorType.VALIDATION.toInstance(Validation.CONSTRAINT_FIELD, FILES)
         );
+    }
 
+    public static ErrorResponseDTO createSchemaValidatorException(LogTraceInfoDTO trace, SchemaValidatorException ex) {
+        return new ErrorResponseDTO(
+            trace,
+            ErrorType.IO.getType(),
+            ErrorType.IO.getTitle(),
+            ex.getMessage(),
+            SC_UNPROCESSABLE_ENTITY,
+            ErrorType.IO.toInstance(IO.CONVERSION)
+        );
     }
 
     public static ErrorResponseDTO createOperationError(LogTraceInfoDTO trace, OperationException ex) {
