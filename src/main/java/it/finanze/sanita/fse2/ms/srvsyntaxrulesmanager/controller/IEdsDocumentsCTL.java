@@ -73,8 +73,8 @@ public interface IEdsDocumentsCTL {
     UpdateDocumentsResDTO patchDocuments(
             @RequestPart @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = ERR_VAL_EXT_BLANK) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size") String extension,
             @RequestPart @Parameter(description = "Files", array = @ArraySchema(minItems = OA_ARRAY_FILES_MIN, maxItems = OA_ARRAY_FILES_MAX, schema = @Schema(type = "string", format = "binary", maxLength = OA_FILE_CONTENT_MAX))) @Size(min = OA_ARRAY_FILES_MIN, max = OA_ARRAY_FILES_MAX, message = "File array does not match the expected size") @UniqueMultipart(message = ERR_VAL_FILES_DUPLICATED) MultipartFile[] files)
-            throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException,
-            DataIntegrityException, InvalidContentException, RootNotValidException;
+        throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException,
+        DataIntegrityException, InvalidContentException, RootNotValidException, SchemaValidatorException;
 
     @DeleteMapping(API_DELETE_BY_EXTS)
     @DeleteDocumentsByExt

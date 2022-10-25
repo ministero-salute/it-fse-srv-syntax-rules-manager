@@ -140,7 +140,7 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
      * @throws InvalidContentException    If at least one files has an invalid content that means is empty or not a proper schema file
      */
     @Override
-    public UpdateDocumentsResDTO patchDocuments(String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, InvalidContentException, RootNotValidException {
+    public UpdateDocumentsResDTO patchDocuments(String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, InvalidContentException, RootNotValidException, SchemaValidatorException {
         
         if (validateFiles(files)) {
             int patchedDocuments = service.patchDocsByExtensionId(extension, files);
