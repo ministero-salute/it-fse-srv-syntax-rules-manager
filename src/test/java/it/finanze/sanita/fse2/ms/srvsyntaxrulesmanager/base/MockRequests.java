@@ -7,13 +7,19 @@ import org.springframework.mock.web.MockPart;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.base.AbstractEntityHandler.SCHEMA_MOD_SAMPLE_FILES;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.base.AbstractEntityHandler.SCHEMA_SAMPLE_FILES;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityRoutes.*;
 import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
 import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
@@ -60,8 +66,8 @@ public final class MockRequests {
     public static MockHttpServletRequestBuilder putDocsByExtensionIdReq(String root, String extension, MockMultipartFile[] files) {
         // Create request
         MockMultipartHttpServletRequestBuilder req = multipart(API_DOCUMENT_MAPPER);
-        req.part(new MockPart("root", root.getBytes()));
-        req.part(new MockPart("extension", extension.getBytes()));
+        req.part(new MockPart(API_PARAM_ROOT, root.getBytes()));
+        req.part(new MockPart(API_PATH_EXTS_VAR, extension.getBytes()));
         // Iterate file
         for (MockMultipartFile f : files) {
             req.file(f);
@@ -74,17 +80,16 @@ public final class MockRequests {
         return req;
     }
 
-    public static MockHttpServletRequestBuilder patchDocsByExtensionIdReq(String extension, List<MockMultipartFile> files) {
+    public static MockHttpServletRequestBuilder patchDocsByExtensionIdReq(String extension, MockMultipartFile[] files) {
         // Create request
         MockMultipartHttpServletRequestBuilder req = multipart(API_DOCUMENT_MAPPER);
-        req.part(new MockPart("extension", extension.getBytes()));
+        req.part(new MockPart(API_PATH_EXTS_VAR, extension.getBytes()));
         // Iterate file
         if (files != null) {
             for (MockMultipartFile f : files) {
                 req.file(f);
             }
         }
-
         // Modify output method
         req.with(request -> {
             request.setMethod(HttpMethod.PATCH.name());
@@ -102,8 +107,8 @@ public final class MockRequests {
         }
         // Add parts
         req.part(
-            new MockPart("root", root.getBytes()),
-            new MockPart("extension", extension.getBytes())
+            new MockPart(API_PARAM_ROOT, root.getBytes()),
+            new MockPart(API_PATH_EXTS_VAR, extension.getBytes())
         );
         return req;
     }
@@ -112,7 +117,7 @@ public final class MockRequests {
         return "  ";
     }
 
-    public static MockMultipartFile createFakeMultipart(String filename, boolean validFile) {
+    public static MockMultipartFile createInvalidFakeMultipart(String filename, boolean validFile) {
         return new MockMultipartFile(
             "files",
             filename,
@@ -120,6 +125,43 @@ public final class MockRequests {
             validFile ? "<?xml xs:schema".getBytes(StandardCharsets.UTF_8) : new byte[0]
         );
     }
+
+    public static MockMultipartFile[] createPartialSchemaFromResource(String field) throws IOException {
+        return retrieveSchemaFromResource(field, SCHEMA_MOD_SAMPLE_FILES).toArray(new MockMultipartFile[0]);
+    }
+
+    public static MockMultipartFile[] createSchemaFromResource(String field, boolean isValid) throws IOException {
+        // Get as array
+        ArrayDeque<MockMultipartFile> mocks = new ArrayDeque<>(
+            retrieveSchemaFromResource(field, SCHEMA_SAMPLE_FILES)
+        );
+        // Just remove last file, it won't be validated anymore
+        if(!isValid) mocks.removeLast();
+        return mocks.toArray(new MockMultipartFile[0]);
+    }
+
+    private static Queue<MockMultipartFile> retrieveSchemaFromResource(String field,Path p) throws IOException {
+        // Working var
+        Queue<MockMultipartFile> mocks = new ArrayDeque<>();
+        // List of all files inside the sample modified directory
+        try (Stream<Path> files = Files.list(p)) {
+            // Convert to list
+            List<Path> samples = files.collect(Collectors.toList());
+            // Add to each map and convert
+            for (Path path : samples) {
+                mocks.add(
+                    new MockMultipartFile(
+                        field,
+                        path.getFileName().toString(),
+                        APPLICATION_XML_VALUE,
+                        Files.newInputStream(path.toFile().toPath())
+                    )
+                );
+            }
+        }
+        return mocks;
+    }
+
 
     public static MockHttpServletRequestBuilder findActiveDocsReq() {
         return get(API_DOCUMENT_MAPPER)
