@@ -7,10 +7,12 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.DataIntegrityE
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IDocumentRepo;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.ComponentScan;
@@ -157,7 +159,6 @@ class DocumentRepoTest extends AbstractDatabaseHandler {
     }
 
     @Test
-    @Disabled("to modify")
     void updateDocsByExtensionId() throws OperationException, DataIntegrityException {
         // Working vars
         Map<String, SchemaETY> newest = getEntitiesToUseAsReplacement();
@@ -169,9 +170,7 @@ class DocumentRepoTest extends AbstractDatabaseHandler {
         );
         Map<String, SchemaETY> current = from.stream().collect(Collectors.toMap(SchemaETY::getNameSchema, entity -> entity));
         // Modify data
-        current.forEach((name, entity) -> {
-            entities.put(entity, newest.get(name));
-        });
+        newest.forEach((name, entity) -> entities.put(current.get(name), entity));
         // Replace test entities content
         repository.updateDocsByExtensionId(entities);
         // Retrieve new documents
@@ -204,8 +203,6 @@ class DocumentRepoTest extends AbstractDatabaseHandler {
         Map<String, SchemaETY> newest = getEntitiesToUseAsReplacement();
         Map<SchemaETY, SchemaETY> entities = new HashMap<>();
         BulkOperations ops = Mockito.spy(BulkOperations.class);
-        // Documents to modify
-        List<String> filenames = new ArrayList<>(getEntitiesToUseAsReplacement().keySet());
         // Retrieve old documents
         List<SchemaETY> from = repository.getInsertedDocumentsByExtension(
                 SCHEMA_TEST_EXTS_B
@@ -213,9 +210,7 @@ class DocumentRepoTest extends AbstractDatabaseHandler {
         Map<String, SchemaETY> current = from.stream().collect(Collectors.toMap(SchemaETY::getNameSchema, entity -> entity));
 
         // Modify data
-        current.forEach((name, entity) -> {
-            entities.put(entity, newest.get(name));
-        });
+        current.forEach((name, entity) -> entities.put(entity, newest.get(name)));
         // Provide knowledge
         doReturn(ops).when(mongo).bulkOps(UNORDERED, SchemaETY.class);
         doThrow(new MongoException("test")).when(ops).execute();
