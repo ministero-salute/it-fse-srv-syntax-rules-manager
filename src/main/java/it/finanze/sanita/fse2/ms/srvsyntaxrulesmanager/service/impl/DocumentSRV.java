@@ -76,7 +76,7 @@ public class DocumentSRV implements IDocumentSRV {
      */
     @Override
     public int insertDocsByExtensionId(String root, String extension, MultipartFile[] files)
-        throws OperationException, ExtensionAlreadyExistsException, DataProcessingException, RootNotValidException {
+        throws OperationException, ExtensionAlreadyExistsException, DataProcessingException, RootNotValidException, SchemaValidatorException {
 
         List<String> filenames = Stream.of(files).map(MultipartFile::getOriginalFilename).collect(Collectors.toList());
         Optional<String> rootName = filenames.stream().filter(root::equals).findFirst();
@@ -88,6 +88,8 @@ public class DocumentSRV implements IDocumentSRV {
         if (repository.isExtensionInserted(extension)) {
             throw new ExtensionAlreadyExistsException(ERR_SRV_EXT_ALREADY_ESISTS);
         }
+
+        new SchemaValidator(root).verify(files);
 
         List<SchemaETY> entities = new ArrayList<>();
         for (MultipartFile f : files) {
@@ -111,7 +113,7 @@ public class DocumentSRV implements IDocumentSRV {
      * @throws DataProcessingException If unable to convert the input raw data into a binary representation
      */
     @Override
-    public int updateDocsByExtensionId(String root, String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DataProcessingException, DataIntegrityException, RootNotValidException {
+    public int updateDocsByExtensionId(String root, String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DataProcessingException, DataIntegrityException, RootNotValidException, SchemaValidatorException {
         List<String> filenames = Stream.of(files).map(MultipartFile::getOriginalFilename).collect(Collectors.toList());
         Optional<String> rootName = filenames.stream().filter(root::equals).findFirst();
 
@@ -122,6 +124,8 @@ public class DocumentSRV implements IDocumentSRV {
         if (!repository.isExtensionInserted(extension)) {
             throw new ExtensionNotFoundException(ERR_SRV_EXT_NOT_FOUND);
         }
+        // Verify files
+        new SchemaValidator(root).verify(files);
 
         List<SchemaETY> toInsert = new ArrayList<>();
 

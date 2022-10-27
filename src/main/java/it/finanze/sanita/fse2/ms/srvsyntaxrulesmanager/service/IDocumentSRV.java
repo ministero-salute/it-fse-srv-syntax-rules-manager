@@ -41,7 +41,7 @@ public interface IDocumentSRV {
      * @throws DataProcessingException If an error occurs while converting raw data to entity type
      * @throws RootNotValidException If the given root filename is not present in the files array
      */
-    int insertDocsByExtensionId(String root, String extension, MultipartFile[] files) throws OperationException, ExtensionAlreadyExistsException, DataProcessingException, RootNotValidException;
+    int insertDocsByExtensionId(String root, String extension, MultipartFile[] files) throws OperationException, ExtensionAlreadyExistsException, DataProcessingException, RootNotValidException, SchemaValidatorException;
 
     /**
      * Update the documents content with the provided ones according to the extension, deleting the old ones
@@ -54,7 +54,7 @@ public interface IDocumentSRV {
      * @throws DocumentNotFoundException If at least one document to be replaced is not found inside the collection
      * @throws DataProcessingException If unable to convert the input raw data into a binary representation
      */
-    int updateDocsByExtensionId(String root, String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, RootNotValidException;
+    int updateDocsByExtensionId(String root, String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, RootNotValidException, SchemaValidatorException;
 
     /**
      * Deletes all the documents entities matching the given extensions

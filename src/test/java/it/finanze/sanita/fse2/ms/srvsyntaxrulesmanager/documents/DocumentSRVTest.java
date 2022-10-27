@@ -22,10 +22,11 @@ import org.springframework.mock.web.MockMultipartFile;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.base.MockRequests.createSchemaFromResource;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityRoutes.API_PARAM_FILES;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @WebMvcTest(IDocumentSRV.class)
@@ -94,16 +95,9 @@ class DocumentSRVTest extends AbstractEntityHandler {
         // Verify exception is not thrown
         assertDoesNotThrow(() -> {
             service.insertDocsByExtensionId(
-                SCHEMA_TEST_ROOT_B,
+                SCHEMA_TEST_ROOT,
                 SCHEMA_TEST_EXTS_D,
-                new MockMultipartFile[]{
-                    new MockMultipartFile(
-                        SCHEMA_TEST_ROOT_B,
-                        SCHEMA_TEST_ROOT_B,
-                        "application/xsd",
-                        "<?xml schema".getBytes(StandardCharsets.UTF_8)
-                    )
-                }
+                createSchemaFromResource(API_PARAM_FILES, true)
             );
         });
     }
@@ -139,16 +133,9 @@ class DocumentSRVTest extends AbstractEntityHandler {
         // Verify exception is not thrown
         assertThrows(OperationException.class, () -> {
             service.insertDocsByExtensionId(
-                SCHEMA_TEST_ROOT_B,
+                SCHEMA_TEST_ROOT,
                 SCHEMA_TEST_EXTS_D,
-                new MockMultipartFile[]{
-                    new MockMultipartFile(
-                        SCHEMA_TEST_ROOT_B,
-                        SCHEMA_TEST_ROOT_B,
-                        "application/xsd",
-                        "<?xml schema".getBytes(StandardCharsets.UTF_8)
-                    )
-                }
+                createSchemaFromResource(API_PARAM_FILES, true)
             );
         });
     }
@@ -170,16 +157,9 @@ class DocumentSRVTest extends AbstractEntityHandler {
            // Verify exception is thrown
            assertThrows(DataProcessingException.class, () -> {
                service.insertDocsByExtensionId(
-                   SCHEMA_TEST_ROOT_B,
+                   SCHEMA_TEST_ROOT,
                    SCHEMA_TEST_EXTS_D,
-                   new MockMultipartFile[]{
-                       new MockMultipartFile(
-                           SCHEMA_TEST_ROOT_B,
-                           SCHEMA_TEST_ROOT_B,
-                           "application/xsd",
-                           "<?xml schema".getBytes(StandardCharsets.UTF_8)
-                       )
-                   }
+                   createSchemaFromResource(API_PARAM_FILES, true)
                );
             });
         }
@@ -197,26 +177,7 @@ class DocumentSRVTest extends AbstractEntityHandler {
             service.updateDocsByExtensionId(
                 SCHEMA_TEST_ROOT,
                 SCHEMA_TEST_EXTS_B,
-                new MockMultipartFile[]{
-                    new MockMultipartFile(
-                            "CDA.xsd",
-                            "CDA.xsd",
-                            MediaType.APPLICATION_XML.toString(),
-                            "<?xml schema".getBytes(StandardCharsets.UTF_8)
-                    ),
-                    new MockMultipartFile(
-                        "datatypes.xsd",
-                        "datatypes.xsd",
-                        MediaType.APPLICATION_XML.toString(),
-                        "<?xml schema".getBytes(StandardCharsets.UTF_8)
-                    ),
-                    new MockMultipartFile(
-                        "datatypes-base.xsd",
-                        "datatypes-base.xsd",
-                        MediaType.APPLICATION_XML.toString(),
-                        "<?xml schema".getBytes(StandardCharsets.UTF_8)
-                    ),
-                }
+                createSchemaFromResource(API_PARAM_FILES, true)
             );
         });
     }
@@ -254,11 +215,9 @@ class DocumentSRVTest extends AbstractEntityHandler {
             // Verify exception is thrown
             assertThrows(DataProcessingException.class, () -> {
                 service.updateDocsByExtensionId(
-                    SCHEMA_TEST_ROOT_B,
+                    SCHEMA_TEST_ROOT,
                     SCHEMA_TEST_EXTS_B,
-                    new MockMultipartFile[]{
-                        new MockMultipartFile(SCHEMA_TEST_ROOT, SCHEMA_TEST_ROOT_B, MediaType.APPLICATION_JSON_VALUE, "<?xml schema".getBytes(StandardCharsets.UTF_8))
-                    }
+                    createSchemaFromResource(API_PARAM_FILES, true)
                 );
             });
         }

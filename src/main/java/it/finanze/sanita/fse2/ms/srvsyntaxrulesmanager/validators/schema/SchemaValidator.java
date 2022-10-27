@@ -1,5 +1,6 @@
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.schema;
 
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.RootNotValidException;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.SchemaValidatorException;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,9 +15,13 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Logs.*;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.ErrorInstance.Fields.ROOT;
 
 public class SchemaValidator implements LSResourceResolver {
 
@@ -70,7 +75,7 @@ public class SchemaValidator implements LSResourceResolver {
         // Compile & resolve
         try {
             factory.newSchema(getRoot());
-        } catch (IOException | SAXException e) {
+        } catch (IOException | SAXException | RootNotValidException e) {
             throw new SchemaValidatorException(
                 String.format(
                     ERR_VAL_INVALID_SCHEMA,
@@ -79,7 +84,17 @@ public class SchemaValidator implements LSResourceResolver {
         }
     }
 
-    private StreamSource getRoot() throws IOException {
+    private List<String> getFilenames() {
+        return new ArrayList<>(mapping.keySet());
+    }
+
+    private StreamSource getRoot() throws IOException, RootNotValidException {
+        // Add root file check
+        if(!mapping.containsKey(root)) {
+            throw new RootNotValidException(
+                String.format(ERR_SRV_ROOT_NOT_FOUND, root, getFilenames()), ROOT
+            );
+        }
         return new StreamSource(new ByteArrayInputStream(mapping.get(root)));
     }
 

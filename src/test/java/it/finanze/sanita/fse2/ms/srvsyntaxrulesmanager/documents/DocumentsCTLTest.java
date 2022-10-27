@@ -27,11 +27,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.base.MockRequests.*;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.ErrorType.*;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityRoutes.API_PARAM_FILES;
 import static org.apache.http.HttpStatus.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
@@ -64,7 +64,9 @@ class DocumentsCTLTest extends AbstractEntityHandler {
 
     @Test
     void getDocumentById() throws Exception {
-        SchemaETY schemaETY = SchemaETY.fromMultipart(createFakeMultipart("test1.xsd", true), SCHEMA_TEST_EXTS_A, true);
+        SchemaETY schemaETY = SchemaETY.fromMultipart(
+            createInvalidFakeMultipart("test1.xsd", true), SCHEMA_TEST_EXTS_A, true
+        );
         schemaETY.setId(FAKE_VALID_DTO_ID);
         mongoTemplate.insert(schemaETY);
         mvc.perform(getDocByIdReq(FAKE_VALID_DTO_ID)).andExpectAll(
@@ -159,11 +161,8 @@ class DocumentsCTLTest extends AbstractEntityHandler {
         mvc.perform(
             putDocsByExtensionIdReq(
                 SCHEMA_TEST_ROOT,
-                    SCHEMA_TEST_EXTS_A,
-                new MockMultipartFile[]{
-                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
-                    createFakeMultipart("test1.xsd", true)
-                }
+                SCHEMA_TEST_EXTS_A,
+                createSchemaFromResource(API_PARAM_FILES, true)
             )
         ).andExpectAll(
             status().is(SC_OK),
@@ -175,17 +174,14 @@ class DocumentsCTLTest extends AbstractEntityHandler {
     void updateDocumentsWithInvalidRoot() throws Exception {
         this.uploadDocumentsWithValidData();
         mvc.perform(
-                putDocsByExtensionIdReq(
-                        SCHEMA_TEST_ROOT,
-                        SCHEMA_TEST_EXTS_A,
-                        new MockMultipartFile[]{
-                                createFakeMultipart("test0.xsd", true),
-                                createFakeMultipart("test1.xsd", true)
-                        }
-                )
+            putDocsByExtensionIdReq(
+                SCHEMA_TEST_ROOT_B,
+                SCHEMA_TEST_EXTS_A,
+                createSchemaFromResource(API_PARAM_FILES, true)
+            )
         ).andExpectAll(
-                status().is(SC_BAD_REQUEST),
-                content().contentType(APPLICATION_PROBLEM_JSON)
+            status().is(SC_BAD_REQUEST),
+            content().contentType(APPLICATION_PROBLEM_JSON)
         );
     }
 
@@ -196,11 +192,8 @@ class DocumentsCTLTest extends AbstractEntityHandler {
         mvc.perform(
             putDocsByExtensionIdReq(
                 SCHEMA_TEST_ROOT,
-                    SCHEMA_TEST_EXTS_A,
-                new MockMultipartFile[]{
-                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
-                    createFakeMultipart("test1.xsd", true)
-                }
+                SCHEMA_TEST_EXTS_A,
+                createSchemaFromResource(API_PARAM_FILES, true)
             )
         ).andExpectAll(
             status().is(SC_INTERNAL_SERVER_ERROR),
@@ -215,8 +208,8 @@ class DocumentsCTLTest extends AbstractEntityHandler {
                 SCHEMA_TEST_ROOT,
                     SCHEMA_TEST_EXTS_A,
                 new MockMultipartFile[]{
-                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
-                    createFakeMultipart("test1.xsd", true)
+                    createInvalidFakeMultipart(SCHEMA_TEST_ROOT, true),
+                    createInvalidFakeMultipart("test1.xsd", true)
                 }
             )
         ).andExpectAll(
@@ -233,8 +226,8 @@ class DocumentsCTLTest extends AbstractEntityHandler {
                         SCHEMA_TEST_ROOT,
                         SCHEMA_TEST_EXTS_A,
                         new MockMultipartFile[]{
-                                createFakeMultipart("test0.xsd", false),
-                                createFakeMultipart("test1.xsd", true)
+                                createInvalidFakeMultipart("test0.xsd", false),
+                                createInvalidFakeMultipart("test1.xsd", true)
                         }
                 )
         ).andExpectAll(
@@ -264,10 +257,7 @@ class DocumentsCTLTest extends AbstractEntityHandler {
             putDocsByExtensionIdReq(
                 createBlankString(),
                 createBlankString(),
-                new MockMultipartFile[]{
-                    createFakeMultipart("test0.xsd", true),
-                    createFakeMultipart("test1.xsd", true)
-                }
+                createSchemaFromResource(API_PARAM_FILES, true)
             )
         ).andExpectAll(
             status().is(SC_BAD_REQUEST),
@@ -283,9 +273,7 @@ class DocumentsCTLTest extends AbstractEntityHandler {
             postDocsByExtensionIdReq(
                 SCHEMA_TEST_ROOT,
                 SCHEMA_TEST_EXTS_A,
-                new MockMultipartFile[]{
-                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
-                }
+                createSchemaFromResource(API_PARAM_FILES, true)
             )
         ).andExpectAll(
             status().is(201),
@@ -300,9 +288,9 @@ class DocumentsCTLTest extends AbstractEntityHandler {
                 SCHEMA_TEST_ROOT,
                 SCHEMA_TEST_EXTS_A,
                 new MockMultipartFile[]{
-                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
-                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
-                    createFakeMultipart("test1.xsd", true)
+                    createInvalidFakeMultipart(SCHEMA_TEST_ROOT, true),
+                    createInvalidFakeMultipart(SCHEMA_TEST_ROOT, true),
+                    createInvalidFakeMultipart("test1.xsd", true)
                 }
             )
         ).andExpectAll(
@@ -318,10 +306,7 @@ class DocumentsCTLTest extends AbstractEntityHandler {
             postDocsByExtensionIdReq(
                 SCHEMA_TEST_ROOT,
                 SCHEMA_TEST_EXTS_A,
-                new MockMultipartFile[]{
-                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
-                    createFakeMultipart("test1.xsd", true)
-                }
+                createSchemaFromResource(API_PARAM_FILES, true)
             )
         ).andExpectAll(
             status().is(SC_INTERNAL_SERVER_ERROR),
@@ -337,8 +322,8 @@ class DocumentsCTLTest extends AbstractEntityHandler {
                 SCHEMA_TEST_ROOT,
                 SCHEMA_TEST_EXTS_A,
                 new MockMultipartFile[]{
-                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
-                    createFakeMultipart("test1.xsd", true)
+                    createInvalidFakeMultipart(SCHEMA_TEST_ROOT, true),
+                    createInvalidFakeMultipart("test1.xsd", true)
                 }
             )
         ).andExpectAll(
@@ -355,8 +340,8 @@ class DocumentsCTLTest extends AbstractEntityHandler {
                 createBlankString(),
                 SCHEMA_TEST_EXTS_A,
                 new MockMultipartFile[]{
-                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
-                    createFakeMultipart("test1.xsd", true)
+                    createInvalidFakeMultipart(SCHEMA_TEST_ROOT, true),
+                    createInvalidFakeMultipart("test1.xsd", true)
                 }
             )
         ).andExpectAll(
@@ -373,8 +358,8 @@ class DocumentsCTLTest extends AbstractEntityHandler {
                 SCHEMA_TEST_ROOT,
                 createBlankString(),
                 new MockMultipartFile[]{
-                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
-                    createFakeMultipart("test1.xsd", true)
+                    createInvalidFakeMultipart(SCHEMA_TEST_ROOT, true),
+                    createInvalidFakeMultipart("test1.xsd", true)
                 }
             )
         ).andExpectAll(
@@ -391,8 +376,8 @@ class DocumentsCTLTest extends AbstractEntityHandler {
                 SCHEMA_TEST_ROOT,
                 createBlankString(),
                 new MockMultipartFile[]{
-                    createFakeMultipart(SCHEMA_TEST_ROOT, true),
-                    createFakeMultipart("test1.xsd", true)
+                    createInvalidFakeMultipart(SCHEMA_TEST_ROOT, true),
+                    createInvalidFakeMultipart("test1.xsd", true)
                 }
             )
         ).andExpectAll(
@@ -468,34 +453,26 @@ class DocumentsCTLTest extends AbstractEntityHandler {
     @Test
     void patchDocumentsTest() throws Exception {
         this.uploadDocumentsWithValidData();
-        List<MockMultipartFile> files = new ArrayList<>();
-        files.add(createFakeMultipart("CDA.xsd", true));
-        files.add(createFakeMultipart("test1.xsd", true));
-
-        mvc.perform(patchDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A, files)).andExpectAll(
-                status().is(SC_OK),
-                content().contentType(APPLICATION_JSON_VALUE)
+        mvc.perform(patchDocsByExtensionIdReq(
+            SCHEMA_TEST_EXTS_A,
+            createPartialSchemaFromResource(API_PARAM_FILES))
+        ).andExpectAll(
+            status().is(SC_OK),
+            content().contentType(APPLICATION_JSON_VALUE)
         );
-
-        List<SchemaETY> onDB = mongoTemplate.find(Query.query(Criteria.where("type_id_extension").is(SCHEMA_TEST_EXTS_A)), SchemaETY.class);
-        // old CDA.xsd deleted, new CDA.xsd patched, new test1.xsd appended
-        assertEquals(3, onDB.size());
     }
 
     @Test
     void patchDocumentsTestWithInvalidData() throws Exception {
         this.uploadDocumentsWithValidData();
-        List<MockMultipartFile> files = new ArrayList<>();
-        files.add(createFakeMultipart("CDA.xsd", true));
-        files.add(createFakeMultipart("test1.xsd", false));
-
-        mvc.perform(patchDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A, files)).andExpectAll(
+        mvc.perform(patchDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A,
+            new MockMultipartFile[]{
+                createInvalidFakeMultipart(API_PARAM_FILES, true)
+            }
+        )).andExpectAll(
                 status().is(SC_BAD_REQUEST),
                 content().contentType(APPLICATION_PROBLEM_JSON)
         );
-
-        List<SchemaETY> onDB = mongoTemplate.find(Query.query(Criteria.where("type_id_extension").is(SCHEMA_TEST_EXTS_A)), SchemaETY.class);
-        assertEquals(1, onDB.size());
     }
 
     @Test
@@ -506,19 +483,17 @@ class DocumentsCTLTest extends AbstractEntityHandler {
                 status().is(SC_BAD_REQUEST),
                 content().contentType(APPLICATION_PROBLEM_JSON)
         );
-
-        List<SchemaETY> onDB = mongoTemplate.find(Query.query(Criteria.where("type_id_extension").is(SCHEMA_TEST_EXTS_A)), SchemaETY.class);
-        assertEquals(1, onDB.size());
     }
 
     @Test
     void patchDocumentsTestWithExtensionNotFound() throws Exception {
-        List<MockMultipartFile> files = new ArrayList<>();
-        files.add(createFakeMultipart("CDA.xsd", true));
-        files.add(createFakeMultipart("test1.xsd", true));
-        mvc.perform(patchDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A, files)).andExpectAll(
-                status().is(SC_NOT_FOUND),
-                content().contentType(APPLICATION_PROBLEM_JSON)
+
+        mvc.perform(patchDocsByExtensionIdReq(
+            SCHEMA_TEST_EXTS_A,
+            createSchemaFromResource(API_PARAM_FILES, true)
+        )).andExpectAll(
+            status().is(SC_NOT_FOUND),
+            content().contentType(APPLICATION_PROBLEM_JSON)
         );
 
         List<SchemaETY> onDB = mongoTemplate.find(Query.query(Criteria.where("type_id_extension").is(SCHEMA_TEST_EXTS_A)), SchemaETY.class);
@@ -528,15 +503,13 @@ class DocumentsCTLTest extends AbstractEntityHandler {
     @Test
     void patchDocumentsTestWithMongoFailure() throws Exception {
         this.uploadDocumentsWithValidData();
-
         Mockito.doThrow(new MongoException("Mongo failure")).when(mongoTemplate).insertAll(any());
-
-        List<MockMultipartFile> files = new ArrayList<>();
-        files.add(createFakeMultipart("CDA.xsd", true));
-        files.add(createFakeMultipart("test1.xsd", true));
-        mvc.perform(patchDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A, files)).andExpectAll(
-                status().is(SC_INTERNAL_SERVER_ERROR),
-                content().contentType(APPLICATION_PROBLEM_JSON)
+        mvc.perform(patchDocsByExtensionIdReq(
+            SCHEMA_TEST_EXTS_A,
+            createSchemaFromResource(API_PARAM_FILES, true)
+        )).andExpectAll(
+            status().is(SC_INTERNAL_SERVER_ERROR),
+            content().contentType(APPLICATION_PROBLEM_JSON)
         );
     }
 
@@ -546,10 +519,10 @@ class DocumentsCTLTest extends AbstractEntityHandler {
 
         Mockito.doThrow(new DataIntegrityException("Integrity failed")).when(documentRepo).deleteDocsByExtensionIdAndFilenames(anyString(), any());
 
-        List<MockMultipartFile> files = new ArrayList<>();
-        files.add(createFakeMultipart("CDA.xsd", true));
-        files.add(createFakeMultipart("test1.xsd", true));
-        mvc.perform(patchDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A, files)).andExpectAll(
+        mvc.perform(
+            patchDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A,
+            createSchemaFromResource(API_PARAM_FILES, true)
+        )).andExpectAll(
                 status().is(SC_INTERNAL_SERVER_ERROR),
                 content().contentType(APPLICATION_PROBLEM_JSON)
         );

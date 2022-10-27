@@ -4,24 +4,18 @@
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.impl;
 
 
-import java.util.ArrayList;
-
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.AbstractCTL;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.IEdsDocumentsCTL;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDocumentDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.schema.SchemaValidator;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.service.IDocumentSRV;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.AbstractCTL;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.IEdsDocumentsCTL;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDocumentDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.DeleteDocumentsResDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentResDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentsResDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.UpdateDocumentsResDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.UploadDocumentsResDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.service.IDocumentSRV;
+import java.util.ArrayList;
 
 @RestController
 public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
@@ -82,7 +76,6 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
 
         String checkedRoot = checkRootExtension(root);
         if (validateFiles(files)) {
-            new SchemaValidator(root).verify(files);
             int insertedSchema = service.insertDocsByExtensionId(checkedRoot, extension, files);
             return new UploadDocumentsResDTO(getLogTraceInfo(), new UploadDocumentsResDTO.UploadPayloadDTO(extension), insertedSchema);
         } else {
@@ -106,7 +99,6 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
     public UpdateDocumentsResDTO updateDocuments(String root, String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, InvalidContentException, RootNotValidException, SchemaValidatorException {
         String checkedRoot = checkRootExtension(root);
         if (validateFiles(files)) {
-            new SchemaValidator(root).verify(files);
             int updatedSchema = service.updateDocsByExtensionId(checkedRoot, extension, files);
             return new UpdateDocumentsResDTO(getLogTraceInfo(), new UpdateDocumentsResDTO.UpdatePayloadDTO(extension), updatedSchema);
         } else {

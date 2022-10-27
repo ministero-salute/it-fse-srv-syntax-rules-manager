@@ -20,13 +20,14 @@ public final class UtilityRoutes {
 
     public static final String API_CHANGESET_STATUS = "/" + API_VERSION + "/" + API_CHANGESET + "/" + API_SCHEMA + "/" + API_STATUS ;
     public static final String API_PATH_EXTS_VAR = "extension";
+    public static final String API_PARAM_ROOT = "root";
+    public static final String API_PARAM_FILES = "files";
     public static final String API_PATH_ID_VAR = "id";
     public static final String API_PATH_EXTS = "/{" + API_PATH_EXTS_VAR + "}";
     public static final String API_ID_EXTS = "/{" + API_PATH_ID_VAR + "}";
     public static final String API_GET_BY_EXTS = API_PATH_EXTS;
     public static final String API_DELETE_BY_EXTS = API_PATH_EXTS;
     public static final String API_GET_ONE_BY_ID = API_ID + API_ID_EXTS;
-    public static final String API_GET_ALL = API_DOCUMENT_MAPPER;
     public static final String API_GET_ONE_BY_ID_FULL = API_DOCUMENT_MAPPER + "/" + API_GET_ONE_BY_ID;
     public static final String API_GET_BY_EXTS_FULL = API_DOCUMENT_MAPPER + API_GET_BY_EXTS;
     public static final String API_DELETE_BY_EXTS_FULL = API_DOCUMENT_MAPPER + API_DELETE_BY_EXTS;
