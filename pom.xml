@@ -11,7 +11,7 @@
 	<groupId>it.finanze.sanita.fse2</groupId>
 	<artifactId>srv-syntax-rules-manager-ms</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>srv-syntax-rules-manager</name>
+	<name>srv-syntax-rules-manager-ms</name>
 	<description>Syntax service rules manager</description>
 	<properties>
 		<!-- Application -->
