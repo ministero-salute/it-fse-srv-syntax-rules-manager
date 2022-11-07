@@ -30,7 +30,6 @@ import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityRou
 /**
  * Documents retriever controller
  *
- * @author G. Baittiner
  */
 @RequestMapping(path = API_DOCUMENT_MAPPER)
 @Tag(name = API_DOCUMENTS_TAG)

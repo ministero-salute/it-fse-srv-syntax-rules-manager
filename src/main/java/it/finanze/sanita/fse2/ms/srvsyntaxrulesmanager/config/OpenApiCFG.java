@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 
 /**
  * OpenAPI configuration class
- * @author G. Baittiner
  */
 @Configuration
 public class OpenApiCFG {

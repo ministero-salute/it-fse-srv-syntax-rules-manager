@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Carries information about the health of the system
  *
- * @author G. Baittiner
  */
 @RestController
 @Tag(name = "Actuator")

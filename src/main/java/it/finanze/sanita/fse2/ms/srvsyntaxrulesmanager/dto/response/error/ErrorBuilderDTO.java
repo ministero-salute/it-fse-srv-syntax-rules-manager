@@ -22,7 +22,6 @@ import static org.apache.http.HttpStatus.*;
 /**
  * Builder class converting a given {@link Exception} into its own {@link ErrorResponseDTO} representation
  *
- * @author G. Baittiner
  */
 public final class ErrorBuilderDTO {
 

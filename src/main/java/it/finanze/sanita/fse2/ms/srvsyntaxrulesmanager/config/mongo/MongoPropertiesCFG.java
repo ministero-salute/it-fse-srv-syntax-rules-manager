@@ -11,7 +11,6 @@ import java.io.Serializable;
 
 /**
  * Database properties
- * @author G. Baittiner
  */
 @Data
 @Component

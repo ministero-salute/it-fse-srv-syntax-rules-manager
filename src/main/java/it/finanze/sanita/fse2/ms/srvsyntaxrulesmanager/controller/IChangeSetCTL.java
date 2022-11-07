@@ -21,7 +21,6 @@ import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityRou
 /**
  * ChangeSet retriever controller
  *
- * @author G. Baittiner
  */
 @Tag(name = API_CHANGESET_TAG)
 @Validated

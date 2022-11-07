@@ -7,7 +7,6 @@ import java.io.IOException;
 
 /**
  * When the database output is not the expected one, this exception kicks in
- * @author G. Baittiner
  */
 public class DataIntegrityException extends IOException {
 

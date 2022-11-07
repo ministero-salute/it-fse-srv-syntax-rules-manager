@@ -12,7 +12,6 @@ import com.mongodb.MongoException;
  * To simplify the handling of operations issues, this class takes in the {@link com.mongodb.MongoException}
  * and add a reasonable descriptive message to find the routine which lead to the error.
  * This exception is supposed to be generated and re-thrown as soon as a {@link com.mongodb.MongoException} is caught.
- * @author G. Baittiner
  */
 public class OperationException extends Exception {
 

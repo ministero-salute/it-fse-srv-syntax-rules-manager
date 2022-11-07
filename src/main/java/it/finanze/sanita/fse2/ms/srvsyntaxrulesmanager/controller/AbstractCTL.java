@@ -18,7 +18,6 @@ import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.L
 
 /**
  * Abstract base controller
- * @author G. Baittiner
  */
 @Slf4j
 public abstract class AbstractCTL {

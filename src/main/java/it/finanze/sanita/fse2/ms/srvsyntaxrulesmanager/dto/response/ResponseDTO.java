@@ -12,7 +12,6 @@ import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.
 
 /**
  * Base response
- * @author G. Baittiner
  */
 @Getter
 public abstract class ResponseDTO<T> implements AbstractDTO {

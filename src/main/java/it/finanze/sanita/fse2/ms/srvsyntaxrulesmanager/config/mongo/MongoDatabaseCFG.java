@@ -23,7 +23,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 /**
  * Factory to create database instances
- * @author G. Baittiner
  */
 @Configuration
 @EnableMongoRepositories(basePackages = Constants.ComponentScan.CONFIG_MONGO)

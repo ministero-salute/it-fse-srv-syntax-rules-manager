@@ -7,7 +7,6 @@ import java.io.IOException;
 
 /**
  * Describe data elaboration exception (I/O conversions)
- * @author G. Baittiner
  */
 public class DataProcessingException extends IOException {
 

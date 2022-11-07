@@ -5,7 +5,6 @@ package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions;
 
 /**
  * Where the requested document is not found, this exception kicks in
- * @author G. Baittiner
  */
 public class DocumentNotFoundException extends Exception {
 

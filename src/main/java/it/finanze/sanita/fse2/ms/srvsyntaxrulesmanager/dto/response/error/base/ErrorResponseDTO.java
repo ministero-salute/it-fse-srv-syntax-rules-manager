@@ -14,7 +14,6 @@ import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.
 
 /**
  * Error response
- * @author G. Baittiner
  */
 @Data
 public class ErrorResponseDTO implements AbstractDTO {

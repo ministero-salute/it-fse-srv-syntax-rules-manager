@@ -28,7 +28,6 @@ import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error
 
 /**
  *	Exceptions handler
- *  @author G. Baittiner
  */
 @ControllerAdvice
 @Slf4j

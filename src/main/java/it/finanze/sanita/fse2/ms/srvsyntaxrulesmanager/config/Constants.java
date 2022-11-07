@@ -6,7 +6,6 @@ package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config;
 /**
  * Application constants
  *
- * @author G.Baittiner
  */
 public final class Constants {
 

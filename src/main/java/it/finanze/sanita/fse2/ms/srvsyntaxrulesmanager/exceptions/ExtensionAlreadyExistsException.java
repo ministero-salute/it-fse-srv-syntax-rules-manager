@@ -5,7 +5,6 @@ package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions;
 
 /**
  * When a given extension conflicts with another one already available on the domain
- * @author G. Baittiner
  */
 public class ExtensionAlreadyExistsException extends Exception {
 

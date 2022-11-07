@@ -13,7 +13,6 @@ import java.util.Map;
 
 /**
  * Repository interface
- * @author G. Baittiner
  */
 public interface IDocumentRepo {
     /**
