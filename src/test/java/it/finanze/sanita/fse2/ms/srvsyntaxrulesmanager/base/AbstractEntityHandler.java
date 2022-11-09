@@ -1,4 +1,7 @@
-package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.base;
+/*
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ */package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.base;
 
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;

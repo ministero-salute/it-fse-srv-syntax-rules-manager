@@ -45,7 +45,7 @@ public class ChangeSetCTL extends AbstractCTL implements IChangeSetCTL {
         response.setInsertions(insertions);
         response.setDeletions(deletions);
         response.setTotalNumberOfElements(totalNumberOfElements);
-        // Have a nice day
+        
         return response;
     }
 }

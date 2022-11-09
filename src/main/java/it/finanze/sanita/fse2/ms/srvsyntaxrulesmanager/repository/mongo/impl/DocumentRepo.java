@@ -155,7 +155,7 @@ public class DocumentRepo implements IDocumentRepo {
                 String.format(ERR_REP_UPD_MISMATCH, result.getModifiedCount(), entities.size())
             );
         }
-        // Bye bye
+        
         return new ArrayList<>(entities.values());
     }
 
