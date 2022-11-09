@@ -18,7 +18,6 @@ import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.
 /**
  * DTO for Change Set status endpoint response.
  *
- * @author Riccardo Bonesi
  *
  */
 @Getter

@@ -53,7 +53,7 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
         // Set HTTP headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
-        // Bye bye
+        
         return new ResponseEntity<>(out, headers, out.getStatus());
     }
 
@@ -71,7 +71,7 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
         // Set HTTP headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
-        // Bye bye
+        
         return new ResponseEntity<>(out, headers, out.getStatus());
     }
 
@@ -91,7 +91,7 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
         // Set HTTP headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
-        // Bye bye
+        
         return new ResponseEntity<>(out, headers, out.getStatus());
     }
 
@@ -109,7 +109,7 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
         // Set HTTP headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
-        // Bye bye
+        
         return new ResponseEntity<>(out, headers, out.getStatus());
     }
 
@@ -128,7 +128,7 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
         // Set HTTP headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
-        // Bye bye
+        
         return new ResponseEntity<>(out, headers, out.getStatus());
     }
 
@@ -146,7 +146,7 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
         // Set HTTP headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
-        // Bye bye
+        
         return new ResponseEntity<>(out, headers, out.getStatus());
     }
 
@@ -164,7 +164,7 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
         // Set HTTP headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
-        // Bye bye
+        
         return new ResponseEntity<>(out, headers, out.getStatus());
     }
 
@@ -181,7 +181,7 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
         ErrorResponseDTO out = createMissingPartError(getLogTraceInfo(), ex);
         // Set HTTP headers
         headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
-        // Bye bye
+        
         return new ResponseEntity<>(out, headers, out.getStatus());
     }
 
@@ -198,7 +198,7 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
         ErrorResponseDTO out = createMissingParameterError(getLogTraceInfo(), ex);
         // Set HTTP headers
         headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
-        // Bye bye
+        
         return new ResponseEntity<>(out, headers, out.getStatus());
     }
 
@@ -235,7 +235,7 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
         // Set HTTP headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
-        // Bye bye
+        
         return new ResponseEntity<>(out, headers, out.getStatus());
     }
 
@@ -254,7 +254,7 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
         // Set HTTP headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
-        // Bye bye
+        
         return new ResponseEntity<>(out, headers, out.getStatus());
     }
 
