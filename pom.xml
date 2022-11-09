@@ -21,7 +21,9 @@
 		<config.infra>${project.basedir}/infrastructure</config.infra>
 		<container.output>target/container</container.output>
 		<container.output.runtime>${container.output}/runtime</container.output.runtime>
-		<!-- SonarQube -->
+		<!-- Sonar integration -->
+		<sonar.organization>ministero-salute</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.exclusions>
 			src/main/java/it/finanze/sanita/fse2/ms/srvsyntaxrulesmanager/config/OpenApiCFG.java,
 			src/main/java/it/finanze/sanita/fse2/ms/srvsyntaxrulesmanager/runner/**/*.*
