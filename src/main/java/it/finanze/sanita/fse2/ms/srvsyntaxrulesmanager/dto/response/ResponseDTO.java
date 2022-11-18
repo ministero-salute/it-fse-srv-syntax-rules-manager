@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.AbstractDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.log.LogTraceInfoDTO;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.OA_IDS_SIZE_MAX;
 
@@ -43,5 +44,11 @@ public abstract class ResponseDTO<T> implements AbstractDTO {
         this.traceID = traceInfo.getTraceID();
         this.spanID = traceInfo.getSpanID();
         this.data = data;
+    }
+    
+    protected ResponseDTO() {
+		this.traceID = "";
+		this.spanID = "";
+		this.data = null;
     }
 }
