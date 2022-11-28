@@ -101,7 +101,7 @@ public final class Constants {
         public static final String ERR_VAL_FUTURE_DATE = "La data del ultimo aggiornamento non può essere nel futuro";
         public static final String ERR_VAL_FILES_DUPLICATED = "Uno o più file duplicati";
         public static final String ERR_VAL_MISSING_PART = "Il campo richiesto '%s' non è presente";
-        public static final String ERR_VAL_UNABLE_CONVERT = "Impossibile convertire dal tipo %s al tipo %s il valore richiesto";
+        public static final String ERR_VAL_UNABLE_CONVERT = "Impossibile convertire %s nel tipo %s";
         public static final String ERR_VAL_MISSING_PARAMETER = "Il parametro richiesto '%s' non è presente";
         public static final String ERR_VAL_INVALID_SCHEMA = "Lo schema fornito non risulta valido: %s";
         public static final String ERR_VAL_INVALID_SCHEMA_IO = "Impossibile elaborare il contenuto dello schema";
@@ -124,7 +124,6 @@ public final class Constants {
         public static final String ERR_REP_UPD_MISMATCH = "Il numero delle modifiche eseguite <%d> non coincide con quelle richieste <%d>";
         public static final String ERR_REP_DEL_DOCS_BY_EXT = "Impossibile cancellare i documenti dell'estensione richiesta";
         public static final String ERR_REP_DEL_MISMATCH = "Il numero delle cancellazioni eseguite <%d> non coincide con quelle richieste <%d>";
-        public static final String ERR_REP_GET_BY_ID = "Impossibile recuperare il documento richiesto";
         // Repository
         // ChangeSetRepo
         public static final String ERR_REP_CHANGESET_INSERT = "Impossibile recuperare il change-set degli inserimenti";
