@@ -22,7 +22,7 @@ public final class Constants {
         /**
          * Schema collection name
          */
-        public static final String SCHEMA = "schema";
+        public static final String SCHEMA = "schema_eds";
 
         /**
          * Private constructor to disallow to access from other classes
