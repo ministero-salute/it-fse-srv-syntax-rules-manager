@@ -17,6 +17,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.DeleteDocumentsResDTO.DeletePayloadDTO;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentResDTO.GetOneDocPayloadDTO;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentsResDTO.GetMultipleDocsPayloadDTO;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.UpdateDocumentsResDTO.UpdatePayloadDTO;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.UploadDocumentsResDTO.UploadPayloadDTO;
+
 @RestController
 public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
 
@@ -38,24 +44,27 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
         // Retrieve document by id
         SchemaDocumentDTO out = service.findDocById(id);
         // Return response
-        return new GetDocumentResDTO(getLogTraceInfo(), new GetDocumentResDTO.GetOneDocPayloadDTO(out));
+        return new GetDocumentResDTO(getLogTraceInfo(), new GetOneDocPayloadDTO(out));
     }
 
     /**
      * Retrieves the documents by their extension identifier
      *
+     * @param binary If response should display binary content for each document
      * @param extension The extension id
      * @return The documents matching the extension identifier
      * @throws OperationException        If a data-layer error occurs
      * @throws ExtensionNotFoundException If no documents matching the extension are found
      */
     @Override
-    public GetDocumentsResDTO getDocumentsByExtension(String extension, boolean includeDeleted)
+    public GetDocumentsResDTO getDocumentsByExtension(String extension, boolean binary, boolean includeDeleted)
         throws ExtensionNotFoundException, OperationException {
+        // Create options
+        SchemaDocumentDTO.Options opts = new SchemaDocumentDTO.Options(binary);
         // Retrieve documents by extension
         ArrayList<SchemaDocumentDTO> out = new ArrayList<>(service.findDocsByExtensionId(extension, includeDeleted));
         // Return response
-        return new GetDocumentsResDTO(getLogTraceInfo(), new GetDocumentsResDTO.GetMultipleDocsPayloadDTO(out));
+        return new GetDocumentsResDTO(getLogTraceInfo(), new GetMultipleDocsPayloadDTO(out, opts));
     }
 
     /**
@@ -77,7 +86,7 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
         String checkedRoot = checkRootExtension(root);
         if (validateFiles(files)) {
             int insertedSchema = service.insertDocsByExtensionId(checkedRoot, extension, files);
-            return new UploadDocumentsResDTO(getLogTraceInfo(), new UploadDocumentsResDTO.UploadPayloadDTO(extension), insertedSchema);
+            return new UploadDocumentsResDTO(getLogTraceInfo(), new UploadPayloadDTO(extension), insertedSchema);
         } else {
             throw new InvalidContentException(String.format(Constants.Logs.ERR_INVALID_CONTENT, extension));
         }
@@ -100,7 +109,7 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
         String checkedRoot = checkRootExtension(root);
         if (validateFiles(files)) {
             int updatedSchema = service.updateDocsByExtensionId(checkedRoot, extension, files);
-            return new UpdateDocumentsResDTO(getLogTraceInfo(), new UpdateDocumentsResDTO.UpdatePayloadDTO(extension), updatedSchema);
+            return new UpdateDocumentsResDTO(getLogTraceInfo(), new UpdatePayloadDTO(extension), updatedSchema);
         } else {
             throw new InvalidContentException(String.format(Constants.Logs.ERR_INVALID_CONTENT, extension));
         }
@@ -116,7 +125,7 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
     @Override
     public DeleteDocumentsResDTO deleteDocuments(String extension) throws OperationException, ExtensionNotFoundException, DataIntegrityException {
         int deletedSchema = service.deleteDocsByExtensionId(extension);
-        return new DeleteDocumentsResDTO(getLogTraceInfo(), new DeleteDocumentsResDTO.DeletePayloadDTO(extension), deletedSchema);
+        return new DeleteDocumentsResDTO(getLogTraceInfo(), new DeletePayloadDTO(extension), deletedSchema);
     }
 
     /**
@@ -132,11 +141,11 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
      * @throws InvalidContentException    If at least one files has an invalid content that means is empty or not a proper schema file
      */
     @Override
-    public UpdateDocumentsResDTO patchDocuments(String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, InvalidContentException, RootNotValidException, SchemaValidatorException {
+    public UpdateDocumentsResDTO patchDocuments(String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, InvalidContentException, SchemaValidatorException {
         
         if (validateFiles(files)) {
             int patchedDocuments = service.patchDocsByExtensionId(extension, files);
-            return new UpdateDocumentsResDTO(getLogTraceInfo(), new UpdateDocumentsResDTO.UpdatePayloadDTO(extension), patchedDocuments);
+            return new UpdateDocumentsResDTO(getLogTraceInfo(), new UpdatePayloadDTO(extension), patchedDocuments);
         } else {
             throw new InvalidContentException(String.format(Constants.Logs.ERR_INVALID_CONTENT, extension));
         }
@@ -144,16 +153,17 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
 
     /**
      * Retrieves all the active documents
-     *
+     * @param binary If response should display binary content for each document
      * @return The documents found on DB
      * @throws OperationException        If a data-layer error occurs
-     * @throws ExtensionNotFoundException If no documents matching the extension are found
      */
     @Override
-    public GetDocumentsResDTO getAllDocuments() throws OperationException {
+    public GetDocumentsResDTO getAllDocuments(boolean binary) throws OperationException {
+        // Create options
+        SchemaDocumentDTO.Options opts = new SchemaDocumentDTO.Options(binary);
         // Retrieve documents by extension
         ArrayList<SchemaDocumentDTO> out = new ArrayList<>(service.findAllActiveDocuments());
         // Return response
-        return new GetDocumentsResDTO(getLogTraceInfo(), new GetDocumentsResDTO.GetMultipleDocsPayloadDTO(out));
+        return new GetDocumentsResDTO(getLogTraceInfo(), new GetMultipleDocsPayloadDTO(out, opts));
     }
 }

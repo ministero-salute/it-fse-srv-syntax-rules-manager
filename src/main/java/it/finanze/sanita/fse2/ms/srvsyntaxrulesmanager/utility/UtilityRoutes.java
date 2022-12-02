@@ -19,10 +19,11 @@ public final class UtilityRoutes {
     public static final String API_DOCUMENT_MAPPER = "/" + API_VERSION + "/" + API_SCHEMA;
 
     public static final String API_CHANGESET_STATUS = "/" + API_VERSION + "/" + API_CHANGESET + "/" + API_SCHEMA + "/" + API_STATUS ;
-    public static final String API_PATH_EXTS_VAR = "extension";
     public static final String API_PARAM_ROOT = "root";
     public static final String API_PARAM_FILES = "files";
     public static final String API_PATH_ID_VAR = "id";
+    public static final String API_QP_BINARY = "includeBinary";
+    public static final String API_PATH_EXTS_VAR = "extension";
     public static final String API_PATH_EXTS = "/{" + API_PATH_EXTS_VAR + "}";
     public static final String API_ID_EXTS = "/{" + API_PATH_ID_VAR + "}";
     public static final String API_GET_BY_EXTS = API_PATH_EXTS;

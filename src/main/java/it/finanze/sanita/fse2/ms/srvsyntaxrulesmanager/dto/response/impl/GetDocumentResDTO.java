@@ -7,11 +7,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.log.LogTraceInfoDTO;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.io.Serializable;
 
-public class GetDocumentResDTO extends ResponseDTO {
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentResDTO.GetOneDocPayloadDTO;
+
+public class GetDocumentResDTO extends ResponseDTO<GetOneDocPayloadDTO> {
 
     @Getter
     @AllArgsConstructor

@@ -13,7 +13,6 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.UniqueMultipart;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.ValidObjectId;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -46,7 +45,8 @@ public interface IEdsDocumentsCTL {
     @GetDocumentsByExt
     GetDocumentsResDTO getDocumentsByExtension(
             @PathVariable(name = API_PATH_EXTS_VAR) @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = ERR_VAL_EXT_BLANK) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size") String extension,
-            @RequestParam(required = false, defaultValue = "false") @Parameter(description = "Include deleted schema") boolean includeDeleted)
+            @RequestParam(name = API_QP_BINARY, defaultValue = "false") @Parameter(description = "Include binary content") boolean binary,
+            @RequestParam(defaultValue = "false") @Parameter(description = "Include deleted schema") boolean includeDeleted)
             throws ExtensionNotFoundException, OperationException;
 
     @PostMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
@@ -73,7 +73,7 @@ public interface IEdsDocumentsCTL {
             @RequestPart @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = ERR_VAL_EXT_BLANK) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size") String extension,
             @RequestPart @Parameter(description = "Files", array = @ArraySchema(minItems = OA_ARRAY_FILES_MIN, maxItems = OA_ARRAY_FILES_MAX, schema = @Schema(type = "string", format = "binary", maxLength = OA_FILE_CONTENT_MAX))) @Size(min = OA_ARRAY_FILES_MIN, max = OA_ARRAY_FILES_MAX, message = "File array does not match the expected size") @UniqueMultipart(message = ERR_VAL_FILES_DUPLICATED) MultipartFile[] files)
         throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException,
-        DataIntegrityException, InvalidContentException, RootNotValidException, SchemaValidatorException;
+        DataIntegrityException, InvalidContentException, SchemaValidatorException;
 
     @DeleteMapping(API_DELETE_BY_EXTS)
     @DeleteDocumentsByExt
@@ -83,5 +83,5 @@ public interface IEdsDocumentsCTL {
 
     @GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
     @GetAllDocuments
-    GetDocumentsResDTO getAllDocuments() throws DocumentNotFoundException, OperationException;
+    GetDocumentsResDTO getAllDocuments(@RequestParam(value = API_QP_BINARY, defaultValue = "false") @Parameter(description = "Include binary content") boolean binary) throws DocumentNotFoundException, OperationException;
 }

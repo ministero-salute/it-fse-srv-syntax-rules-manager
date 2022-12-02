@@ -5,7 +5,6 @@ package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityMisc;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +12,8 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityMisc.convertToOffsetDateTime;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityMisc.encodeBase64;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.*;
 
 @Data
@@ -30,15 +31,25 @@ public class SchemaDocumentDTO implements Serializable {
     private Boolean rootSchema;
     private OffsetDateTime lastUpdateDate;
 
+    @AllArgsConstructor
+    public static class Options {
+        private final boolean binary;
+    }
+
     public static SchemaDocumentDTO fromEntity(SchemaETY e) {
         return new SchemaDocumentDTO(
             e.getId(),
             e.getNameSchema(),
-            UtilityMisc.encodeBase64(e.getContentSchema().getData()),
+            encodeBase64(e.getContentSchema().getData()),
             e.getTypeIdExtension(),
             e.getRootSchema(),
-            UtilityMisc.convertToOffsetDateTime(e.getLastUpdateDate())
+            convertToOffsetDateTime(e.getLastUpdateDate())
         );
+    }
+
+    public SchemaDocumentDTO applyOptions(Options o) {
+        if(!o.binary) contentSchema = null;
+        return this;
     }
 
 }
