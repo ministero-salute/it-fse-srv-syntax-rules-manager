@@ -129,6 +129,7 @@ public final class Constants {
         public static final String ERR_REP_CHANGESET_INSERT = "Impossibile recuperare il change-set degli inserimenti";
         public static final String ERR_REP_CHANGESET_DELETE = "Impossibile recuperare il change-set delle cancellazioni";
         public static final String ERR_REP_EVERY_ACTIVE_DOC = "Impossibile recuperare ogni estensione attiva con i relativi documenti";
+        public static final String ERR_REP_COUNT_ACTIVE_DOC = "Impossibile conteggiare ogni estensione attiva";
         // Entities
         // Schema
         public static final String ERR_ETY_BINARY_CONVERSION = "Impossibile convertire i dati binari nel formato richiesto (UTF-8)";

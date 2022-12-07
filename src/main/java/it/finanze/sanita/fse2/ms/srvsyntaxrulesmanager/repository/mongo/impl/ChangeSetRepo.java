@@ -101,4 +101,26 @@ public class ChangeSetRepo implements IChangeSetRepo<SchemaETY> {
         }
         return objects;
     }
+
+    /**
+     * Count all the not-deleted extensions items
+     *
+     * @return Number of active documents
+     * @throws OperationException If a data-layer error occurs
+     */
+    @Override
+    public long getActiveDocumentCount() throws OperationException {
+        // Working var
+        long size;
+        // Create query
+        Query q = query(where(FIELD_DELETED).ne(true));
+        try {
+            // Execute count
+            size = mongo.count(q, SchemaETY.class);
+        }catch (MongoException e) {
+            // Catch data-layer runtime exceptions and turn into a checked exception
+            throw new OperationException(ERR_REP_COUNT_ACTIVE_DOC, e);
+        }
+        return size;
+    }
 }

@@ -65,4 +65,15 @@ public class ChangeSetSRV implements IChangeSetSRV {
         }
         return changes;
     }
+
+    /**
+     * Retrieves the expected collection size after the alignment
+     *
+     * @return The collection size
+     * @throws OperationException If a data-layer error occurs
+     */
+    @Override
+    public long getCollectionSize() throws OperationException {
+        return repository.getActiveDocumentCount();
+    }
 }

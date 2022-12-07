@@ -18,7 +18,6 @@ import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.
 /**
  * DTO for Change Set status endpoint response.
  *
- *
  */
 @Getter
 @Setter
@@ -63,6 +62,11 @@ public class ChangeSetResDTO {
      * The total number of items returned (inserted/modified/deleted)
      */
     @Schema(minimum = OA_ARRAY_CHANGESET_MIN + "", maximum = OA_ARRAY_CHANGESET_MAX + "")
-    private int totalNumberOfElements;
+    private long totalNumberOfElements;
+
+    /**
+     * The current active collection items
+     */
+    private long collectionSize;
 
 }

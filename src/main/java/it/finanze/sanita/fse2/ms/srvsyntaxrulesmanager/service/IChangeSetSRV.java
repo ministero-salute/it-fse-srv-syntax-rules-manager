@@ -26,4 +26,11 @@ public interface IChangeSetSRV {
      * @throws OperationException If a data-layer error occurs
      */
     List<ChangeSetDTO> getDeletions(@Nullable Date lastUpdate) throws OperationException;
+
+    /**
+     * Retrieves the expected collection size after the alignment
+     * @return The collection size
+     * @throws OperationException If a data-layer error occurs
+     */
+    long getCollectionSize() throws OperationException;
 }

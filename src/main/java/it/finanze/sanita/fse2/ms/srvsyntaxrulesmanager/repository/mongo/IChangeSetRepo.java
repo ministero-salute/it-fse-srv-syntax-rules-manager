@@ -39,4 +39,12 @@ public interface IChangeSetRepo<T> {
      * @throws OperationException If a data-layer error occurs
      */
     List<T> getEveryActiveDocument() throws OperationException;
+
+    /**
+     * Count all the not-deleted extensions items
+     *
+     * @return Number of active documents
+     * @throws OperationException If a data-layer error occurs
+     */
+    long getActiveDocumentCount() throws OperationException;
 }
