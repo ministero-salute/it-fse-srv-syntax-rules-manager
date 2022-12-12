@@ -34,7 +34,7 @@ public class ChangeSetCTL extends AbstractCTL implements IChangeSetCTL {
         List<ChangeSetDTO> insertions = service.getInsertions(lastUpdate);
         List<ChangeSetDTO> deletions = service.getDeletions(lastUpdate);
         long collectionSize = service.getCollectionSize();
-        long totalNumberOfElements = insertions.size() + deletions.size();
+        long totalNumberOfElements = (long) insertions.size() + deletions.size();
         // Retrieve log trace
         LogTraceInfoDTO trace = getLogTraceInfo();
         // Build response
