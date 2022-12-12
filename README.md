@@ -35,29 +35,7 @@
 
 ---
 
-_it-fse-srv-syntax-rules-manager_ duty description
-- duty description item
-- duty description item
-- duty description item with ✨Magic ✨
-
-## Features
-- Features1
-- Features2
-- Features3
-- ....
-- Featuresn
-
-#### Feature1
-TODO --> Feature1 description
-
-#### Feature2
-TODO --> Feature2 description
-
-#### Feature3
-TODO --> Feature3 description
-
-#### Featuren
-TODO --> Featuren description
+Il microservizio in oggetto espone API che consentono la creazione, lettura, aggiornamento ed eliminazione degli artefatti per i controlli sintattici utilizzati dal Gateway in fase di validazione. Il microservizio, inoltre, espone API necessarie al Gateway per effettuare l'allineamento dei nuovi artefatti.
 
 ## Repos
 - [ministero-salute-git-repo-url] - Repos Git Ministero della Salute
