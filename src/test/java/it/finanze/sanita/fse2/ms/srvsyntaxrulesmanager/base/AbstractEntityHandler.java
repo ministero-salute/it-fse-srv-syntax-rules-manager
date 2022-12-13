@@ -3,14 +3,12 @@
  *
  */package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.base;
 
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,18 +26,6 @@ public abstract class AbstractEntityHandler {
      * Valid objectID for test purpose
      */
     public final String FAKE_VALID_DTO_ID = "62cd4f7f5c7e221a80e7effa";
-
-    /**
-     * Document DTO for test purpose
-     */
-    public final SchemaDocumentDTO FAKE_DTO = new SchemaDocumentDTO(
-        FAKE_VALID_DTO_ID,
-        "fake_dto.xsd",
-        "Q2lhbw==",
-        "POCD_TEST",
-        true,
-        OffsetDateTime.now()
-    );
 
     /**
      * This collection is going to be retrieved
