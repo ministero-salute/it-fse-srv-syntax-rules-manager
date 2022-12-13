@@ -80,5 +80,5 @@ public interface IDocumentSRV {
      * @return
      * @throws OperationException
      */
-    List<SchemaDTO> getExtensions(SchemaDocumentDTO.Options opts) throws OperationException;
+    List<SchemaDTO> getExtensions(SchemaDocumentDTO.Options opts, boolean deleted) throws OperationException;
 }

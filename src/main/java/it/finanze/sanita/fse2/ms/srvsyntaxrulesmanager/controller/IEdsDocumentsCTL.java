@@ -88,5 +88,8 @@ public interface IEdsDocumentsCTL {
 
     @GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
     @GetAllDocuments
-    GetDocumentsResDTO getAllDocuments(@RequestParam(value = API_QP_BINARY, defaultValue = "false") @Parameter(description = "Include binary content") boolean binary) throws DocumentNotFoundException, OperationException;
+    GetDocumentsResDTO getAllDocuments(
+        @RequestParam(value = API_QP_BINARY, defaultValue = "false") @Parameter(description = "Include binary content") boolean binary,
+        @RequestParam(value = API_QP_INCLUDE_DELETED, defaultValue = "false") @Parameter(description = "Include deleted content") boolean deleted
+    ) throws DocumentNotFoundException, OperationException;
 }

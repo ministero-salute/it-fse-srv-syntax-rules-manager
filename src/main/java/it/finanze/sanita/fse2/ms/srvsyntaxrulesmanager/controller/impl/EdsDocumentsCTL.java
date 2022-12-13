@@ -160,15 +160,16 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
     /**
      * Retrieves all the active documents
      * @param binary If response should display binary content for each document
+     * @param deleted If response should evaluate deleted content
      * @return The documents found on DB
      * @throws OperationException        If a data-layer error occurs
      */
     @Override
-    public GetDocumentsResDTO getAllDocuments(boolean binary) throws OperationException {
+    public GetDocumentsResDTO getAllDocuments(boolean binary, boolean deleted) throws OperationException {
         // Create options
         SchemaDocumentDTO.Options opts = new SchemaDocumentDTO.Options(binary);
         // Retrieve documents by extension
-        List<SchemaDTO> out = new ArrayList<>(service.getExtensions(opts));
+        List<SchemaDTO> out = new ArrayList<>(service.getExtensions(opts, deleted));
         // Return response
         return new GetDocumentsResDTO(getLogTraceInfo(), out);
     }

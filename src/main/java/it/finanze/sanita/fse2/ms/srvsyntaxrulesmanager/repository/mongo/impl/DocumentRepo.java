@@ -263,13 +263,15 @@ public class DocumentRepo implements IDocumentRepo {
     }
 
     @Override
-    public List<ExtensionETY> groupByExtension() throws OperationException {
+    public List<ExtensionETY> groupByExtension(boolean deleted) throws OperationException {
         // Working var
         List<ExtensionETY> extensions;
         // Define aggregation operation
         MatchOperation match = Aggregation.match(where(FIELD_DELETED).ne(true));
         GroupOperation group = Aggregation.group(FIELD_TYPE_ID_EXT).push(Aggregation.ROOT).as(ExtensionETY.FIELD_ITEMS);
         TypedAggregation<SchemaETY> agg = Aggregation.newAggregation(SchemaETY.class, match, group);
+        // Override match operator if deleted is allowed
+        if(deleted) agg = Aggregation.newAggregation(SchemaETY.class, group);
         // Execute
         try {
             extensions = mongo.aggregate(agg, ExtensionETY.class).getMappedResults();

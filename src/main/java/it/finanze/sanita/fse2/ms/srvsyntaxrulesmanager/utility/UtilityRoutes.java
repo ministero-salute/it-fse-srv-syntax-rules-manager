@@ -22,6 +22,7 @@ public final class UtilityRoutes {
     public static final String API_PARAM_ROOT = "root";
     public static final String API_PARAM_FILES = "files";
     public static final String API_PATH_ID_VAR = "id";
+    public static final String API_QP_INCLUDE_DELETED = "includeDeleted";
     public static final String API_QP_BINARY = "includeBinary";
     public static final String API_PATH_EXTS_VAR = "extension";
     public static final String API_PATH_EXTS = "/{" + API_PATH_EXTS_VAR + "}";

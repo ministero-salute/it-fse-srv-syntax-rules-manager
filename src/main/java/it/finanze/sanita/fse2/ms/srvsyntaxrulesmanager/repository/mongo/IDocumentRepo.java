@@ -99,5 +99,5 @@ public interface IDocumentRepo {
      * @return All active documents
      * @throws OperationException If a data-layer error occurs
      */
-    List<ExtensionETY> groupByExtension() throws OperationException;
+    List<ExtensionETY> groupByExtension(boolean deleted) throws OperationException;
 }

@@ -207,7 +207,7 @@ public class DocumentSRV implements IDocumentSRV {
     }
 
     @Override
-    public List<SchemaDTO> getExtensions(SchemaDocumentDTO.Options opts) throws OperationException {
-        return repository.groupByExtension().stream().map(e -> SchemaDTO.fromExtension(e, opts)).collect(Collectors.toList());
+    public List<SchemaDTO> getExtensions(SchemaDocumentDTO.Options opts, boolean deleted) throws OperationException {
+        return repository.groupByExtension(deleted).stream().map(e -> SchemaDTO.fromExtension(e, opts)).collect(Collectors.toList());
     }
 }
