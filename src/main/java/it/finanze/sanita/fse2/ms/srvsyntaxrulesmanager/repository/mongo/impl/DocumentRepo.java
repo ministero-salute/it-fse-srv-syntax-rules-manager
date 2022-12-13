@@ -8,12 +8,17 @@ import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.result.UpdateResult;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.DataIntegrityException;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.ExtensionETY;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IDocumentRepo;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.GroupOperation;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -258,12 +263,19 @@ public class DocumentRepo implements IDocumentRepo {
     }
 
     @Override
-    public List<SchemaETY> findAllActive() throws OperationException {
+    public List<ExtensionETY> groupByExtension() throws OperationException {
+        // Working var
+        List<ExtensionETY> extensions;
+        // Define aggregation operation
+        MatchOperation match = Aggregation.match(where(FIELD_DELETED).ne(true));
+        GroupOperation group = Aggregation.group(FIELD_TYPE_ID_EXT).push(Aggregation.ROOT).as(ExtensionETY.FIELD_ITEMS);
+        TypedAggregation<SchemaETY> agg = Aggregation.newAggregation(SchemaETY.class, match, group);
+        // Execute
         try {
-            Query query = Query.query(Criteria.where(FIELD_DELETED).ne(true));
-            return mongo.find(query, SchemaETY.class);
+            extensions = mongo.aggregate(agg, ExtensionETY.class).getMappedResults();
         } catch (MongoException e) {
             throw new OperationException(ERR_FIND_ACTIVE_DOCS , e);
         }
+        return extensions;
     }
 }

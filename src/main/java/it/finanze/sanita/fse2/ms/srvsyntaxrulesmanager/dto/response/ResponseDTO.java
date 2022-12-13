@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.AbstractDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.log.LogTraceInfoDTO;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.OA_IDS_SIZE_MAX;
 
@@ -15,7 +14,7 @@ import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.
  * Base response
  */
 @Getter
-public abstract class ResponseDTO<T> implements AbstractDTO {
+public abstract class ResponseDTO implements AbstractDTO {
 
     /**
      * Trace id log.
@@ -30,25 +29,12 @@ public abstract class ResponseDTO<T> implements AbstractDTO {
     private final String spanID;
 
     /**
-     * Data object
-     */
-    private final T data;
-
-    /**
      * Instantiates a new response DTO.
      *
      * @param traceInfo The {@link LogTraceInfoDTO} instance
-     * @param data The data object
      */
-    protected ResponseDTO(final LogTraceInfoDTO traceInfo, T data) {
+    protected ResponseDTO(final LogTraceInfoDTO traceInfo) {
         this.traceID = traceInfo.getTraceID();
         this.spanID = traceInfo.getSpanID();
-        this.data = data;
-    }
-    
-    protected ResponseDTO() {
-		this.traceID = "";
-		this.spanID = "";
-		this.data = null;
     }
 }

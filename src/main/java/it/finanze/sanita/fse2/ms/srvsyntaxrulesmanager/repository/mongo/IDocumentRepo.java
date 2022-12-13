@@ -6,6 +6,7 @@ package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo;
 import com.mongodb.bulk.BulkWriteResult;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.DataIntegrityException;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.ExtensionETY;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
 
 import java.util.List;
@@ -94,8 +95,9 @@ public interface IDocumentRepo {
 
     /**
      * Retrieves all active documents on DB
+     *
      * @return All active documents
      * @throws OperationException If a data-layer error occurs
      */
-    List<SchemaETY> findAllActive() throws OperationException;
+    List<ExtensionETY> groupByExtension() throws OperationException;
 }

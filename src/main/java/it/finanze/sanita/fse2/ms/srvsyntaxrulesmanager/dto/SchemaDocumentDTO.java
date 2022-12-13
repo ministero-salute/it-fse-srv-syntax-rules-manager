@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.time.OffsetDateTime;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityMisc.convertToOffsetDateTime;
@@ -19,7 +18,7 @@ import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SchemaDocumentDTO implements Serializable {
+public class SchemaDocumentDTO {
     @Schema(maxLength = OA_ANY_STRING_MAX)
     private String id;
     @Schema(maxLength = OA_ANY_STRING_MAX)
@@ -29,7 +28,11 @@ public class SchemaDocumentDTO implements Serializable {
     @Schema(maxLength = OA_EXTS_STRING_MAX)
     private String typeIdExtension;
     private Boolean rootSchema;
+    private OffsetDateTime insertionDate;
+
     private OffsetDateTime lastUpdateDate;
+
+    private boolean deleted;
 
     @AllArgsConstructor
     public static class Options {
@@ -43,7 +46,9 @@ public class SchemaDocumentDTO implements Serializable {
             encodeBase64(e.getContentSchema().getData()),
             e.getTypeIdExtension(),
             e.getRootSchema(),
-            convertToOffsetDateTime(e.getLastUpdateDate())
+            convertToOffsetDateTime(e.getInsertionDate()),
+            convertToOffsetDateTime(e.getLastUpdateDate()),
+            e.isDeleted()
         );
     }
 

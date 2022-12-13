@@ -3,6 +3,7 @@
  */
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.service;
 
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -75,8 +76,9 @@ public interface IDocumentSRV {
 
     /**
      * Find all active documents in DB
+     *
      * @return
      * @throws OperationException
      */
-    List<SchemaDocumentDTO> findAllActiveDocuments() throws OperationException;
+    List<SchemaDTO> getExtensions(SchemaDocumentDTO.Options opts) throws OperationException;
 }

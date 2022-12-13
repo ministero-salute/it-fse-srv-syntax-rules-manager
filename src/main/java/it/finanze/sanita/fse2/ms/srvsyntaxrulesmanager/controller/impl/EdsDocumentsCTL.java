@@ -7,6 +7,7 @@ package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.impl;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.IEdsDocumentsCTL;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
@@ -16,12 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.DeleteDocumentsResDTO.DeletePayloadDTO;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentResDTO.GetOneDocPayloadDTO;
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentsResDTO.GetMultipleDocsPayloadDTO;
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.UpdateDocumentsResDTO.UpdatePayloadDTO;
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.UploadDocumentsResDTO.UploadPayloadDTO;
 
 @RestController
 public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
@@ -64,7 +62,7 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
         // Retrieve documents by extension
         ArrayList<SchemaDocumentDTO> out = new ArrayList<>(service.findDocsByExtensionId(extension, includeDeleted));
         // Return response
-        return new GetDocumentsResDTO(getLogTraceInfo(), new GetMultipleDocsPayloadDTO(out, opts));
+        return new GetDocumentsResDTO(getLogTraceInfo(), SchemaDTO.fromItems(extension, out, opts));
     }
 
     /**
@@ -86,7 +84,7 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
         String checkedRoot = checkRootExtension(root);
         if (validateFiles(files)) {
             int insertedSchema = service.insertDocsByExtensionId(checkedRoot, extension, files);
-            return new UploadDocumentsResDTO(getLogTraceInfo(), new UploadPayloadDTO(extension), insertedSchema);
+            return new UploadDocumentsResDTO(getLogTraceInfo(), insertedSchema);
         } else {
             throw new InvalidContentException(String.format(Constants.Logs.ERR_INVALID_CONTENT, extension));
         }
@@ -109,7 +107,7 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
         String checkedRoot = checkRootExtension(root);
         if (validateFiles(files)) {
             int updatedSchema = service.updateDocsByExtensionId(checkedRoot, extension, files);
-            return new UpdateDocumentsResDTO(getLogTraceInfo(), new UpdatePayloadDTO(extension), updatedSchema);
+            return new UpdateDocumentsResDTO(getLogTraceInfo(), updatedSchema);
         } else {
             throw new InvalidContentException(String.format(Constants.Logs.ERR_INVALID_CONTENT, extension));
         }
@@ -125,7 +123,7 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
     @Override
     public DeleteDocumentsResDTO deleteDocuments(String extension) throws OperationException, ExtensionNotFoundException, DataIntegrityException {
         int deletedSchema = service.deleteDocsByExtensionId(extension);
-        return new DeleteDocumentsResDTO(getLogTraceInfo(), new DeletePayloadDTO(extension), deletedSchema);
+        return new DeleteDocumentsResDTO(getLogTraceInfo(), deletedSchema);
     }
 
     /**
@@ -145,7 +143,7 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
         
         if (validateFiles(files)) {
             int patchedDocuments = service.patchDocsByExtensionId(extension, files);
-            return new UpdateDocumentsResDTO(getLogTraceInfo(), new UpdatePayloadDTO(extension), patchedDocuments);
+            return new UpdateDocumentsResDTO(getLogTraceInfo(), patchedDocuments);
         } else {
             throw new InvalidContentException(String.format(Constants.Logs.ERR_INVALID_CONTENT, extension));
         }
@@ -162,8 +160,8 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
         // Create options
         SchemaDocumentDTO.Options opts = new SchemaDocumentDTO.Options(binary);
         // Retrieve documents by extension
-        ArrayList<SchemaDocumentDTO> out = new ArrayList<>(service.findAllActiveDocuments());
+        List<SchemaDTO> out = new ArrayList<>(service.getExtensions(opts));
         // Return response
-        return new GetDocumentsResDTO(getLogTraceInfo(), new GetMultipleDocsPayloadDTO(out, opts));
+        return new GetDocumentsResDTO(getLogTraceInfo(), out);
     }
 }

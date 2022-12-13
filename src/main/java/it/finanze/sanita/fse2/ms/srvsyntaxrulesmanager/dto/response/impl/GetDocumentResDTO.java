@@ -12,9 +12,8 @@ import lombok.Getter;
 
 import java.io.Serializable;
 
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentResDTO.GetOneDocPayloadDTO;
-
-public class GetDocumentResDTO extends ResponseDTO<GetOneDocPayloadDTO> {
+@Getter
+public class GetDocumentResDTO extends ResponseDTO {
 
     @Getter
     @AllArgsConstructor
@@ -26,6 +25,8 @@ public class GetDocumentResDTO extends ResponseDTO<GetOneDocPayloadDTO> {
         private SchemaDocumentDTO document;
     }
 
+    private final GetOneDocPayloadDTO data;
+
     /**
      * Instantiates a new response DTO.
      *
@@ -33,6 +34,7 @@ public class GetDocumentResDTO extends ResponseDTO<GetOneDocPayloadDTO> {
      * @param data      The data object
      */
     public GetDocumentResDTO(LogTraceInfoDTO traceInfo, GetOneDocPayloadDTO data) {
-        super(traceInfo, data);
+        super(traceInfo);
+        this.data = data;
     }
 }

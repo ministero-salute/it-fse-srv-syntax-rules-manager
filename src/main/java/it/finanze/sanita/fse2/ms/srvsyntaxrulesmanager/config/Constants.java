@@ -135,6 +135,9 @@ public final class Constants {
         public static final String ERR_ETY_BINARY_CONVERSION = "Impossibile convertire i dati binari nel formato richiesto (UTF-8)";
         public static final String ERR_INVALID_CONTENT = "One or more than one file appears not to be a valid schema for the extension: %s";
         public static final String ERR_FIND_ACTIVE_DOCS = "Impossibile trovare documenti attivi";
-
+        // DTO
+        // Schema
+        public static final String ERR_DTO_EMPTY_ITEMS = "La lista items per lo schema %s è vuota";
+        public static final String ERR_DTO_NO_ROOT_FOUND = "Impossibile recuperare root file per estensione %s";
     }
 }

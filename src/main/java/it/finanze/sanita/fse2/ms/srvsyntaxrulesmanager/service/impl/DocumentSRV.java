@@ -3,6 +3,7 @@
  */
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.service.impl;
 
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.ErrorInstance.Fields;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
@@ -206,22 +207,7 @@ public class DocumentSRV implements IDocumentSRV {
     }
 
     @Override
-    public List<SchemaDocumentDTO> findAllActiveDocuments() throws OperationException {
-        List<SchemaETY> etyList = repository.findAllActive();
-        if (etyList == null || etyList.isEmpty()) {
-            log.warn("No active schema documents found");
-            return new ArrayList<>();
-        }
-        return buildDtoFromEty(etyList);
-    }
-
-    private List<SchemaDocumentDTO> buildDtoFromEty(List<SchemaETY> etyList) {
-        List<SchemaDocumentDTO> schemaDocumentDTOList = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(etyList)) {
-            for (SchemaETY ety : etyList) {
-                schemaDocumentDTOList.add(SchemaDocumentDTO.fromEntity(ety));
-            }
-        }
-        return schemaDocumentDTOList;
+    public List<SchemaDTO> getExtensions(SchemaDocumentDTO.Options opts) throws OperationException {
+        return repository.groupByExtension().stream().map(e -> SchemaDTO.fromExtension(e, opts)).collect(Collectors.toList());
     }
 }
