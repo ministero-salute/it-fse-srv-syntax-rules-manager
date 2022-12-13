@@ -8,8 +8,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.PatchDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.base.ErrorResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.UpdateDocumentsResDTO;
 import org.springframework.http.MediaType;
 
 import java.lang.annotation.Retention;
@@ -29,7 +29,7 @@ import static java.lang.annotation.ElementType.METHOD;
             description = "Schema aggiornato",
             content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE,
-                schema = @Schema(implementation = UpdateDocumentsResDTO.class)
+                schema = @Schema(implementation = PatchDocsResDTO.class)
             )
         ),
         @ApiResponse(

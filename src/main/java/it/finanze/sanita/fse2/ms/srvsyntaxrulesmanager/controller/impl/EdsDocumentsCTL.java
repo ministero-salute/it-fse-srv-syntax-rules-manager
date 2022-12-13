@@ -9,7 +9,12 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.IEdsDocumentsCTL;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDocumentDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.*;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.DeleteDocsResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.PatchDocsResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.PostDocsResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.PutDocsResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentsResDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.service.IDocumentSRV;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,24 +72,25 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
 
     /**
      * Insert the given data inside the schema
-     * @param root Root filename
+     *
+     * @param root      Root filename
      * @param extension Extension identifier
-     * @param files The content schema to insert
+     * @param files     The content schema to insert
      * @return List with filenames of elements inserted into the schema
-     * @throws OperationException If a data-layer error occurs
+     * @throws OperationException              If a data-layer error occurs
      * @throws ExtensionAlreadyExistsException If the given extension is already inserted into the schema
-     * @throws DataProcessingException If an error occurs while converting raw data to entity type
-     * @throws RootNotValidException If the given root filename is not present in the files array
-     * @throws InvalidContentException If at least one files has an invalid content that means is empty or not a proper schema file
+     * @throws DataProcessingException         If an error occurs while converting raw data to entity type
+     * @throws RootNotValidException           If the given root filename is not present in the files array
+     * @throws InvalidContentException         If at least one files has an invalid content that means is empty or not a proper schema file
      */
     @Override
-    public UploadDocumentsResDTO uploadDocuments(String root, String extension, MultipartFile[] files)
+    public PostDocsResDTO uploadDocuments(String root, String extension, MultipartFile[] files)
         throws OperationException, ExtensionAlreadyExistsException, DataProcessingException, RootNotValidException, InvalidContentException, SchemaValidatorException {
 
         String checkedRoot = checkRootExtension(root);
         if (validateFiles(files)) {
             int insertedSchema = service.insertDocsByExtensionId(checkedRoot, extension, files);
-            return new UploadDocumentsResDTO(getLogTraceInfo(), insertedSchema);
+            return new PostDocsResDTO(getLogTraceInfo(), insertedSchema);
         } else {
             throw new InvalidContentException(String.format(Constants.Logs.ERR_INVALID_CONTENT, extension));
         }
@@ -92,22 +98,23 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
 
     /**
      * Update the documents content with the provided ones according to the extension
+     *
      * @param extension The extension id
-     * @param files The documents to use as replacement of the old ones
-     * @param root Root identifier
+     * @param files     The documents to use as replacement of the old ones
+     * @param root      Root identifier
      * @return List with filenames of elements updated into the schema
-     * @throws OperationException If a data-layer error occurs
+     * @throws OperationException         If a data-layer error occurs
      * @throws ExtensionNotFoundException If no documents matching the extension are found
-     * @throws DocumentNotFoundException If at least one document to be replaced is not found inside the collection
-     * @throws DataProcessingException If unable to convert the input raw data into a binary representation
-     * @throws InvalidContentException If at least one files has an invalid content that means is empty or not a proper schema file
+     * @throws DocumentNotFoundException  If at least one document to be replaced is not found inside the collection
+     * @throws DataProcessingException    If unable to convert the input raw data into a binary representation
+     * @throws InvalidContentException    If at least one files has an invalid content that means is empty or not a proper schema file
      */
     @Override
-    public UpdateDocumentsResDTO updateDocuments(String root, String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, InvalidContentException, RootNotValidException, SchemaValidatorException {
+    public PutDocsResDTO updateDocuments(String root, String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, InvalidContentException, RootNotValidException, SchemaValidatorException {
         String checkedRoot = checkRootExtension(root);
         if (validateFiles(files)) {
             int updatedSchema = service.updateDocsByExtensionId(checkedRoot, extension, files);
-            return new UpdateDocumentsResDTO(getLogTraceInfo(), updatedSchema);
+            return new PutDocsResDTO(getLogTraceInfo(), updatedSchema);
         } else {
             throw new InvalidContentException(String.format(Constants.Logs.ERR_INVALID_CONTENT, extension));
         }
@@ -115,15 +122,16 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
 
     /**
      * Deletes all the documents entities matching the given extension
+     *
      * @param extension The extension id
      * @return List with filenames of elements removed from the collection
-     * @throws OperationException If a data-layer error occurs
+     * @throws OperationException         If a data-layer error occurs
      * @throws ExtensionNotFoundException If there is no document matching the given extension
      */
     @Override
-    public DeleteDocumentsResDTO deleteDocuments(String extension) throws OperationException, ExtensionNotFoundException, DataIntegrityException {
+    public DeleteDocsResDTO deleteDocuments(String extension) throws OperationException, ExtensionNotFoundException, DataIntegrityException {
         int deletedSchema = service.deleteDocsByExtensionId(extension);
-        return new DeleteDocumentsResDTO(getLogTraceInfo(), deletedSchema);
+        return new DeleteDocsResDTO(getLogTraceInfo(), deletedSchema);
     }
 
     /**
@@ -139,11 +147,11 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
      * @throws InvalidContentException    If at least one files has an invalid content that means is empty or not a proper schema file
      */
     @Override
-    public UpdateDocumentsResDTO patchDocuments(String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, InvalidContentException, SchemaValidatorException {
+    public PatchDocsResDTO patchDocuments(String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, InvalidContentException, SchemaValidatorException {
         
         if (validateFiles(files)) {
             int patchedDocuments = service.patchDocsByExtensionId(extension, files);
-            return new UpdateDocumentsResDTO(getLogTraceInfo(), patchedDocuments);
+            return new PatchDocsResDTO(getLogTraceInfo(), patchedDocuments);
         } else {
             throw new InvalidContentException(String.format(Constants.Logs.ERR_INVALID_CONTENT, extension));
         }

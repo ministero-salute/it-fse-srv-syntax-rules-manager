@@ -9,7 +9,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.operation.document.GetDocumentById;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.operation.documents.*;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.*;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.DeleteDocsResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.PatchDocsResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.PostDocsResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.PutDocsResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentsResDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.UniqueMultipart;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.ValidObjectId;
@@ -52,7 +57,7 @@ public interface IEdsDocumentsCTL {
     @PostMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     @UploadDocumentsByExt
     @ResponseStatus(HttpStatus.CREATED)
-    UploadDocumentsResDTO uploadDocuments(
+    PostDocsResDTO uploadDocuments(
             @RequestPart @Parameter(description = "Root filename (eg. Test.xsd)", schema = @Schema(minLength = OA_ANY_STRING_MIN, maxLength = OA_ANY_STRING_MAX)) @NotBlank(message = ERR_VAL_ROOT_BLANK) @Size(min = OA_ANY_STRING_MIN, max = OA_ANY_STRING_MAX, message = "Root filename does not match the expected size") String root,
             @RequestPart @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = ERR_VAL_EXT_BLANK) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size") String extension,
             @RequestPart @Parameter(description = "Files", array = @ArraySchema(minItems = OA_ARRAY_FILES_MIN, maxItems = OA_ARRAY_FILES_MAX, schema = @Schema(type = "string", format = "binary", maxLength = OA_FILE_CONTENT_MAX))) @Size(min = OA_ARRAY_FILES_MIN, max = OA_ARRAY_FILES_MAX, message = "File array does not match the expected size") @UniqueMultipart(message = ERR_VAL_FILES_DUPLICATED) MultipartFile[] files)
@@ -60,7 +65,7 @@ public interface IEdsDocumentsCTL {
 
     @PutMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     @UpdateDocumentsByExt
-    UpdateDocumentsResDTO updateDocuments(
+    PutDocsResDTO updateDocuments(
             @RequestPart @Parameter(description = "Root filename (eg. Test.xsd)", schema = @Schema(minLength = OA_ANY_STRING_MIN, maxLength = OA_ANY_STRING_MAX)) @NotBlank(message = ERR_VAL_ROOT_BLANK) @Size(min = OA_ANY_STRING_MIN, max = OA_ANY_STRING_MAX, message = "Root filename does not match the expected size") String root,
             @RequestPart @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = ERR_VAL_EXT_BLANK) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size") String extension,
             @RequestPart @Parameter(description = "Files", array = @ArraySchema(minItems = OA_ARRAY_FILES_MIN, maxItems = OA_ARRAY_FILES_MAX, schema = @Schema(type = "string", format = "binary", maxLength = OA_FILE_CONTENT_MAX))) @Size(min = OA_ARRAY_FILES_MIN, max = OA_ARRAY_FILES_MAX, message = "File array does not match the expected size") @UniqueMultipart(message = ERR_VAL_FILES_DUPLICATED) MultipartFile[] files)
@@ -69,7 +74,7 @@ public interface IEdsDocumentsCTL {
 
     @PatchMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     @PatchDocumentsByExt
-    UpdateDocumentsResDTO patchDocuments(
+    PatchDocsResDTO patchDocuments(
             @RequestPart @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = ERR_VAL_EXT_BLANK) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size") String extension,
             @RequestPart @Parameter(description = "Files", array = @ArraySchema(minItems = OA_ARRAY_FILES_MIN, maxItems = OA_ARRAY_FILES_MAX, schema = @Schema(type = "string", format = "binary", maxLength = OA_FILE_CONTENT_MAX))) @Size(min = OA_ARRAY_FILES_MIN, max = OA_ARRAY_FILES_MAX, message = "File array does not match the expected size") @UniqueMultipart(message = ERR_VAL_FILES_DUPLICATED) MultipartFile[] files)
         throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException,
@@ -77,7 +82,7 @@ public interface IEdsDocumentsCTL {
 
     @DeleteMapping(API_DELETE_BY_EXTS)
     @DeleteDocumentsByExt
-    DeleteDocumentsResDTO deleteDocuments(
+    DeleteDocsResDTO deleteDocuments(
             @PathVariable(name = API_PATH_EXTS_VAR) @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = ERR_VAL_EXT_BLANK) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size") String extension)
             throws OperationException, ExtensionNotFoundException, DataIntegrityException;
 
