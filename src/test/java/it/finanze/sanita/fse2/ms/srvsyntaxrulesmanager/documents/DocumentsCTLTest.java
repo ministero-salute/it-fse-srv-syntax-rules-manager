@@ -10,7 +10,7 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.DataIntegrityException;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IDocumentRepo;
-import org.junit.jupiter.api.Assertions;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -27,8 +27,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 
@@ -55,14 +53,14 @@ class DocumentsCTLTest extends AbstractEntityHandler {
     private Tracer tracer;
 
     @SpyBean
-    private MongoTemplate mongoTemplate;
+    private MongoTemplate mongo;
 
     @SpyBean
-    private IDocumentRepo documentRepo;
+    private IDocumentRepo repository;
 
     @BeforeEach
     void setup() {
-        mongoTemplate.dropCollection(SchemaETY.class);
+        mongo.dropCollection(SchemaETY.class);
     }
 
     @Test
@@ -71,7 +69,7 @@ class DocumentsCTLTest extends AbstractEntityHandler {
             createInvalidFakeMultipart("test1.xsd", true), SCHEMA_TEST_EXTS_A, true
         );
         schemaETY.setId(FAKE_VALID_DTO_ID);
-        mongoTemplate.insert(schemaETY);
+        mongo.insert(schemaETY);
         mvc.perform(getDocByIdReq(FAKE_VALID_DTO_ID)).andExpectAll(
             status().is2xxSuccessful(),
             content().contentType(APPLICATION_JSON_VALUE)
@@ -102,7 +100,7 @@ class DocumentsCTLTest extends AbstractEntityHandler {
 
     @Test
     void getDocumentByIdInvalidOperation() throws Exception {
-        Mockito.doThrow(new MongoException("Invalid exception")).when(mongoTemplate).findOne(any(), eq(SchemaETY.class));
+        Mockito.doThrow(new MongoException("Invalid exception")).when(mongo).findOne(any(), eq(SchemaETY.class));
         mvc.perform(
             getDocByIdReq(FAKE_VALID_DTO_ID)
         ).andExpectAll(
@@ -136,7 +134,7 @@ class DocumentsCTLTest extends AbstractEntityHandler {
 
     @Test
     void getDocumentsByInvalidOperation() throws Exception {
-        Mockito.doThrow(new MongoException("Invalid exception")).when(mongoTemplate).find(any(), eq(SchemaETY.class));
+        Mockito.doThrow(new MongoException("Invalid exception")).when(mongo).find(any(), eq(SchemaETY.class));
         mvc.perform(
             findDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A)
         ).andExpectAll(
@@ -148,7 +146,7 @@ class DocumentsCTLTest extends AbstractEntityHandler {
 
     @Test
     void getDocumentsByUnknownError() throws Exception {
-        Mockito.doThrow(new MongoException("Invalid exception")).when(mongoTemplate).find(any(), eq(SchemaETY.class));
+        Mockito.doThrow(new MongoException("Invalid exception")).when(mongo).find(any(), eq(SchemaETY.class));
         mvc.perform(
             findDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A)
         ).andExpectAll(
@@ -191,7 +189,7 @@ class DocumentsCTLTest extends AbstractEntityHandler {
     @Test
     void updateDocumentsWithInvalidOperation() throws Exception {
         this.uploadDocumentsWithValidData();
-        Mockito.doThrow(new MongoException("Invalid exception")).when(mongoTemplate).insertAll(any());
+        Mockito.doThrow(new MongoException("Invalid exception")).when(mongo).insertAll(any());
         mvc.perform(
             putDocsByExtensionIdReq(
                 SCHEMA_TEST_ROOT,
@@ -304,7 +302,7 @@ class DocumentsCTLTest extends AbstractEntityHandler {
 
     @Test
     void uploadDocumentsWithOperationError() throws Exception {
-        Mockito.doThrow(new MongoException("Invalid exception")).when(mongoTemplate).insertAll(any());
+        Mockito.doThrow(new MongoException("Invalid exception")).when(mongo).insertAll(any());
         mvc.perform(
             postDocsByExtensionIdReq(
                 SCHEMA_TEST_ROOT,
@@ -430,7 +428,7 @@ class DocumentsCTLTest extends AbstractEntityHandler {
     @Test
     void deleteDocumentsByInvalidOperation() throws Exception {
         this.uploadDocumentsWithValidData();
-        Mockito.doThrow(new MongoException("Invalid exception")).when(mongoTemplate).updateMulti(any(), any(), eq(SchemaETY.class));
+        Mockito.doThrow(new MongoException("Invalid exception")).when(mongo).updateMulti(any(), any(), eq(SchemaETY.class));
         mvc.perform(
             deleteDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A)
         ).andExpectAll(
@@ -443,7 +441,7 @@ class DocumentsCTLTest extends AbstractEntityHandler {
     @Test
     void deleteDocumentsByUnknownError() throws Exception {
         this.uploadDocumentsWithValidData();
-        Mockito.doThrow(new MongoException("Invalid exception")).when(mongoTemplate).updateMulti(any(), any(), eq(SchemaETY.class));
+        Mockito.doThrow(new MongoException("Invalid exception")).when(mongo).updateMulti(any(), any(), eq(SchemaETY.class));
         mvc.perform(
             deleteDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A)
         ).andExpectAll(
@@ -499,14 +497,14 @@ class DocumentsCTLTest extends AbstractEntityHandler {
             content().contentType(APPLICATION_PROBLEM_JSON)
         );
 
-        List<SchemaETY> onDB = mongoTemplate.find(Query.query(Criteria.where("type_id_extension").is(SCHEMA_TEST_EXTS_A)), SchemaETY.class);
+        List<SchemaETY> onDB = mongo.find(Query.query(Criteria.where("type_id_extension").is(SCHEMA_TEST_EXTS_A)), SchemaETY.class);
         assertEquals(0, onDB.size());
     }
 
     @Test
     void patchDocumentsTestWithMongoFailure() throws Exception {
         this.uploadDocumentsWithValidData();
-        Mockito.doThrow(new MongoException("Mongo failure")).when(mongoTemplate).insertAll(any());
+        Mockito.doThrow(new MongoException("Mongo failure")).when(mongo).insertAll(any());
         mvc.perform(patchDocsByExtensionIdReq(
             SCHEMA_TEST_EXTS_A,
             createSchemaFromResource(API_PARAM_FILES, true)
@@ -520,7 +518,7 @@ class DocumentsCTLTest extends AbstractEntityHandler {
     void patchDocumentsTestWithDataIntegrityException() throws Exception {
         this.uploadDocumentsWithValidData();
 
-        Mockito.doThrow(new DataIntegrityException("Integrity failed")).when(documentRepo).deleteDocsByExtensionIdAndFilenames(anyString(), any());
+        Mockito.doThrow(new DataIntegrityException("Integrity failed")).when(repository).deleteDocsByExtensionIdAndFilenames(anyString(), any());
 
         mvc.perform(
             patchDocsByExtensionIdReq(SCHEMA_TEST_EXTS_A,
@@ -534,25 +532,21 @@ class DocumentsCTLTest extends AbstractEntityHandler {
     @Test
     void getActiveDocumentsTest() throws Exception {
         this.uploadDocumentsWithValidData();
-        ResultActions resultActions = mvc.perform(findActiveDocsReq()).andExpectAll(
-                status().is(SC_OK),
-                content().contentType(APPLICATION_JSON_VALUE)
+        mvc.perform(findActiveDocsReq()).andExpectAll(
+            status().is(SC_OK),
+            content().contentType(APPLICATION_JSON_VALUE),
+            jsonPath("$.items").isNotEmpty(),
+            jsonPath("$.numberOfItems").value(Matchers.not(0))
         );
-        MvcResult result = resultActions.andReturn();
-        String response = result.getResponse().getContentAsString();
-        Assertions.assertNotNull(response);
-        Assertions.assertNotEquals("{\"data\":{\"documents\":[]}}", response);
     }
 
     @Test
     void getActiveDocumentsNotFoundTest() throws Exception {
-        ResultActions resultActions = mvc.perform(findActiveDocsReq()).andExpectAll(
-                status().is(SC_OK),
-                content().contentType(APPLICATION_JSON_VALUE)
+        mvc.perform(findActiveDocsReq()).andExpectAll(
+            status().is(SC_OK),
+            content().contentType(APPLICATION_JSON_VALUE),
+            jsonPath("$.items").isEmpty(),
+            jsonPath("$.numberOfItems").value(0)
         );
-        MvcResult result = resultActions.andReturn();
-        String response = result.getResponse().getContentAsString();
-        Assertions.assertNotNull(response);
-        Assertions.assertEquals("{\"data\":{\"documents\":[]}}", response);
     }
 }
