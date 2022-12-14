@@ -49,7 +49,7 @@ public class SchemaDTO {
     }
 
     private static String extractRoot(String typeIdExtension, List<SchemaDocumentDTO> items) {
-        return items.stream().filter(SchemaDocumentDTO::getRootSchema).findFirst().orElseThrow(
+        return items.stream().filter(i -> !i.isDeleted() && i.getRootSchema()).findFirst().orElseThrow(
             () -> new IllegalStateException(
                 String.format(ERR_DTO_NO_ROOT_FOUND, typeIdExtension)
             )
@@ -78,7 +78,7 @@ public class SchemaDTO {
         // Emptiness check
         if(items.isEmpty()) throw new IllegalStateException(String.format(ERR_DTO_EMPTY_ITEMS, typeIdExtension));
         // Extract
-        return items.stream().anyMatch(SchemaDocumentDTO::isDeleted);
+        return items.stream().allMatch(SchemaDocumentDTO::isDeleted);
     }
 
     private static List<SchemaDocumentDTO> applyOptions(List<SchemaDocumentDTO> items, SchemaDocumentDTO.Options options) {
