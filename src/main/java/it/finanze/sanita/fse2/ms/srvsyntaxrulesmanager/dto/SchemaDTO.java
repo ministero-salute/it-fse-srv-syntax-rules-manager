@@ -49,11 +49,24 @@ public class SchemaDTO {
     }
 
     private static String extractRoot(String typeIdExtension, List<SchemaDocumentDTO> items) {
-        return items.stream().filter(i -> !i.isDeleted() && i.getRootSchema()).findFirst().orElseThrow(
-            () -> new IllegalStateException(
-                String.format(ERR_DTO_NO_ROOT_FOUND, typeIdExtension)
-            )
-        ).getNameSchema();
+        // Two cases
+        // [1] Everything has been deleted
+        // [2] Not everything has been deleted
+        String name;
+        boolean deleted = items.stream().allMatch(SchemaDocumentDTO::isDeleted);
+
+        if(deleted) {
+            // Just check for any root schema
+            name = items.stream().filter(SchemaDocumentDTO::getRootSchema).findFirst().orElseThrow(
+                () -> new IllegalStateException(String.format(ERR_DTO_NO_ROOT_FOUND, typeIdExtension))
+            ).getNameSchema();
+        } else {
+            // Otherwise check for not-deleted root schema
+            name = items.stream().filter(i -> !i.isDeleted() && i.getRootSchema()).findFirst().orElseThrow(
+                () -> new IllegalStateException(String.format(ERR_DTO_NO_ROOT_FOUND, typeIdExtension))
+            ).getNameSchema();
+        }
+        return name;
     }
 
     private static OffsetDateTime extractInsertionDate(String typeIdExtension, List<SchemaDocumentDTO> items) {
