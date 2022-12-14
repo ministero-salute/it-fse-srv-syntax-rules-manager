@@ -60,12 +60,12 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
      * @throws ExtensionNotFoundException If no documents matching the extension are found
      */
     @Override
-    public GetDocumentsResDTO getDocumentsByExtension(String extension, boolean binary, boolean includeDeleted)
+    public GetDocumentsResDTO getDocumentsByExtension(String extension, boolean binary, boolean deleted)
         throws ExtensionNotFoundException, OperationException {
         // Create options
         SchemaDocumentDTO.Options opts = new SchemaDocumentDTO.Options(binary);
         // Retrieve documents by extension
-        ArrayList<SchemaDocumentDTO> out = new ArrayList<>(service.findDocsByExtensionId(extension, includeDeleted));
+        ArrayList<SchemaDocumentDTO> out = new ArrayList<>(service.findDocsByExtensionId(extension, deleted));
         // Return response
         return new GetDocumentsResDTO(getLogTraceInfo(), SchemaDTO.fromItems(extension, out, opts));
     }

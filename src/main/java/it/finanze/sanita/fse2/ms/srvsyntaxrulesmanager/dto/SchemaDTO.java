@@ -82,7 +82,10 @@ public class SchemaDTO {
     }
 
     private static List<SchemaDocumentDTO> applyOptions(List<SchemaDocumentDTO> items, SchemaDocumentDTO.Options options) {
-        return items.stream().map(d -> d.applyOptions(options)).collect(Collectors.toList());
+        // Apply
+        items.forEach(d -> d.applyOptions(options));
+        // Return initial object
+        return items;
     }
 
 }
