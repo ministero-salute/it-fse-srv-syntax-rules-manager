@@ -11,10 +11,9 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.OperationExcep
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IChangeSetRepo;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IDocumentRepo;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityMisc;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.MiscUtility;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.ComponentScan;
@@ -60,7 +59,7 @@ class ChangeSetRepoTest extends AbstractDatabaseHandler {
     @Test
     void getInsertionsWithTimestamp() throws OperationException {
         // Retrieve documents with yesterday date
-        List<SchemaETY> insertions = repository.getInsertions(UtilityMisc.getYesterday());
+        List<SchemaETY> insertions = repository.getInsertions(MiscUtility.getYesterday());
         // Expect full match
         assertEquals(SCHEMA_INTO_DB, insertions.size());
     }

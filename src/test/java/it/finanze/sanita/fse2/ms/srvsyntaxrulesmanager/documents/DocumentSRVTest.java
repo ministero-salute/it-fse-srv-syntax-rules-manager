@@ -27,7 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.base.MockRequests.createSchemaFromResource;
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityRoutes.API_PARAM_FILES;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.RoutesUtility.API_PARAM_FILES;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;

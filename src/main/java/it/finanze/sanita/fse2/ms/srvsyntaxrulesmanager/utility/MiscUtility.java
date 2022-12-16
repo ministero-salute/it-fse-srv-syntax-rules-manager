@@ -13,12 +13,12 @@ import java.time.ZoneOffset;
 import java.util.Base64;
 import java.util.Date;
 
-public final class UtilityMisc {
+public final class MiscUtility {
 
     /**
      * Private constructor to disallow to access from other classes
      */
-    private UtilityMisc() {}
+    private MiscUtility() {}
 
     public static OffsetDateTime convertToOffsetDateTime(Date dateToConvert) {
         return dateToConvert.toInstant().atOffset(ZoneOffset.UTC);

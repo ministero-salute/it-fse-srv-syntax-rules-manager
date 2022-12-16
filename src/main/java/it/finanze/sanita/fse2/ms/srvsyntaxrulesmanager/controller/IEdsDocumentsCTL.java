@@ -24,8 +24,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Logs.*;
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.*;
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityRoutes.*;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.OAUtility.*;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.RoutesUtility.*;
 
 /**
  * Documents retriever controller

@@ -3,12 +3,12 @@
  */
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility;
 
-public final class UtilityRoutes {
+public final class RoutesUtility {
 
     /**
      * Private constructor to disallow to access from other classes
      */
-    private UtilityRoutes() {}
+    private RoutesUtility() {}
 
     public static final String API_VERSION = "v1";
     public static final String API_CHANGESET = "changeset";

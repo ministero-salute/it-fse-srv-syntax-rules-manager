@@ -3,12 +3,12 @@
  */
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility;
 
-public final class UtilityOA {
+public final class OAUtility {
 
     /**
      * Private constructor to disallow to access from other classes
      */
-    private UtilityOA() {}
+    private OAUtility() {}
 
     /**
      * Min size extension string

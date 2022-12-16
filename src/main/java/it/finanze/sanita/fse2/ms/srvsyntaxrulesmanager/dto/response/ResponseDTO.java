@@ -9,7 +9,7 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.log.LogTrace
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.OA_IDS_SIZE_MAX;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.OAUtility.OA_IDS_SIZE_MAX;
 
 /**
  * Base response

@@ -8,8 +8,8 @@ import org.bson.types.ObjectId;
 
 import javax.validation.constraints.Size;
 
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.OA_ANY_STRING_MAX;
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.OA_ANY_STRING_MIN;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.OAUtility.OA_ANY_STRING_MAX;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.OAUtility.OA_ANY_STRING_MIN;
 
 /**
  * The changeset item DTO

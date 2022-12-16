@@ -32,7 +32,7 @@ import java.util.List;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.base.MockRequests.*;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.ErrorType.*;
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityRoutes.API_PARAM_FILES;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.RoutesUtility.API_PARAM_FILES;
 import static org.apache.http.HttpStatus.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;

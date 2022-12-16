@@ -13,7 +13,7 @@ import lombok.Setter;
 import java.util.Date;
 import java.util.List;
 
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.*;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.OAUtility.*;
 
 /**
  * DTO for Change Set status endpoint response.

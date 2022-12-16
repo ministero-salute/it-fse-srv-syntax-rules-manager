@@ -17,13 +17,16 @@ import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Date;
+import java.util.List;
+import java.util.Queue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.base.AbstractEntityHandler.SCHEMA_MOD_SAMPLE_FILES;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.base.AbstractEntityHandler.SCHEMA_SAMPLE_FILES;
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityRoutes.*;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.RoutesUtility.*;
 import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
 import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;

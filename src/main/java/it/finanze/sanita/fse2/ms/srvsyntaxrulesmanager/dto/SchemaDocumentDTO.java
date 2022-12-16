@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
 
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityMisc.convertToOffsetDateTime;
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityMisc.encodeBase64;
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.*;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.MiscUtility.convertToOffsetDateTime;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.MiscUtility.encodeBase64;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.OAUtility.*;
 
 @Data
 @AllArgsConstructor

@@ -12,7 +12,7 @@ import lombok.Getter;
 
 import java.util.List;
 
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.*;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.OAUtility.*;
 import static java.util.Collections.singletonList;
 
 @Getter

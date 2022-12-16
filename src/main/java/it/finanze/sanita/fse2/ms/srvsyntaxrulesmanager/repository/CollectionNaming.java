@@ -3,19 +3,18 @@
  */
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository;
 
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Collections.SCHEMA;
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Profile.TEST_PREFIX;
-
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.ProfileUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityProfile;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Collections.SCHEMA;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Profile.TEST_PREFIX;
 
 @Configuration
 public class CollectionNaming {
     @Autowired
-    private UtilityProfile profiles;
+    private ProfileUtility profiles;
 
     @Bean("schemaBean")
     public String getSchemaCollection() {

@@ -8,7 +8,7 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.OperationExcep
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IChangeSetRepo;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.service.IChangeSetSRV;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityMisc;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.MiscUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,7 @@ public class ChangeSetSRV implements IChangeSetSRV {
             insertions = repository.getEveryActiveDocument();
         }
         // Iterate and populate
-        return insertions.stream().map(UtilityMisc::toChangeset).collect(Collectors.toList());
+        return insertions.stream().map(MiscUtility::toChangeset).collect(Collectors.toList());
     }
 
     /**
@@ -61,7 +61,7 @@ public class ChangeSetSRV implements IChangeSetSRV {
             // Retrieve deletions
             List<SchemaETY> deletions = repository.getDeletions(lastUpdate);
             // Iterate and populate
-            changes = deletions.stream().map(UtilityMisc::toChangeset).collect(Collectors.toList());
+            changes = deletions.stream().map(MiscUtility::toChangeset).collect(Collectors.toList());
         }
         return changes;
     }

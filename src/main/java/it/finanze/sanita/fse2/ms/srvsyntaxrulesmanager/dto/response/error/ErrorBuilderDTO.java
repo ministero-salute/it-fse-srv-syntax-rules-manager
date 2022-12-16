@@ -6,7 +6,7 @@ package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.log.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityMisc;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.MiscUtility;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
@@ -15,8 +15,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Logs.*;
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.ErrorInstance.*;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.ErrorInstance.Fields.FILES;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.ErrorInstance.*;
 import static org.apache.http.HttpStatus.*;
 
 /**
@@ -33,7 +33,7 @@ public final class ErrorBuilderDTO {
     public static ErrorResponseDTO createConstraintError(LogTraceInfoDTO trace, ConstraintViolationException ex) {
         // Retrieve the first constraint error
         ConstraintViolation<?> violation = ex.getConstraintViolations().iterator().next();
-        String field = UtilityMisc.extractKeyFromPath(violation.getPropertyPath());
+        String field = MiscUtility.extractKeyFromPath(violation.getPropertyPath());
         // Return associated information
         return new ErrorResponseDTO(
             trace,
