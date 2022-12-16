@@ -9,12 +9,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.operation.document.GetDocumentById;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.operation.documents.*;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.DeleteDocsResDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.PatchDocsResDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.PostDocsResDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.PutDocsResDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentResDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentsResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.changes.data.GetDocumentByIdResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.UniqueMultipart;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.ValidObjectId;
@@ -42,7 +38,7 @@ public interface IEdsDocumentsCTL {
 
     @GetMapping(API_GET_ONE_BY_ID)
     @GetDocumentById
-    GetDocumentResDTO getDocumentById(
+    GetDocumentByIdResDTO getDocumentById(
             @PathVariable(name = API_PATH_ID_VAR) @Parameter(description = "Document identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = ERR_VAL_ID_BLANK) @Size(min = OA_ANY_STRING_MIN, max = OA_ANY_STRING_MAX, message = "Document id does not match the expected size") @ValidObjectId(message = ERR_VAL_ID_NOT_VALID) String id)
             throws DocumentNotFoundException, OperationException;
 

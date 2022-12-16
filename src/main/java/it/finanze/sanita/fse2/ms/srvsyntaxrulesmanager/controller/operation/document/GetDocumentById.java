@@ -8,8 +8,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.changes.data.GetDocumentByIdResDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.base.ErrorResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentResDTO;
 import org.springframework.http.MediaType;
 
 import java.lang.annotation.Retention;
@@ -30,7 +30,7 @@ import static java.lang.annotation.ElementType.METHOD;
             description = "Documenti trovati sul database",
             content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE,
-                schema = @Schema(implementation = GetDocumentResDTO.class))
+                schema = @Schema(implementation = GetDocumentByIdResDTO.class))
         ),
         @ApiResponse(
             responseCode = "400",

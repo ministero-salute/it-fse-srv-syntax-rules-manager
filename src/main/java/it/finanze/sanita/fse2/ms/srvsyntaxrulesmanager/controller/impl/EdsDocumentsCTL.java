@@ -9,12 +9,8 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.IEdsDocumentsCTL;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDocumentDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.DeleteDocsResDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.PatchDocsResDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.PostDocsResDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.PutDocsResDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentResDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentsResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.changes.data.GetDocumentByIdResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.service.IDocumentSRV;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.impl.GetDocumentResDTO.GetOneDocPayloadDTO;
 
 @RestController
 public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
@@ -43,11 +38,8 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
      * @throws DocumentNotFoundException If no document matching the id is found
      */
     @Override
-    public GetDocumentResDTO getDocumentById(String id) throws OperationException, DocumentNotFoundException {
-        // Retrieve document by id
-        SchemaDocumentDTO out = service.findDocById(id);
-        // Return response
-        return new GetDocumentResDTO(getLogTraceInfo(), new GetOneDocPayloadDTO(out));
+    public GetDocumentByIdResDTO getDocumentById(String id) throws OperationException, DocumentNotFoundException {
+        return new GetDocumentByIdResDTO(getLogTraceInfo(), service.findDocById(id));
     }
 
     /**
