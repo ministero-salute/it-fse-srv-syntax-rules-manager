@@ -16,7 +16,7 @@ import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.UtilityOA.
 import static java.util.Collections.singletonList;
 
 @Getter
-public class GetDocumentsResDTO extends ResponseDTO {
+public class GetDocsResDTO extends ResponseDTO {
 
     @ArraySchema(
             minItems = OA_ARRAY_FILES_MIN,
@@ -33,7 +33,7 @@ public class GetDocumentsResDTO extends ResponseDTO {
      * @param traceInfo The {@link LogTraceInfoDTO} instance
      * @param item     The available document object
      */
-    public GetDocumentsResDTO(LogTraceInfoDTO traceInfo, SchemaDTO item) {
+    public GetDocsResDTO(LogTraceInfoDTO traceInfo, SchemaDTO item) {
         super(traceInfo);
         List<SchemaDTO> items = singletonList(item);
         this.items = items;
@@ -46,7 +46,7 @@ public class GetDocumentsResDTO extends ResponseDTO {
      * @param traceInfo The {@link LogTraceInfoDTO} instance
      * @param items     The available documents object
      */
-    public GetDocumentsResDTO(LogTraceInfoDTO traceInfo, List<SchemaDTO> items) {
+    public GetDocsResDTO(LogTraceInfoDTO traceInfo, List<SchemaDTO> items) {
         super(traceInfo);
         this.items = items;
         this.numberOfItems = items.size();

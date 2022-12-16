@@ -10,7 +10,7 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.log.LogTrace
 import lombok.Getter;
 
 @Getter
-public class GetDocumentByIdResDTO extends ResponseDTO {
+public class GetDocByIdResDTO extends ResponseDTO {
 
     @Schema(implementation = SchemaDocumentDTO.class)
     private final SchemaDocumentDTO document;
@@ -21,7 +21,7 @@ public class GetDocumentByIdResDTO extends ResponseDTO {
      * @param traceInfo The {@link LogTraceInfoDTO} instance
      * @param document      The data object
      */
-    public GetDocumentByIdResDTO(LogTraceInfoDTO traceInfo, SchemaDocumentDTO document) {
+    public GetDocByIdResDTO(LogTraceInfoDTO traceInfo, SchemaDocumentDTO document) {
         super(traceInfo);
         this.document = document;
     }

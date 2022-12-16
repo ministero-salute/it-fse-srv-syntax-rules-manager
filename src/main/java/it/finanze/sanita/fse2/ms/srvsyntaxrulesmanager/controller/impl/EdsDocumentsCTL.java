@@ -9,7 +9,7 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.IEdsDocumentsCTL;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.SchemaDocumentDTO;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.changes.data.GetDocumentByIdResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.changes.data.GetDocByIdResDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.service.IDocumentSRV;
@@ -38,8 +38,8 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
      * @throws DocumentNotFoundException If no document matching the id is found
      */
     @Override
-    public GetDocumentByIdResDTO getDocumentById(String id) throws OperationException, DocumentNotFoundException {
-        return new GetDocumentByIdResDTO(getLogTraceInfo(), service.findDocById(id));
+    public GetDocByIdResDTO getDocumentById(String id) throws OperationException, DocumentNotFoundException {
+        return new GetDocByIdResDTO(getLogTraceInfo(), service.findDocById(id));
     }
 
     /**
@@ -52,14 +52,14 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
      * @throws ExtensionNotFoundException If no documents matching the extension are found
      */
     @Override
-    public GetDocumentsResDTO getDocumentsByExtension(String extension, boolean binary, boolean deleted)
+    public GetDocsResDTO getDocumentsByExtension(String extension, boolean binary, boolean deleted)
         throws ExtensionNotFoundException, OperationException {
         // Create options
         SchemaDocumentDTO.Options opts = new SchemaDocumentDTO.Options(binary);
         // Retrieve documents by extension
         ArrayList<SchemaDocumentDTO> out = new ArrayList<>(service.findDocsByExtensionId(extension, deleted));
         // Return response
-        return new GetDocumentsResDTO(getLogTraceInfo(), SchemaDTO.fromItems(extension, out, opts));
+        return new GetDocsResDTO(getLogTraceInfo(), SchemaDTO.fromItems(extension, out, opts));
     }
 
     /**
@@ -157,12 +157,12 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
      * @throws OperationException        If a data-layer error occurs
      */
     @Override
-    public GetDocumentsResDTO getAllDocuments(boolean binary, boolean deleted) throws OperationException {
+    public GetDocsResDTO getAllDocuments(boolean binary, boolean deleted) throws OperationException {
         // Create options
         SchemaDocumentDTO.Options opts = new SchemaDocumentDTO.Options(binary);
         // Retrieve documents by extension
         List<SchemaDTO> out = new ArrayList<>(service.getExtensions(opts, deleted));
         // Return response
-        return new GetDocumentsResDTO(getLogTraceInfo(), out);
+        return new GetDocsResDTO(getLogTraceInfo(), out);
     }
 }

@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.operation.document.GetDocumentById;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.operation.documents.*;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.changes.data.GetDocumentByIdResDTO;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.changes.data.GetDocByIdResDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.UniqueMultipart;
@@ -38,13 +38,13 @@ public interface IEdsDocumentsCTL {
 
     @GetMapping(API_GET_ONE_BY_ID)
     @GetDocumentById
-    GetDocumentByIdResDTO getDocumentById(
+    GetDocByIdResDTO getDocumentById(
             @PathVariable(name = API_PATH_ID_VAR) @Parameter(description = "Document identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = ERR_VAL_ID_BLANK) @Size(min = OA_ANY_STRING_MIN, max = OA_ANY_STRING_MAX, message = "Document id does not match the expected size") @ValidObjectId(message = ERR_VAL_ID_NOT_VALID) String id)
             throws DocumentNotFoundException, OperationException;
 
     @GetMapping(API_GET_BY_EXTS)
     @GetDocumentsByExt
-    GetDocumentsResDTO getDocumentsByExtension(
+    GetDocsResDTO getDocumentsByExtension(
             @PathVariable(name = API_PATH_EXTS_VAR) @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = ERR_VAL_EXT_BLANK) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size") String extension,
             @RequestParam(name = API_QP_BINARY, defaultValue = "false") @Parameter(description = "Include binary content") boolean binary,
             @RequestParam(defaultValue = "false") @Parameter(description = "Include deleted schema") boolean includeDeleted)
@@ -84,7 +84,7 @@ public interface IEdsDocumentsCTL {
 
     @GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
     @GetAllDocuments
-    GetDocumentsResDTO getAllDocuments(
+    GetDocsResDTO getAllDocuments(
         @RequestParam(value = API_QP_BINARY, defaultValue = "false") @Parameter(description = "Include binary content") boolean binary,
         @RequestParam(value = API_QP_INCLUDE_DELETED, defaultValue = "false") @Parameter(description = "Include deleted content") boolean deleted
     ) throws DocumentNotFoundException, OperationException;
