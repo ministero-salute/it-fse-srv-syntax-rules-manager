@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>it.finanze.sanita.fse2</groupId>
 	<artifactId>srv-syntax-rules-manager-ms</artifactId>
-	<version>0.2.0-SNAPSHOT</version> <!-- IPPOCRATE -->
+	<version>0.2.0-RELEASE</version>
 	<name>srv-syntax-rules-manager-ms</name>
 	<description>Syntax service rules manager</description>
 	<properties>
