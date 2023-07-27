@@ -86,7 +86,7 @@ public class SchemaValidator implements LSResourceResolver {
         // Compile & resolve
         try {
             factory.newSchema(getRoot());
-        } catch (IOException | SAXException | RootNotValidException e) {
+        } catch (SAXException | RootNotValidException e) {
             throw new SchemaValidatorException(
                 String.format(
                     ERR_VAL_INVALID_SCHEMA,
@@ -99,7 +99,7 @@ public class SchemaValidator implements LSResourceResolver {
         return new ArrayList<>(mapping.keySet());
     }
 
-    private StreamSource getRoot() throws IOException, RootNotValidException {
+    private StreamSource getRoot() throws RootNotValidException {
         // Add root file check
         if(!mapping.containsKey(root)) {
             throw new RootNotValidException(

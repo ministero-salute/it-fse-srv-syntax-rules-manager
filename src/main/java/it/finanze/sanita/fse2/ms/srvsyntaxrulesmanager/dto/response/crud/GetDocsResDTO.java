@@ -43,9 +43,9 @@ public class GetDocsResDTO extends ResponseDTO {
      */
     public GetDocsResDTO(LogTraceInfoDTO traceInfo, SchemaDTO item) {
         super(traceInfo);
-        List<SchemaDTO> items = singletonList(item);
-        this.items = items;
-        this.numberOfItems = items.size();
+        List<SchemaDTO> raw = singletonList(item);
+        this.items = raw;
+        this.numberOfItems = raw.size();
     }
 
     /**
