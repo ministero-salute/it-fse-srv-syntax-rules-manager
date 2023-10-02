@@ -11,27 +11,26 @@
  */
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.mongo;
 
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.Serializable;
+import lombok.Data;
 
 /**
  * Database properties
  */
 @Data
 @Component
-public class MongoPropertiesCFG implements Serializable {
+public class MongoPropertiesCFG {
 
-    /**
-     *  Serial version uid
-     */
-    private static final long serialVersionUID = 3858996306276323941L;
 
     /**
      *  Connection string
      */
     @Value("${data.mongodb.uri}")
     private String uri;
+    
+    @Value("${data.mongodb.schema-name}")
+	private String schemaName;
+	
 }

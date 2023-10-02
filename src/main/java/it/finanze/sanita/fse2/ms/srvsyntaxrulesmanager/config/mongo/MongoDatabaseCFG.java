@@ -11,9 +11,13 @@
  */
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.mongo;
 
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
 import com.mongodb.ReadConcern;
 import com.mongodb.TransactionOptions;
 import com.mongodb.WriteConcern;
+import com.mongodb.client.MongoClients;
+
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -42,7 +46,11 @@ public class MongoDatabaseCFG {
      */
     @Bean
     public MongoDatabaseFactory createFactory(MongoPropertiesCFG props) {
-        return new SimpleMongoClientDatabaseFactory(props.getUri());
+    	  ConnectionString connectionString = new ConnectionString(props.getUri());
+          MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
+              .applyConnectionString(connectionString)
+              .build();
+          return new SimpleMongoClientDatabaseFactory(MongoClients.create(mongoClientSettings), props.getSchemaName());
     }
 
     /**
