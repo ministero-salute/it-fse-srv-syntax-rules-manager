@@ -15,10 +15,15 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.log.LogTraceInfoDTO;
 import lombok.Getter;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
 
 @Getter
 public class DeleteDocsResDTO extends ResponseDTO {
 
+    @Min(0)
+    @Max(Integer.MAX_VALUE)
     private final int deletedItems;
 
     public DeleteDocsResDTO(LogTraceInfoDTO info, int deletedItems) {

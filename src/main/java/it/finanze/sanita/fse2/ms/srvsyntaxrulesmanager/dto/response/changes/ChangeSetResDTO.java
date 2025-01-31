@@ -18,6 +18,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.Date;
 import java.util.List;
 
@@ -75,6 +77,8 @@ public class ChangeSetResDTO {
     /**
      * The current active collection items
      */
+    @Min(0)
+    @Max(Integer.MAX_VALUE)
     private long collectionSize;
 
 }

@@ -11,6 +11,8 @@
  */
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto;
 
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.ExtensionETY;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,11 +31,16 @@ import static java.util.Comparator.comparing;
 @NoArgsConstructor
 public class SchemaDTO {
 
+    @Schema(minLength = 0, maxLength = 1000)
     private String nameRoot;
+    @Schema(minLength = 0, maxLength = 1000)
     private String typeIdExtension;
+    @Schema(minLength = 0, maxLength = 50)
     private OffsetDateTime insertionDate;
+    @Schema(minLength = 0, maxLength = 50)
     private OffsetDateTime lastUpdateDate;
     private boolean deleted;
+    @ArraySchema(minItems = 0, maxItems = 1000000)
     private List<SchemaDocumentDTO> content;
 
     public static SchemaDTO fromExtension(ExtensionETY ext, SchemaDocumentDTO.Options options) {

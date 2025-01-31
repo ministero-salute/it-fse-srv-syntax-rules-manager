@@ -30,7 +30,7 @@ import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.RoutesUtil
  * ChangeSet retriever controller
  *
  */
-@Tag(name = API_CHANGESET_TAG)
+@Tag(name = API_CHANGESET_TAG, description = "ChangeSet schema controller")
 @Validated
 public interface IChangeSetCTL {
 

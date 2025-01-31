@@ -18,6 +18,8 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.log.LogTraceInfoDTO;
 import lombok.Getter;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.OAUtility.*;
@@ -33,6 +35,8 @@ public class GetDocsResDTO extends ResponseDTO {
     )
     private final List<SchemaDTO> items;
 
+    @Min(0)
+    @Max(Integer.MAX_VALUE)
     private final long numberOfItems;
 
     /**

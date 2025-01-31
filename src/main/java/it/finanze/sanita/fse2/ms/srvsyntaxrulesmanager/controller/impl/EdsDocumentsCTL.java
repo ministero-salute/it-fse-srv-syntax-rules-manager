@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,7 +101,7 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
      * Update the documents content with the provided ones according to the extension
      *
      * @param extension The extension id
-     * @param files     The documents to use as replacement of the old ones
+     * @param filesList     The documents to use as replacement of the old ones
      * @param root      Root identifier
      * @return List with filenames of elements updated into the schema
      * @throws OperationException         If a data-layer error occurs
@@ -110,8 +111,9 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
      * @throws InvalidContentException    If at least one files has an invalid content that means is empty or not a proper schema file
      */
     @Override
-    public PutDocsResDTO updateDocuments(String root, String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, InvalidContentException, RootNotValidException, SchemaValidatorException {
+    public PutDocsResDTO updateDocuments(String root, String extension, List<MultipartFile> filesList, HttpServletRequest request) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, InvalidContentException, RootNotValidException, SchemaValidatorException {
         String checkedRoot = checkRootExtension(root);
+        MultipartFile[] files = filesList.toArray(new MultipartFile[0]);
         if (validateFiles(files)) {
             int updatedSchema = service.updateDocsByExtensionId(checkedRoot, extension, files);
             return new PutDocsResDTO(getLogTraceInfo(), updatedSchema);
@@ -147,7 +149,7 @@ public class EdsDocumentsCTL extends AbstractCTL implements IEdsDocumentsCTL {
      * @throws InvalidContentException    If at least one files has an invalid content that means is empty or not a proper schema file
      */
     @Override
-    public PatchDocsResDTO patchDocuments(String extension, MultipartFile[] files) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, InvalidContentException, SchemaValidatorException {
+    public PatchDocsResDTO patchDocuments(String extension, MultipartFile[] files, HttpServletRequest request) throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException, DataIntegrityException, InvalidContentException, SchemaValidatorException {
         
         if (validateFiles(files)) {
             int patchedDocuments = service.patchDocsByExtensionId(extension, files);

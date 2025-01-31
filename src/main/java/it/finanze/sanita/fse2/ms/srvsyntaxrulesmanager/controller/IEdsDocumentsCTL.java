@@ -28,8 +28,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import java.util.List;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Logs.*;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.OAUtility.*;
@@ -40,7 +43,7 @@ import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.RoutesUtil
  *
  */
 @RequestMapping(path = API_DOCUMENT_MAPPER)
-@Tag(name = API_DOCUMENTS_TAG)
+@Tag(name = API_DOCUMENTS_TAG, description = "controller to manage eds documents")
 @Validated
 public interface IEdsDocumentsCTL {
 
@@ -70,17 +73,49 @@ public interface IEdsDocumentsCTL {
     @PutMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     @UpdateDocumentsByExt
     PutDocsResDTO updateDocuments(
-            @RequestPart @Parameter(description = "Root filename (eg. Test.xsd)", schema = @Schema(minLength = OA_ANY_STRING_MIN, maxLength = OA_ANY_STRING_MAX)) @NotBlank(message = ERR_VAL_ROOT_BLANK) @Size(min = OA_ANY_STRING_MIN, max = OA_ANY_STRING_MAX, message = "Root filename does not match the expected size") String root,
-            @RequestPart @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = ERR_VAL_EXT_BLANK) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size") String extension,
-            @RequestPart @Parameter(description = "Files", array = @ArraySchema(minItems = OA_ARRAY_FILES_MIN, maxItems = OA_ARRAY_FILES_MAX, schema = @Schema(type = "string", format = "binary", maxLength = OA_FILE_CONTENT_MAX))) @Size(min = OA_ARRAY_FILES_MIN, max = OA_ARRAY_FILES_MAX, message = "File array does not match the expected size") @UniqueMultipart(message = ERR_VAL_FILES_DUPLICATED) MultipartFile[] files)
+            @RequestPart @Parameter(description = "Root filename (eg. Test.xsd)", schema = @Schema(minLength = OA_ANY_STRING_MIN, maxLength = OA_ANY_STRING_MAX))
+            @NotBlank(message = ERR_VAL_ROOT_BLANK)
+            @Size(min = OA_ANY_STRING_MIN, max = OA_ANY_STRING_MAX, message = "Root filename does not match the expected size")
+            String root,
+
+            @RequestPart @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX))
+            @NotBlank(message = ERR_VAL_EXT_BLANK)
+            @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size")
+            String extension,
+
+            @RequestPart @Parameter(description = "Files", array = @ArraySchema(minItems = OA_ARRAY_FILES_MIN, maxItems = OA_ARRAY_FILES_MAX, schema = @Schema(type = "string", format = "binary", maxLength = OA_FILE_CONTENT_MAX, additionalProperties = Schema.AdditionalPropertiesValue.FALSE)))
+            @Size(min = OA_ARRAY_FILES_MIN, max = OA_ARRAY_FILES_MAX, message = "File array does not match the expected size")
+            @UniqueMultipart(message = ERR_VAL_FILES_DUPLICATED)
+            List<MultipartFile> files,
+
+            HttpServletRequest request
+    )
         throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException,
         DataIntegrityException, InvalidContentException, RootNotValidException, SchemaValidatorException;
 
     @PatchMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     @PatchDocumentsByExt
     PatchDocsResDTO patchDocuments(
-            @RequestPart @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = ERR_VAL_EXT_BLANK) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size") String extension,
-            @RequestPart @Parameter(description = "Files", array = @ArraySchema(minItems = OA_ARRAY_FILES_MIN, maxItems = OA_ARRAY_FILES_MAX, schema = @Schema(type = "string", format = "binary", maxLength = OA_FILE_CONTENT_MAX))) @Size(min = OA_ARRAY_FILES_MIN, max = OA_ARRAY_FILES_MAX, message = "File array does not match the expected size") @UniqueMultipart(message = ERR_VAL_FILES_DUPLICATED) MultipartFile[] files)
+            @RequestPart
+            @Parameter(description = "Extension identifier",
+                    schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX))
+            @NotBlank(message = ERR_VAL_EXT_BLANK)
+            @Schema(additionalProperties = Schema.AdditionalPropertiesValue.FALSE)
+            @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size")
+            String extension,
+
+            @RequestPart
+            @Parameter(description = "Files",
+                    array = @ArraySchema(minItems = OA_ARRAY_FILES_MIN, maxItems = OA_ARRAY_FILES_MAX,
+                            schema = @Schema(type = "string", format = "binary", maxLength = OA_FILE_CONTENT_MAX, additionalProperties = Schema.AdditionalPropertiesValue.FALSE)
+                    )
+            )
+            @Size(min = OA_ARRAY_FILES_MIN, max = OA_ARRAY_FILES_MAX, message = "File array does not match the expected size")
+            @UniqueMultipart(message = ERR_VAL_FILES_DUPLICATED)
+            MultipartFile[] files,
+
+            HttpServletRequest request
+    )
         throws OperationException, ExtensionNotFoundException, DocumentNotFoundException, DataProcessingException,
         DataIntegrityException, InvalidContentException, SchemaValidatorException;
 
