@@ -77,15 +77,19 @@ public class OpenApiCFG {
 				schema.setAdditionalProperties(false);
 			});
 
-            openApi.getPaths().values()
-			.stream().map(this::getFileSchema)
-			.filter(Objects::nonNull)
-			.forEach(schema -> {
-				schema.additionalProperties(false);
-				if (schema.getProperties().containsKey("file")) {
-                    schema.getProperties().get("file").setMaxLength(customOpenapi.getFileMaxLength());
-                }
-			});
+            openApi.getPaths().values().forEach(pathItem -> {
+                pathItem.readOperations().forEach(operation -> {
+                    if (operation.getRequestBody() != null) {
+                        operation.getRequestBody().getContent().values().forEach(mediaType -> {
+                            Schema<?> schema = mediaType.getSchema();
+                            if (schema != null) {
+                                System.out.println("Forcing additionalProperties(false) for: " + schema.getName());
+                                schema.setAdditionalProperties(false);
+                            }
+                        });
+                    }
+                });
+            });
         };
     }
 
