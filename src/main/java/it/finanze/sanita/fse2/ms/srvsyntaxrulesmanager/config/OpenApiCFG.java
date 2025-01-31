@@ -83,7 +83,6 @@ public class OpenApiCFG {
                         operation.getRequestBody().getContent().values().forEach(mediaType -> {
                             Schema<?> schema = mediaType.getSchema();
                             if (schema != null) {
-                                System.out.println("Forcing additionalProperties(false) for: " + schema.getName());
                                 schema.setAdditionalProperties(false);
                             }
                         });
