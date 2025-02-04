@@ -83,10 +83,10 @@ public interface IEdsDocumentsCTL {
             @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size")
             String extension,
 
-            @RequestPart @Parameter(description = "Files", array = @ArraySchema(minItems = OA_ARRAY_FILES_MIN, maxItems = OA_ARRAY_FILES_MAX, schema = @Schema(type = "string", format = "binary", maxLength = OA_FILE_CONTENT_MAX, additionalProperties = Schema.AdditionalPropertiesValue.FALSE)))
+            @RequestPart(API_PARAM_FILES) @Parameter(description = "Files", array = @ArraySchema(minItems = OA_ARRAY_FILES_MIN, maxItems = OA_ARRAY_FILES_MAX, schema = @Schema(type = "string", format = "binary", maxLength = OA_FILE_CONTENT_MAX, additionalProperties = Schema.AdditionalPropertiesValue.FALSE)))
             @Size(min = OA_ARRAY_FILES_MIN, max = OA_ARRAY_FILES_MAX, message = "File array does not match the expected size")
             @UniqueMultipart(message = ERR_VAL_FILES_DUPLICATED)
-            List<MultipartFile> files,
+            MultipartFile[] files,
 
             HttpServletRequest request
     )
@@ -104,7 +104,7 @@ public interface IEdsDocumentsCTL {
             @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size")
             String extension,
 
-            @RequestPart
+            @RequestPart(API_PARAM_FILES)
             @Parameter(description = "Files",
                     array = @ArraySchema(minItems = OA_ARRAY_FILES_MIN, maxItems = OA_ARRAY_FILES_MAX,
                             schema = @Schema(type = "string", format = "binary", maxLength = OA_FILE_CONTENT_MAX, additionalProperties = Schema.AdditionalPropertiesValue.FALSE)
