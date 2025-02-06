@@ -11,15 +11,20 @@
  */
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.base;
 
-import com.mongodb.MongoException;
-import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.OperationException;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Collections.SCHEMA;
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Profile.TEST_PREFIX;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import java.io.IOException;
+import com.mongodb.MongoException;
+import com.mongodb.client.MongoDatabase;
 
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Collections.SCHEMA;
-import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Profile.TEST_PREFIX;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.OperationException;
 
 public abstract class AbstractDatabaseHandler extends AbstractEntityHandler {
 
@@ -95,7 +100,10 @@ public abstract class AbstractDatabaseHandler extends AbstractEntityHandler {
     }
 
     private boolean isTestSchemaAvailable() {
-        return mongo.getCollectionNames().contains(SCHEMA_TEST_COLLECTION);
+        MongoDatabase database = mongo.getDb();
+        List<String> collectionNames = new ArrayList<>();
+        database.listCollectionNames().into(collectionNames);
+        return collectionNames.contains(SCHEMA_TEST_COLLECTION);
     }
 
     private void createTestSchema() {
