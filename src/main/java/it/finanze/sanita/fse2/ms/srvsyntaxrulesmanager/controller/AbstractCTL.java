@@ -11,7 +11,8 @@
  */
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller;
 
-import brave.Tracer;
+import io.opentelemetry.api.trace.SpanBuilder;
+import io.opentelemetry.api.trace.Tracer;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.ErrorInstance;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.log.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.RootNotValidException;
@@ -23,35 +24,28 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Optional;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Logs.ERR_SRV_INVALID_ROOT_EXT;
-
+import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Microservice.MS_NAME;
 /**
  * Abstract base controller
  */
 @Slf4j
 public abstract class AbstractCTL {
-
     /**
      * Tracker log.
      */
     @Autowired
     private Tracer tracer;
 
-    /**
-     * Generate a new {@link LogTraceInfoDTO} instance
-     * @return The new instance
-     */
-    protected LogTraceInfoDTO getLogTraceInfo() {
-        // Create instance
-        LogTraceInfoDTO out = new LogTraceInfoDTO(null, null);
-        // Verify if context is available
-        if (tracer.currentSpan() != null) {
-            out = new LogTraceInfoDTO(
-                    tracer.currentSpan().context().spanIdString(),
-                    tracer.currentSpan().context().traceIdString());
-        }
-        // Return the log trace
-        return out;
-    }
+	protected LogTraceInfoDTO getLogTraceInfo() {
+		LogTraceInfoDTO out = new LogTraceInfoDTO(null, null);
+		SpanBuilder spanbuilder = tracer.spanBuilder(MS_NAME);
+		if (spanbuilder != null) {
+			out = new LogTraceInfoDTO(
+					spanbuilder.startSpan().getSpanContext().getSpanId(),
+					spanbuilder.startSpan().getSpanContext().getTraceId());
+		}
+		return out;
+	}
 
 	protected String checkRootExtension(String root) throws RootNotValidException {
 		if (FilenameUtils.getExtension(root).equals("")) {

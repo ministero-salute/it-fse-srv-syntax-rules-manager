@@ -64,6 +64,12 @@ public final class Constants {
 
     }
 
+    public static final class Microservice {
+        public static final String MS_NAME = "it-fse-srv-syntax-rules-manager";
+
+        private Microservice(){}
+    }
+
     /**
      * Available profiles on the microservice
      */

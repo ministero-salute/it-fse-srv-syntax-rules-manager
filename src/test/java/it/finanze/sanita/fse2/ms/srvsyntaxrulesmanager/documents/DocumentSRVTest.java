@@ -11,9 +11,9 @@
  */
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.documents;
 
-import brave.Tracer;
 import com.mongodb.MongoException;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.base.AbstractEntityHandler;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IDocumentRepo;
@@ -26,9 +26,12 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -40,13 +43,13 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@WebMvcTest(IDocumentSRV.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ComponentScan
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ActiveProfiles(Constants.Profile.TEST)
 class DocumentSRVTest extends AbstractEntityHandler {
 
-    @MockBean
-    private Tracer tracer;
-    @MockBean
+    @MockitoBean
     private IDocumentRepo repository;
     @Autowired
     private IDocumentSRV service;

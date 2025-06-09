@@ -12,13 +12,18 @@
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.changeset;
 
 
-import brave.Tracer;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.controller.IChangeSetCTL;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.service.IChangeSetSRV;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -33,13 +38,15 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(IChangeSetCTL.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ComponentScan
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ActiveProfiles(Constants.Profile.TEST)
+@AutoConfigureMockMvc
 class ChangeSetCTLTest {
     @Autowired
     private MockMvc mvc;
-    @MockBean
-    private Tracer tracer;
-    @MockBean
+    @MockitoBean
     private IChangeSetSRV service;
     @Test
     void getStatus() throws Exception {

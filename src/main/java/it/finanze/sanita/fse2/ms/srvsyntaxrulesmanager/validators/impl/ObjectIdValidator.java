@@ -12,10 +12,9 @@
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.impl;
 
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.ValidObjectId;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.bson.types.ObjectId;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 
 public class ObjectIdValidator implements ConstraintValidator<ValidObjectId, String> {
     /**

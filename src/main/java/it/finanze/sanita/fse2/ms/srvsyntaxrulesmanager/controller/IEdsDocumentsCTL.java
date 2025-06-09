@@ -22,17 +22,14 @@ import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.crud.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.UniqueMultipart;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.validators.ValidObjectId;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-
-import java.util.List;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants.Logs.*;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.OAUtility.*;

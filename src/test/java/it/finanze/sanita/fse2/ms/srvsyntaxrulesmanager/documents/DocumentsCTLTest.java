@@ -11,7 +11,6 @@
  */
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.documents;
 
-import brave.Tracer;
 import com.mongodb.MongoException;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.base.AbstractEntityHandler;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants;
@@ -26,14 +25,13 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -41,7 +39,7 @@ import java.util.List;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.base.MockRequests.*;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.error.ErrorType.*;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.RoutesUtility.API_PARAM_FILES;
-import static org.apache.http.HttpStatus.*;
+import static jakarta.servlet.http.HttpServletResponse.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.http.MediaType.*;
@@ -57,13 +55,10 @@ class DocumentsCTLTest extends AbstractEntityHandler {
     @Autowired
     private MockMvc mvc;
 
-    @MockBean
-    private Tracer tracer;
-
-    @SpyBean
+    @MockitoSpyBean
     private MongoTemplate mongo;
 
-    @SpyBean
+    @MockitoSpyBean
     private IDocumentRepo repository;
 
     @BeforeEach
@@ -404,7 +399,11 @@ class DocumentsCTLTest extends AbstractEntityHandler {
                 SCHEMA_TEST_EXTS_A,
                 new MockMultipartFile[]{}
             )
-        ).andExpectAll(
+        ).andDo(result -> {
+            System.out.println("Response status: " + result.getResponse().getStatus());
+            System.out.println("Response content type: " + result.getResponse().getContentType());
+            System.out.println("Response body: " + result.getResponse().getContentAsString());
+        }).andExpectAll(
             status().is(SC_BAD_REQUEST),
             content().contentType(APPLICATION_PROBLEM_JSON),
             jsonPath("$.title").value(VALIDATION.getTitle())

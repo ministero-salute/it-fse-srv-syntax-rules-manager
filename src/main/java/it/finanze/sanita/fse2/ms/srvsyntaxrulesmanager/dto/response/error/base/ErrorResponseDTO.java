@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.AbstractDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.log.LogTraceInfoDTO;
 import lombok.Data;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.OAUtility.OA_ANY_STRING_MAX;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.OAUtility.OA_IDS_SIZE_MAX;

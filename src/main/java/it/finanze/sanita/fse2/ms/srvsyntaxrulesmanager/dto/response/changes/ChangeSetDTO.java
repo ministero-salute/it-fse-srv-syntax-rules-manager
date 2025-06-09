@@ -11,10 +11,9 @@
  */
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.changes;
 
+import jakarta.validation.constraints.Size;
 import lombok.Value;
 import org.bson.types.ObjectId;
-
-import javax.validation.constraints.Size;
 
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.OAUtility.OA_ANY_STRING_MAX;
 import static it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility.OAUtility.OA_ANY_STRING_MIN;

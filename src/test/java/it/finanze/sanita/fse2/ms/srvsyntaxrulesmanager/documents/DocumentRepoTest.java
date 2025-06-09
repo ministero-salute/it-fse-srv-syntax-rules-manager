@@ -25,12 +25,12 @@ import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ import static org.springframework.data.mongodb.core.BulkOperations.BulkMode.UNOR
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DocumentRepoTest extends AbstractDatabaseHandler {
 
-    @SpyBean
+    @MockitoSpyBean
     private MongoTemplate mongo;
 
     @Autowired

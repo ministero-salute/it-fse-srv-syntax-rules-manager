@@ -13,13 +13,13 @@ package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.changes;
 
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import java.util.Date;
 import java.util.List;
 

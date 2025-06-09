@@ -11,8 +11,8 @@
  */
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.changeset;
 
-import brave.Tracer;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.base.AbstractEntityHandler;
+import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.mongo.IChangeSetRepo;
@@ -23,7 +23,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.io.IOException;
 import java.util.Date;
@@ -31,14 +34,13 @@ import java.util.Date;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
-
-@WebMvcTest(IChangeSetSRV.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ComponentScan
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ActiveProfiles(Constants.Profile.TEST)
 class ChangeSetSRVTest extends AbstractEntityHandler {
 
-    @MockBean
-    private Tracer tracer;
-    @MockBean
+    @MockitoBean
     private IChangeSetRepo<SchemaETY> repository;
     @Autowired
     private IChangeSetSRV service;

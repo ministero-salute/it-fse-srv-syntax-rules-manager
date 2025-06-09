@@ -13,8 +13,8 @@ package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.utility;
 
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.dto.response.changes.ChangeSetDTO;
 import it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.repository.entity.SchemaETY;
+import jakarta.validation.Path;
 
-import javax.validation.Path;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
