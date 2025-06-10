@@ -181,12 +181,13 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
      * @param ex exception
      */
     @Override
-    protected ResponseEntity<Object> handleMissingServletRequestPart(MissingServletRequestPartException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<Object> handleMissingServletRequestPart(MissingServletRequestPartException ex, HttpHeaders ignored, HttpStatusCode status, WebRequest request) {
         // Log me
         log.error("HANDLER handleMissingServletRequestPart()", ex);
         // Create error DTO
         ErrorResponseDTO out = createMissingPartError(getLogTraceInfo(), ex);
         // Set HTTP headers
+        HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
         
         return new ResponseEntity<>(out, headers, out.getStatus());
