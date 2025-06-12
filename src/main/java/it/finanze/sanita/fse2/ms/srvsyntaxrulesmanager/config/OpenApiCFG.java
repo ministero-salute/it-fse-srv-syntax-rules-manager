@@ -11,23 +11,28 @@
  */
 package it.finanze.sanita.fse2.ms.srvsyntaxrulesmanager.config;
 
+
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.servers.Server;
 
 import org.springdoc.core.customizers.OpenApiCustomizer;
-import org.springdoc.core.models.GroupedOpenApi;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * OpenAPI configuration class
+ */
 @Configuration
 public class OpenApiCFG {
 
@@ -35,45 +40,42 @@ public class OpenApiCFG {
     private CustomSwaggerCFG customOpenapi;
 
     @Bean
-    public GroupedOpenApi publicApi() {
-        return GroupedOpenApi.builder()
-                .group("default")
-                .pathsToMatch("/**")
-                .addOpenApiCustomizer(openApiCustomizer())
-                .build();
-    }
+    public OpenApiCustomizer disableAdditionalRequestProperties() {
 
-    private OpenApiCustomizer openApiCustomizer() {
+        final List<String> required = new ArrayList<>();
+        required.add("file");
+        required.add("requestBody");
+
         return openApi -> {
-            // Popolamento sezione info
+
+            // Populating info section.
             openApi.getInfo().setTitle(customOpenapi.getTitle());
             openApi.getInfo().setVersion(customOpenapi.getVersion());
             openApi.getInfo().setDescription(customOpenapi.getDescription());
             openApi.getInfo().setTermsOfService(customOpenapi.getTermsOfService());
 
-            // Contatto
-            Contact contact = new Contact();
+            // Adding contact to info section
+            final Contact contact = new Contact();
             contact.setName(customOpenapi.getContactName());
             contact.setUrl(customOpenapi.getContactUrl());
             contact.setEmail(customOpenapi.getContactMail());
             openApi.getInfo().setContact(contact);
 
-            // Estensioni custom
+            // Adding extensions
             openApi.getInfo().addExtension("x-api-id", customOpenapi.getApiId());
             openApi.getInfo().addExtension("x-summary", customOpenapi.getApiSummary());
 
-            // Flag sandbox per server HTTP
-            for (Server server : openApi.getServers()) {
-                if (!Pattern.matches("^https://.*", server.getUrl())) {
+            for (final Server server : openApi.getServers()) {
+                final Pattern pattern = Pattern.compile("^https://.*");
+                if (!pattern.matcher(server.getUrl()).matches()) {
                     server.addExtension("x-sandbox", true);
                 }
             }
 
-            // Disabilita additionalProperties negli schema globali
-            openApi.getComponents().getSchemas().values()
-                    .forEach(schema -> schema.setAdditionalProperties(false));
+            openApi.getComponents().getSchemas().values().forEach(schema -> {
+                schema.setAdditionalProperties(false);
+            });
 
-            // Disabilita additionalProperties nei body delle request
             openApi.getPaths().values().forEach(pathItem -> {
                 pathItem.readOperations().forEach(operation -> {
                     if (operation.getRequestBody() != null) {
@@ -89,16 +91,31 @@ public class OpenApiCFG {
         };
     }
 
-    // Metodi ausiliari (eventualmente usabili)
+    /**
+     * Disable additional properties on every response object
+     * @return The {@link OpenApiCustomizer} instance
+     */
+    @Bean
+    public OpenApiCustomizer disableAdditionalResponseProperties() {
+        return openApi -> openApi.getComponents().
+                getSchemas().
+                values().
+                forEach( s -> s.setAdditionalProperties(false));
+    }
+
     private Schema<?> getFileSchema(PathItem item) {
         MediaType mediaType = getMultipartFile(item);
-        return mediaType != null ? mediaType.getSchema() : null;
+        if (mediaType == null) return null;
+        return mediaType.getSchema();
     }
 
     private MediaType getMultipartFile(PathItem item) {
         Operation operation = getOperation(item);
-        if (operation == null || operation.getRequestBody() == null) return null;
-        Content content = operation.getRequestBody().getContent();
+        if (operation == null) return null;
+        RequestBody body = operation.getRequestBody();
+        if (body == null) return null;
+        Content content = body.getContent();
+        if (content == null) return null;
         return content.get(org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE);
     }
 
